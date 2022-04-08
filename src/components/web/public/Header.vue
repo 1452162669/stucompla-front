@@ -35,7 +35,19 @@ export default {
         },
         {
           title: '后台管理系统',
-          path: '/index'
+          path: '/admin'
+        },
+        {
+          title: '交流栏目',
+          path: '/forum'
+        },
+        {
+          title: '表白墙',
+          path: '/wall'
+        },
+        {
+          title: '二手交易',
+          path: '/market'
         },
         {
           title: '新闻中心',
