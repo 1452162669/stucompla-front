@@ -41,14 +41,15 @@ const cdn = {
 module.exports = {
   publicPath: '/',
   devServer: {
+    // 修改完配置文件后，一定要记得重启项目，否则修改不会生效！
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      '/dev_api': {
+        target: 'http://localhost:8086/',
         // ws: true,
-        changeOrigin: true
-        // pathRewrite: {
-        //   '^/api': '/api/private/v1/'
-        // }
+        changeOrigin: true,
+        pathRewrite: {
+          '^/dev_api': ''
+        }
       }
     }
   },

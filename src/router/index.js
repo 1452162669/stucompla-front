@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import index from '../views/web/index'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,6 +18,26 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: () => import('../views/web/admin.vue')
+  },
+  {
+    path: '/forum',
+    name: 'forum',
+    component: () => import('../views/web/forum.vue')
+  },
+  {
+    path: '/post/:id',
+    name: 'postDetail',
+    component: () => import(/* webpackChunkName: "newsDetail" */ '../views/web/postDetail.vue')
+  },
+  {
+    path: '/wall',
+    name: 'wall',
+    component: () => import('../views/web/wall.vue')
+  },
+  {
+    path: '/market',
+    name: 'market',
+    component: () => import('../views/web/market.vue')
   },
   {
     path: '/news',

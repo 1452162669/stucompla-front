@@ -11,6 +11,9 @@
               <h2>{{ item.news_title }}</h2>
               <p>{{ item.news_desc }}</p>
               <span>{{ item.publish_time }}</span>
+              <span title="热度" style="margin-left:19px;font-weight:400"><i class="el-icon-view"></i> 155</span>
+              <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round"></i> 18</span>
+              <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> 8</span>
             </div>
           </router-link>
         </el-card>
