@@ -19,7 +19,7 @@
           <el-button type="primary" @click="dialogFormVisible = true">登录</el-button>
 
           <el-dialog title="欢迎登录" :visible.sync="dialogFormVisible" :modal-append-to-body="false" :lock-scroll="false"
-                     width="20%" center="true" :show-close="false">
+                     width="25%" :center="true" :show-close="false">
             <el-form :model="loginForm">
               <el-form-item label="">
                 <el-input
@@ -38,7 +38,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item align="center">
-                <el-button type="primary" onclick="" @keyup.enter.native="handleLogin">登录</el-button>
+                <el-button type="primary" @click.native="handleLogin()">登录</el-button>
                 <el-button type="danger" onclick="">注册</el-button>
               </el-form-item>
             </el-form>
@@ -120,11 +120,23 @@ export default {
   },
   methods: {
     handleLogin () {
-      this.$store.dispatch('user/login', this.loginForm).then(() => {
-        this.$router.push({ path: this.redirect || '/' })
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
+      // 要优化
+      this.$http.post('/user/login/', this.loginForm).then(res => {
+        console.log(res.data)
+        if (res.data.code !== 200) {
+          this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        } else {
+          this.$store.dispatch('user/setToken', res.data.data)
+          this.dialogFormVisible = false
+          this.$message({
+            message: '登录成功',
+            type: 'success'
+          })
+        }
+        // console.log('2访问完成。赋值完成。')
       })
     }
   }

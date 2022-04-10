@@ -7,7 +7,7 @@ const mutations = {
   }
 }
 const actions = {
-  setArticlePath({ commit }, path) {
+  setArticlePath ({ commit }, path) {
     return new Promise(resolve =>
       commit('SET_ARTICLE_PATH'), path)
   }

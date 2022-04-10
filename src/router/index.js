@@ -50,11 +50,11 @@ const routes = [
     name: 'forum',
     component: () => import('../views/web/forum.vue')
   },
-  {
-    path: '/post/:id',
-    name: 'postDetail',
-    component: () => import(/* webpackChunkName: "newsDetail" */ '../views/web/postDetail.vue')
-  },
+  // {
+  //   path: '/post/:id',
+  //   name: 'postDetail',
+  //   component: () => import(/* webpackChunkName: "newsDetail" */ '../views/web/postDetail.vue')
+  // },
   {
     path: '/wall',
     name: 'wall',

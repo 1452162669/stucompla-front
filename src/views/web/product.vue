@@ -1,37 +1,37 @@
 <template>
   <div>
-    <AwHeader class = "product_header"></AwHeader>
-    <div class = "product">
-      <ul class = "product-fullpage-indicator">
+    <AwHeader class="product_header"></AwHeader>
+    <div class="product">
+      <ul class="product-fullpage-indicator">
         <li
-          v-for = "(item, index) in products"
-          :key = "item.id"
-          class = "product-fullpage-indicator-item"
-          :class = "{ active: activeIndex === index }"
-          @click = "activeIndex = index"
+          v-for="(item, index) in products"
+          :key="item.id"
+          class="product-fullpage-indicator-item"
+          :class="{ active: activeIndex === index }"
+          @click="activeIndex = index"
         >
-          <img :src = "item.product_logo" alt/>
+          <img :src="item.product_logo" alt/>
         </li>
       </ul>
-      <transition :duration = "duration" :name = "transitionName">
+      <transition :duration="duration" :name="transitionName">
         <!-- ... the buttons ... -->
         <div
-          :key = "activeIndex"
-          class = "view-wrapper"
-          v-if = "!loading"
-          :style = "`backgroundImage:url(${item.cover_img})`"
+          :key="activeIndex"
+          class="view-wrapper"
+          v-if="!loading"
+          :style="`backgroundImage:url(${item.cover_img})`"
         >
-          <div class = "content">
-            <div class = "logo">
-              <img :src = "item.product_logo" width = "100%" height = "100%" alt/>
+          <div class="content">
+            <div class="logo">
+              <img :src="item.product_logo" width="100%" height="100%" alt/>
             </div>
             <h2>{{ item.product_title }}</h2>
-            <div class = "description">
+            <div class="description">
               <p>{{ item.product_desc }}</p>
               <p>
                 {{ item.product_sub_desc }}
               </p>
-              <p>更多信息，请访问：</p><a :href = "item.link" target = "_blank">{{ item.product_link }}</a>
+              <p>更多信息，请访问：</p><a :href="item.link" target="_blank">{{ item.product_link }}</a>
             </div>
           </div>
         </div>
@@ -84,18 +84,18 @@ export default {
       headerShow: false
     })
     this.loading = true
-    const { data: res } = await this.$http.get('/web/products')
-    if (res.status === 200) {
-      this.products = res.data.list
-      this.loading = false
-      // loading.close()
-      // if (this.$route.params.id) {
-      //   console.log(true)
-      //   this.activeIndex = this.products.findIndex(
-      //     item => item.id === this.$route.params.id
-      //   )
-      // }
-    }
+    // const { data: res } = await this.$http.get('/web/products')
+    // if (res.status === 200) {
+    //   this.products = res.data.list
+    //   this.loading = false
+    //   // loading.close()
+    //   // if (this.$route.params.id) {
+    //   //   console.log(true)
+    //   //   this.activeIndex = this.products.findIndex(
+    //   //     item => item.id === this.$route.params.id
+    //   //   )
+    //   // }
+    // }
   },
   mounted () {
     window.addEventListener('mousewheel', this.mousewheelHandler)
@@ -152,7 +152,7 @@ export default {
   }
 }
 </script>
-<style lang = "less" scoped>
+<style lang="less" scoped>
 .product_header {
   background-color: rgba(255, 255, 255, .7);
   backdrop-filter: blur(10px);

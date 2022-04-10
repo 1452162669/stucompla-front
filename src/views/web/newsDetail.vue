@@ -89,18 +89,18 @@ export default {
   methods: {
     // 获取新闻详情
     async getNewsDetail () {
-      const { data: res } = await this.$http.get('/web/article/' + this.news_path)
-      if (res.status !== 200) {
-        console.log(res)
-      } else {
-        // this.$message.success('获取成功')
-        this.news_detail = {
-          title: res.data.news_detail.news_title,
-          createTime: res.data.news_detail.publish_time,
-          detail: res.data.news_detail.news_content,
-          categoryName: res.data.news_detail.aw_news_type.type_name
-        }
-      }
+      // const { data: res } = await this.$http.get('/web/article/' + this.news_path)
+      // if (res.status !== 200) {
+      //   console.log(res)
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.news_detail = {
+      //     title: res.data.news_detail.news_title,
+      //     createTime: res.data.news_detail.publish_time,
+      //     detail: res.data.news_detail.news_content,
+      //     categoryName: res.data.news_detail.aw_news_type.type_name
+      //   }
+      // }
     }
   }
 }

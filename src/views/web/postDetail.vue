@@ -1,6 +1,6 @@
 <template>
   <div class="news-detail">
-    <AwHeader class="news_header" ref="news_header"></AwHeader>
+    <!--    <AwHeader class="news_header" ref="news_header"></AwHeader>-->
     <div class="container">
       <div class="left">
         <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -27,13 +27,11 @@
       </div>
       <hot-news class="right"></hot-news>
     </div>
-    <AwFooter></AwFooter>
+    <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
 
 <script>
-import AwHeader from '../../components/web/public/Header'
-import AwFooter from '../../components/web/public/Footer'
 import HotNews from '../../components/web/hotNews'
 import CommentList from '../../components/web/commentList'
 
@@ -41,9 +39,9 @@ export default {
   name: 'postDetail',
   components: {
     CommentList,
-    HotNews,
-    AwHeader,
-    AwFooter
+    HotNews
+    // AwHeader,
+    // AwFooter
   },
   data () {
     return {

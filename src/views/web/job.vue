@@ -1,68 +1,68 @@
 <template>
-  <div class = "job">
-    <AwHeader class = "job_header" ref = "job_header"></AwHeader>
-    <div class = "box">
-      <div class = "banner">和优秀的人，做有挑战的事</div>
+  <div class="job">
+    <AwHeader class="job_header" ref="job_header"></AwHeader>
+    <div class="box">
+      <div class="banner">和优秀的人，做有挑战的事</div>
       <!-- 搜索 -->
-      <div class = "search-wrapper" :class = "{ fixedTop: searchBarFixedTop }">
+      <div class="search-wrapper" :class="{ fixedTop: searchBarFixedTop }">
         <el-input
-          :class = "[{'medium':searchBarFixedTop},'small']"
-          placeholder = "搜索职位"
-          @change = "search"
-          v-model = "searchKeyword">
-          <i slot = "prefix" class = "el-input__icon el-icon-search"></i>
+          :class="[{'medium':searchBarFixedTop},'small']"
+          placeholder="搜索职位"
+          @change="search"
+          v-model="searchKeyword">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
-        <el-button :class = "[{'medium':searchBarFixedTop},'small']" type = "primary" round @click = "search">搜索
+        <el-button :class="[{'medium':searchBarFixedTop},'small']" type="primary" round @click="search">搜索
         </el-button>
       </div>
-      <div class = "main">
-        <div class = "aside-filter">
-          <div class = "aside-header">
+      <div class="main">
+        <div class="aside-filter">
+          <div class="aside-header">
             <span>筛选</span>
-            <span :class = "{ clearable }" class = "clear" @click = "clearFilter">清空</span>
+            <span :class="{ clearable }" class="clear" @click="clearFilter">清空</span>
           </div>
-          <div class = "job-category job-filter-block">
-            <div class = "title">职位类别</div>
+          <div class="job-category job-filter-block">
+            <div class="title">职位类别</div>
             <el-tree
-              ref = "jobCategory"
-              :data = "jobCategories"
-              :props = "jobCategoryProps"
-              node-key = "id"
+              ref="jobCategory"
+              :data="jobCategories"
+              :props="jobCategoryProps"
+              node-key="id"
               check-on-click-node
-              @check = "jobCategoryChange"
+              @check="jobCategoryChange"
               show-checkbox>
             </el-tree>
           </div>
-          <div class = "city-category job-filter-block">
-            <div class = "title">城市</div>
-            <checkbox-and-dropdown @changed = "cityChange"
-                                   :data = "jobCities"
-                                   :cityList = "this.location_code_list"
+          <div class="city-category job-filter-block">
+            <div class="title">城市</div>
+            <checkbox-and-dropdown @changed="cityChange"
+                                   :data="jobCities"
+                                   :cityList="this.location_code_list"
             >{{ location_code_list }}
             </checkbox-and-dropdown>
           </div>
         </div>
-        <div class = "content">
-          <h2 class = "content-title" v-show = "results.total>0">开启新的工作 ({{ results.total }})</h2>
-          <h2 class = "content-title" v-show = "!results.total>0">开启新的工作 (0)</h2>
-          <ul class = "content-list">
-            <li class = "content-item is-hover-shadow" v-for = "item in results.job_post_list" :key = "item.id">
-              <router-link :to = "`/job/${item.id}`">
-                <h3 class = "title">{{ item.title }}</h3>
-                <div class = "subTitle">
-                  <span class = "city">{{ item.aw_city_info.name }}</span>&nbsp;|
-                  <span class = "job_category">{{ item.aw_job_category.name }}</span>
+        <div class="content">
+          <h2 class="content-title" v-show="results.total>0">开启新的工作 ({{ results.total }})</h2>
+          <h2 class="content-title" v-show="!results.total>0">开启新的工作 (0)</h2>
+          <ul class="content-list">
+            <li class="content-item is-hover-shadow" v-for="item in results.job_post_list" :key="item.id">
+              <router-link :to="`/job/${item.id}`">
+                <h3 class="title">{{ item.title }}</h3>
+                <div class="subTitle">
+                  <span class="city">{{ item.aw_city_info.name }}</span>&nbsp;|
+                  <span class="job_category">{{ item.aw_job_category.name }}</span>
                 </div>
-                <p class = "desc">{{ item.description }}</p>
+                <p class="desc">{{ item.description }}</p>
               </router-link>
             </li>
           </ul>
-          <div v-show = "!loading" class = "pagination-wrapper">
+          <div v-show="!loading" class="pagination-wrapper">
             <el-pagination
-              layout = "prev, pager, next"
-              :current-page.sync = "currentPage"
-              :total = "results.total"
-              :hide-on-single-page = "singlePage">
+              layout="prev, pager, next"
+              :current-page.sync="currentPage"
+              :total="results.total"
+              :hide-on-single-page="singlePage">
             </el-pagination>
           </div>
         </div>
@@ -168,29 +168,29 @@ export default {
     },
     // 请求筛选条件
     async getJobConfigRequest () {
-      const { data: res } = await this.$http.get('/web/job-filters')
-      // console.log(res)
-      if (res.status === 200) {
-        this.jobCities = res.data.city_list
-        this.jobCategories = res.data.job_type_list
-      }
+      // const { data: res } = await this.$http.get('/web/job-filters')
+      // // console.log(res)
+      // if (res.status === 200) {
+      //   this.jobCities = res.data.city_list
+      //   this.jobCategories = res.data.job_type_list
+      // }
     },
     // 请求职位列表
     async getJobList () {
       // console.log(this.queryFilter)
-      this.results = []
-      const { data: res } = await this.$http.post('/web/job', this.queryFilter)
-      if (res.status === 200) {
-        // if (this.results.count !== res.count) {
-        //   this.currentPage = 1
-        // }
-        // console.log('查询成功')
-        this.results = res.data
-        this.loading = false
-        if (this.results.total <= this.results.limit) {
-          this.singlePage = true
-        }
-      }
+      // this.results = []
+      // const { data: res } = await this.$http.post('/web/job', this.queryFilter)
+      // if (res.status === 200) {
+      //   // if (this.results.count !== res.count) {
+      //   //   this.currentPage = 1
+      //   // }
+      //   // console.log('查询成功')
+      //   this.results = res.data
+      //   this.loading = false
+      //   if (this.results.total <= this.results.limit) {
+      //     this.singlePage = true
+      //   }
+      // }
     },
     jobCategoryChange () {
       this.job_category_id_list = this.$refs.jobCategory.getCheckedKeys({ leafOnly: true })
@@ -241,7 +241,7 @@ export default {
 }
 </script>
 
-<style lang = "less" scoped>
+<style lang="less" scoped>
 .job_header {
   background-color: rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
@@ -433,7 +433,7 @@ export default {
   }
 }
 </style>
-<style lang = "less">
+<style lang="less">
 .el-tree {
   color: @primary-text-color;
   font-size: 14px;

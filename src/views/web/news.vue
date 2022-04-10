@@ -1,77 +1,77 @@
 <template>
-  <div class = "news">
-    <AwHeader class = "news_header" ref = "news_header"></AwHeader>
-    <div class = "box">
-      <div class = "news-banner">
-        <div class = "banner-title">
+  <div class="news">
+    <AwHeader class="news_header" ref="news_header"></AwHeader>
+    <div class="box">
+      <div class="news-banner">
+        <div class="banner-title">
           <h2>新视野</h2>
           <h3>了解更多新闻</h3>
         </div>
         <el-autocomplete
-          class = "search-news"
-          popper-class = "my-autocomplete"
+          class="search-news"
+          popper-class="my-autocomplete"
           highlight-first-item
-          v-model = "searchNews"
+          v-model="searchNews"
           clearable
-          ref = "autocomplete"
-          @focus = "autocompleteFlag=true"
-          @blur = "autocompleteFlag=false"
-          @clear = "searchHandle"
-          :fetch-suggestions = "querySearchAsync"
-          placeholder = "请输入新闻关键词"
-          :trigger-on-focus = "false">
-          <i slot = "prefix" class = "el-input__icon el-icon-search"></i>
-          <template slot-scope = "{ item }">
-            <router-link :to = "item.news_path" target = "_blank">
-              <div class = "name" v-html = "item.news_title"></div>
-              <span class = "desc" v-html = "item.news_desc"></span>
+          ref="autocomplete"
+          @focus="autocompleteFlag=true"
+          @blur="autocompleteFlag=false"
+          @clear="searchHandle"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="请输入新闻关键词"
+          :trigger-on-focus="false">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          <template slot-scope="{ item }">
+            <router-link :to="item.news_path" target="_blank">
+              <div class="name" v-html="item.news_title"></div>
+              <span class="desc" v-html="item.news_desc"></span>
             </router-link>
           </template>
         </el-autocomplete>
       </div>
-      <div class = "news-container">
-        <div class = "news-card">
-          <el-card shadow = "never" v-for = "(item,index) in recomNews" :key = "index">
-            <router-link :to = "`/news/${item.news_path}`">
-              <div class = "news-card-item">
-                <img :src = "item.cover_img" alt = "">
-                <p class = "item-mask"><span>{{ item.news_title }}</span></p>
+      <div class="news-container">
+        <div class="news-card">
+          <el-card shadow="never" v-for="(item,index) in recomNews" :key="index">
+            <router-link :to="`/news/${item.news_path}`">
+              <div class="news-card-item">
+                <img :src="item.cover_img" alt="">
+                <p class="item-mask"><span>{{ item.news_title }}</span></p>
               </div>
             </router-link>
           </el-card>
         </div>
-        <div class = "news-list">
-          <el-tabs class = "list-left" v-model = "pageInfo.activeName" @tab-click = "handleClick">
-            <el-tab-pane :label = "newsTabs[0].name" :name = "newsTabs[0].id">
-              <news-list :items = "newsItems.list" v-if = "pageInfo.activeName===newsTabs[0].id"></news-list>
+        <div class="news-list">
+          <el-tabs class="list-left" v-model="pageInfo.activeName" @tab-click="handleClick">
+            <el-tab-pane :label="newsTabs[0].name" :name="newsTabs[0].id">
+              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[0].id"></news-list>
             </el-tab-pane>
-            <el-tab-pane :label = "newsTabs[1].name" :name = "newsTabs[1].id">
-              <news-list :items = "newsItems.list" v-if = "pageInfo.activeName===newsTabs[1].id"></news-list>
+            <el-tab-pane :label="newsTabs[1].name" :name="newsTabs[1].id">
+              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[1].id"></news-list>
             </el-tab-pane>
-            <el-tab-pane :label = "newsTabs[2].name" :name = "newsTabs[2].id">
-              <news-list :items = "newsItems.list" v-if = "pageInfo.activeName===newsTabs[2].id"></news-list>
+            <el-tab-pane :label="newsTabs[2].name" :name="newsTabs[2].id">
+              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[2].id"></news-list>
             </el-tab-pane>
             <el-pagination
-              class = "pagination"
+              class="pagination"
               background
-              @current-change = "handleCurrentChange"
-              :current-page.sync = "pageInfo.pagenum"
-              :page-size = "pageInfo.pagesize"
-              layout = "prev, pager, next, jumper"
-              :total = "newsItems.total"
-              :hide-on-single-page = "singlePage"
-              v-scroll-to = "{ element: '.news-container',duration: 300, easing: 'ease',offset: -40  }">
+              @current-change="handleCurrentChange"
+              :current-page.sync="pageInfo.pagenum"
+              :page-size="pageInfo.pagesize"
+              layout="prev, pager, next, jumper"
+              :total="newsItems.total"
+              :hide-on-single-page="singlePage"
+              v-scroll-to="{ element: '.news-container',duration: 300, easing: 'ease',offset: -40  }">
             </el-pagination>
           </el-tabs>
-          <div class = "list-right">
-            <div class = "search-by-date">
+          <div class="list-right">
+            <div class="search-by-date">
               <p>按日期搜索：</p>
               <el-date-picker
-                v-model = "pageInfo.selectDate"
-                type = "month"
-                placeholder = "选择日期"
-                value-format = "yyyy-MM"
-                @change = "searchByDate(pageInfo.selectDate)">
+                v-model="pageInfo.selectDate"
+                type="month"
+                placeholder="选择日期"
+                value-format="yyyy-MM"
+                @change="searchByDate(pageInfo.selectDate)">
               </el-date-picker>
             </div>
             <hot-news></hot-news>
@@ -136,23 +136,23 @@ export default {
   methods: {
     // 关键词搜索新闻
     async querySearchAsync (queryString, cb) {
-      this.searchList = []
-      const { data: res } = await this.$http.get('/web/searchnews/' + queryString)
-      if (res.status !== 200) {
-      } else {
-        // this.$message.success('获取成功')
-        this.searchList = res.data.list
-      }
-      const newHtml = `<span style="color: #3370ff">${queryString}</span>`
-      this.searchList.forEach(item => {
-        item.news_title = item.news_title.replace(queryString, newHtml)
-        item.news_desc = item.news_desc.replace(queryString, newHtml)
-        // item.news_desc = item.news_desc.replace(queryString, newHtml)
-      })
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        cb(this.searchList)
-      }, 1000 * Math.random())
+      // this.searchList = []
+      // const { data: res } = await this.$http.get('/web/searchnews/' + queryString)
+      // if (res.status !== 200) {
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.searchList = res.data.list
+      // }
+      // const newHtml = `<span style="color: #3370ff">${queryString}</span>`
+      // this.searchList.forEach(item => {
+      //   item.news_title = item.news_title.replace(queryString, newHtml)
+      //   item.news_desc = item.news_desc.replace(queryString, newHtml)
+      //   // item.news_desc = item.news_desc.replace(queryString, newHtml)
+      // })
+      // clearTimeout(this.timeout)
+      // this.timeout = setTimeout(() => {
+      //   cb(this.searchList)
+      // }, 1000 * Math.random())
     },
     // 解决 clearable 搜索框后再次输入不显示下拉
     searchHandle () {
@@ -172,16 +172,16 @@ export default {
     },
     // 根据新闻 类型、日期 查询新闻，并按日期排序
     async getNewsItems () {
-      const { data: res } = await this.$http.get('/web/newslist', { params: this.pageInfo })
-      if (res.status !== 200) {
-        this.newsItems = {}
-      } else {
-        // this.$message.success('获取成功')
-        this.newsItems = res.data
-        if (this.newsItems.total <= this.newsItems.limit) {
-          this.singlePage = true
-        }
-      }
+      // const { data: res } = await this.$http.get('/web/newslist', { params: this.pageInfo })
+      // if (res.status !== 200) {
+      //   this.newsItems = {}
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.newsItems = res.data
+      //   if (this.newsItems.total <= this.newsItems.limit) {
+      //     this.singlePage = true
+      //   }
+      // }
     },
     searchByDate (data) {
       // console.log(data)
@@ -189,13 +189,13 @@ export default {
     },
 
     async getRecomNews () {
-      const { data: res } = await this.$http.get('/web/recomNews')
-      if (res.status !== 200) {
-        this.hotNews = []
-      } else {
-        // this.$message.success('获取成功')
-        this.recomNews = res.data.list
-      }
+      // const { data: res } = await this.$http.get('/web/recomNews')
+      // if (res.status !== 200) {
+      //   this.hotNews = []
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.recomNews = res.data.list
+      // }
     }
   },
   created () {
@@ -232,7 +232,7 @@ export default {
 }
 </script>
 
-<style lang = "less" scoped>
+<style lang="less" scoped>
 @hover_color: #3370ff;
 * {
   margin: 0;
@@ -457,7 +457,7 @@ export default {
   width: 480px;
 }
 </style>
-<style lang = "less">
+<style lang="less">
 @hover_color: #3370ff;
 .my-autocomplete {
   li {

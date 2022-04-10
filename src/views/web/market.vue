@@ -134,23 +134,23 @@ export default {
   methods: {
     // 关键词搜索新闻
     async querySearchAsync (queryString, cb) {
-      this.searchList = []
-      const { data: res } = await this.$http.get('/web/searchnews/' + queryString)
-      if (res.status !== 200) {
-      } else {
-        // this.$message.success('获取成功')
-        this.searchList = res.data.list
-      }
-      const newHtml = `<span style="color: #3370ff">${queryString}</span>`
-      this.searchList.forEach(item => {
-        item.news_title = item.news_title.replace(queryString, newHtml)
-        item.news_desc = item.news_desc.replace(queryString, newHtml)
-        // item.news_desc = item.news_desc.replace(queryString, newHtml)
-      })
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        cb(this.searchList)
-      }, 1000 * Math.random())
+      // this.searchList = []
+      // const { data: res } = await this.$http.get('/web/searchnews/' + queryString)
+      // if (res.status !== 200) {
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.searchList = res.data.list
+      // }
+      // const newHtml = `<span style="color: #3370ff">${queryString}</span>`
+      // this.searchList.forEach(item => {
+      //   item.news_title = item.news_title.replace(queryString, newHtml)
+      //   item.news_desc = item.news_desc.replace(queryString, newHtml)
+      //   // item.news_desc = item.news_desc.replace(queryString, newHtml)
+      // })
+      // clearTimeout(this.timeout)
+      // this.timeout = setTimeout(() => {
+      //   cb(this.searchList)
+      // }, 1000 * Math.random())
     },
     // 解决 clearable 搜索框后再次输入不显示下拉
     searchHandle () {
@@ -170,16 +170,16 @@ export default {
     },
     // 根据新闻 类型、日期 查询新闻，并按日期排序
     async getNewsItems () {
-      const { data: res } = await this.$http.get('/web/newslist', { params: this.pageInfo })
-      if (res.status !== 200) {
-        this.newsItems = {}
-      } else {
-        // this.$message.success('获取成功')
-        this.newsItems = res.data
-        if (this.newsItems.total <= this.newsItems.limit) {
-          this.singlePage = true
-        }
-      }
+      // const { data: res } = await this.$http.get('/web/newslist', { params: this.pageInfo })
+      // if (res.status !== 200) {
+      //   this.newsItems = {}
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.newsItems = res.data
+      //   if (this.newsItems.total <= this.newsItems.limit) {
+      //     this.singlePage = true
+      //   }
+      // }
     },
     searchByDate (data) {
       // console.log(data)
@@ -187,13 +187,13 @@ export default {
     },
 
     async getRecomNews () {
-      const { data: res } = await this.$http.get('/web/recomNews')
-      if (res.status !== 200) {
-        this.hotNews = []
-      } else {
-        // this.$message.success('获取成功')
-        this.recomNews = res.data.list
-      }
+      // const { data: res } = await this.$http.get('/web/recomNews')
+      // if (res.status !== 200) {
+      //   this.hotNews = []
+      // } else {
+      //   // this.$message.success('获取成功')
+      //   this.recomNews = res.data.list
+      // }
     }
   },
   created () {
