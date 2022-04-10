@@ -16,26 +16,34 @@
             </h2>
 
           </div>
-          <el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
+          <el-button type="primary" @click="dialogFormVisible = true">登录</el-button>
 
-          <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-            <el-form :model="form">
-              <el-form-item label="活动名称" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-dialog title="欢迎登录" :visible.sync="dialogFormVisible" :modal-append-to-body="false" :lock-scroll="false"
+                     width="20%" center="true" :show-close="false">
+            <el-form :model="loginForm">
+              <el-form-item label="">
+                <el-input
+                  placeholder="用户名"
+                  v-model="loginForm.username"
+                  prefix-icon="el-icon-user">
+                </el-input>
               </el-form-item>
-              <el-form-item label="活动区域" :label-width="formLabelWidth">
-                <el-select v-model="form.region" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
-                </el-select>
+              <el-form-item label="">
+                <el-input
+                  type="password"
+                  placeholder="密码"
+                  v-model="loginForm.password"
+                  prefix-icon="el-icon-lock"
+                  @keyup.enter.native="handleLogin">
+                </el-input>
+              </el-form-item>
+              <el-form-item align="center">
+                <el-button type="primary" onclick="" @keyup.enter.native="handleLogin">登录</el-button>
+                <el-button type="danger" onclick="">注册</el-button>
               </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-            </div>
+
           </el-dialog>
-          <el-button type="primary" onclick="">登录</el-button>
           <el-button type="danger">注册</el-button>
         </div>
       </div>
@@ -50,37 +58,11 @@ export default {
   name: 'Header',
   data () {
     return {
-      gridData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
-      dialogTableVisible: false,
       dialogFormVisible: false,
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+      loginForm: {
+        username: '',
+        password: ''
       },
-      formLabelWidth: '120px',
-
       navList: [
         {
           title: '首页',
@@ -92,15 +74,15 @@ export default {
         },
         {
           title: '交流栏目',
-          path: '/forum'
+          path: '/stucompla/forum'
         },
         {
           title: '表白墙',
-          path: '/wall'
+          path: '/stucompla/wall'
         },
         {
           title: '二手交易',
-          path: '/market'
+          path: '/stucompla/market'
         },
         {
           title: '新闻中心',
@@ -136,7 +118,16 @@ export default {
   computed: mapState(['headerShadowActive', 'headerShow', 'headerLogoShow', 'navDarkActive']),
   mounted () {
   },
-  methods: {}
+  methods: {
+    handleLogin () {
+      this.$store.dispatch('user/login', this.loginForm).then(() => {
+        this.$router.push({ path: this.redirect || '/' })
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    }
+  }
 
 }
 </script>

@@ -15,6 +15,32 @@ const routes = [
     component: index
   },
   {
+    path: '/stucompla',
+    name: 'home',
+    component: () => import('../views/web/Home'),
+    children: [
+      {
+        path: 'forum',
+        name: 'forum',
+        component: () => import('../views/web/forum.vue')
+      },
+      {
+        path: 'post/:id',
+        name: 'postDetail',
+        component: () => import('../views/web/postDetail.vue')
+      },
+      {
+        path: 'wall',
+        name: 'wall',
+        component: () => import('../views/web/wall.vue')
+      },
+      {
+        path: 'market',
+        name: 'market',
+        component: () => import('../views/web/market.vue')
+      }]
+  },
+  {
     path: '/admin',
     name: 'admin',
     component: () => import('../views/web/admin.vue')

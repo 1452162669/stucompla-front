@@ -1,6 +1,6 @@
 <template>
   <div class="news">
-    <AwHeader class="news_header" ref="news_header"></AwHeader>
+    <!--    <AwHeader class="news_header" ref="news_header"></AwHeader>-->
     <div class="box">
       <div class="news-banner">
         <div class="banner-title">
@@ -99,13 +99,11 @@
         </div>
       </div>
     </div>
-    <AwFooter></AwFooter>
+    <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
 
 <script>
-import AwHeader from '../../components/web/public/Header'
-import AwFooter from '../../components/web/public/Footer'
 import NewsList from '../../components/web/newsList'
 import HotNews from '../../components/web/hotNews'
 
@@ -113,9 +111,9 @@ export default {
   name: 'forum',
   components: {
     HotNews,
-    NewsList,
-    AwFooter,
-    AwHeader
+    NewsList
+    // AwFooter,
+    // AwHeader
   },
   data () {
     return {
