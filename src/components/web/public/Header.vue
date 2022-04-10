@@ -129,7 +129,7 @@ export default {
             type: 'error'
           })
         } else {
-          this.$store.dispatch('user/setToken', res.data.data)
+          this.$store.dispatch('user/setJwt', res.data.data)
           this.dialogFormVisible = false
           this.$message({
             message: '登录成功',

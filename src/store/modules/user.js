@@ -1,13 +1,16 @@
+import { getToken, setToken } from '../../utils/auth'
+
 const state = {
-  token: localStorage.getItem('token')
+  jwt: getToken()
 }
 const mutations = {
   // RESET_STATE: (state) => {
   //   // Object.assign(state, getDefaultState())
   // },
-  SET_TOKEN: (state, token) => {
-    state.token = token
-    localStorage.setItem('token', token)
+  SET_JWT: (state, jwt) => {
+    state.jwt = jwt
+    setToken(jwt)
+    // localStorage.setItem('jwt', jwt)
   }
   // SET_NAME: (state, name) => {
   //   state.name = name
@@ -18,9 +21,9 @@ const mutations = {
 }
 
 const actions = {
-  setToken ({ commit }, token) {
+  setJwt ({ commit }, jwt) {
     return new Promise(resolve =>
-      commit('SET_TOKEN', token))
+      commit('SET_JWT', jwt))
   }
 }
 

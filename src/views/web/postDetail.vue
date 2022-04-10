@@ -18,7 +18,7 @@
           <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> {{ post.collectNum }}</span>
           <el-divider><i class="el-icon-view"></i></el-divider>
           <article class="article" v-html="post.detail"></article>
-          <el-divider><i :style="{color: iconStarColor}" style="font-size: 40px" class="el-icon-star-on"
+          <el-divider><i :class="{iconStarColor: isCollect}" style="font-size: 40px" class="el-icon-star-off"
                          @click="onCollect"></i>
           </el-divider>
         </div>
@@ -46,7 +46,8 @@ export default {
   data () {
     return {
 
-      iconStarColor: '#ff8c25',
+      isCollect: false, // 默认未收藏
+
       post: {
         title: '',
         createTime: '',
@@ -67,6 +68,7 @@ export default {
   },
   created () {
     this.getPostDetail()
+    this.checkCollect()
     this.getCommentListFromPostId(this.news_path)
   },
   mounted () {
@@ -107,22 +109,42 @@ export default {
   methods: {
     // 检查是否收藏
     checkCollect () {
-      // 去写用户登录
-      // 如果没有登录就直接返回false（没收藏）
-
-      this.$http.get('/collect/check/' + this.news_path).then(res => {
-
-      })
+      console.log(this.$store.state.user.jwt)
+      if (this.$store.state.user.jwt) {
+        console.log('执行检查')
+        this.$http.get('/collect/check/' + this.news_path).then(res => {
+          if (res.data.code !== 200) {
+            return false
+          } else {
+            if (res.data.data) {
+              this.isCollect = true
+            }
+            return res.data.data
+          }
+        })
+      }
       // 是登陆用户就/collect/check/ 带上postId 看是否已经收藏 true或者false 后台根据postId和request去处理
     },
     // 收藏和取消收藏
     onCollect () {
       // 执行checkCollect()根据结果改变颜色
+      if (this.isCollect === false) {
+        this.$http.post('/collect/add/' + this.news_path).then(res => {
+          console.log(res)
+          if (res.data.code !== 200) {
+          } else {
+            this.isCollect = true
+          }
+        })
+      } else {
+        this.$http.delete('/collect/delete/' + this.news_path).then(res => {
+          if (res.data.code !== 200) {
 
-      if (this.iconStarColor === '#ff8c25') {
-        this.iconStarColor = 'red'
+          } else {
+            this.isCollect = false
+          }
+        })
       }
-      this.iconStarColor = 'red'
     },
     // 获取帖子信息
     getPostDetail () {
@@ -154,9 +176,9 @@ export default {
 
         } else {
           this.post.commentList = res.data.data.comments
-          console.log('00000000')
-          console.log(this.post.commentList)
-          console.log(this.post.commentList !== undefined)
+          // console.log('00000000')
+          // console.log(this.post.commentList)
+          // console.log(this.post.commentList !== undefined)
         }
         // console.log('2访问完成。赋值完成。')
       })
@@ -166,6 +188,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.iconStarColor {
+  color: #ff8c25;
+}
+
 .news_header {
   background-color: rgba(255, 255, 255, .5);
   backdrop-filter: blur(10px);

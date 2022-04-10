@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '../store'
 
 const instance = axios.create({
   // baseURL: '/api/v1', // 开发模式下
@@ -12,6 +13,12 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(config => {
+  if (store.state.user.jwt) {
+    // let each request carry token
+    // ['X-Token'] is a custom headers key
+    // please modify it according to the actual situation
+    config.headers.Authorization = store.state.user.jwt
+  }
   // console.log(config)
   // 记得处理
   // config.headers.Authorization = 'Bearer ' + window.sessionStorage.getItem('token')

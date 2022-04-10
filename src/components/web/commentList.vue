@@ -37,15 +37,8 @@ export default {
     }
   },
   created () {
-    this.testItems()
   },
   methods: {
-
-    testItems () {
-      console.log('run')
-      console.log(this.items)
-      console.log('over')
-    },
 
     setArticlePath (path) {
       console.log(path)
