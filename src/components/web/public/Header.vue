@@ -1,20 +1,42 @@
 <template>
-  <div class = "header" :class = "{header_show: headerShow, shadow: headerShadowActive }">
-    <div class = "header_container">
-      <div class = "header_content">
-        <div class = "logo">
-          <router-link to = "/">
-            <img :src = "logo_img[0].path" alt = "logo" v-if = "headerLogoShow===true"/>
-            <img :src = "logo_img[1].path" alt = "logo" v-else/>
+  <div class="header" :class="{header_show: headerShow, shadow: headerShadowActive }">
+    <div class="header_container">
+      <div class="header_content">
+        <div class="logo">
+          <router-link to="/">
+            <img :src="logo_img[0].path" alt="logo" v-if="headerLogoShow===true"/>
+            <img :src="logo_img[1].path" alt="logo" v-else/>
           </router-link>
         </div>
-        <div class = "menu-wrapper">
-          <div class = "menu-item" v-for = "(item,index) in navList" :key = "index">
-            <h2 class = "menu-item-link">
-              <router-link :to = "item.path" ><span :class="{a_text_dark: navDarkActive}">{{ item.title }}</span>
+        <div class="menu-wrapper">
+          <div class="menu-item" v-for="(item,index) in navList" :key="index">
+            <h2 class="menu-item-link">
+              <router-link :to="item.path"><span :class="{a_text_dark: navDarkActive}">{{ item.title }}</span>
               </router-link>
             </h2>
+
           </div>
+          <el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
+
+          <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+            <el-form :model="form">
+              <el-form-item label="活动名称" :label-width="formLabelWidth">
+                <el-input v-model="form.name" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="活动区域" :label-width="formLabelWidth">
+                <el-select v-model="form.region" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            </div>
+          </el-dialog>
+          <el-button type="primary" onclick="">登录</el-button>
+          <el-button type="danger">注册</el-button>
         </div>
       </div>
     </div>
@@ -28,6 +50,37 @@ export default {
   name: 'Header',
   data () {
     return {
+      gridData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }],
+      dialogTableVisible: false,
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      formLabelWidth: '120px',
+
       navList: [
         {
           title: '首页',
@@ -60,15 +113,15 @@ export default {
         {
           title: '人才招聘',
           path: '/job'
-        },
+        }
         // {
         //   title: '客户服务',
         //   path: '/customer'
         // },
-        {
-          title: '登录',
-          path: '/login'
-        }
+        // {
+        //   title: '登录',
+        //   path: '/login'
+        // }
       ],
       logo_img: [
         {
@@ -83,23 +136,25 @@ export default {
   computed: mapState(['headerShadowActive', 'headerShow', 'headerLogoShow', 'navDarkActive']),
   mounted () {
   },
-  methods: {
-  }
+  methods: {}
 
 }
 </script>
 
-<style lang = "less" scoped>
+<style lang="less" scoped>
 @nav_active_color: #3370ff;
-h2{
+h2 {
   margin: 0;
 }
+
 .header_show {
   transform: translateY(-62px);
 }
-.a_text_dark{
+
+.a_text_dark {
   color: rgba(0, 0, 0, .8);
 }
+
 .header {
   width: 100%;
   height: 60px;
@@ -177,6 +232,7 @@ h2{
     line-height: 60px;
     cursor: pointer;
     position: relative;
+
     a {
       display: inline-block;
       color: rgba(255, 255, 255, 1);

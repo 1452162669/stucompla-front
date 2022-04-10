@@ -57,108 +57,108 @@ export default {
 }
 </script>
 
-<!--<style lang="less" scoped>-->
-<!--.news-list-item {-->
-<!--  padding: 0 15px 15px 8px;-->
-<!--  position: relative;-->
-<!--  border-radius: 8px;-->
+<style lang="less" scoped>
+.news-list-item {
+  padding: 0 15px 15px 8px;
+  position: relative;
+  border-radius: 8px;
 
-<!--  img {-->
-<!--    width: 198px;-->
-<!--    height: 125px;-->
-<!--    border-style: none;-->
-<!--  }-->
+  img {
+    width: 198px;
+    height: 125px;
+    border-style: none;
+  }
 
-<!--  a {-->
-<!--    color: rgba(0, 0, 0, 1);-->
-<!--    transition: color .3s;-->
-<!--    overflow: hidden;-->
-<!--    display: flex;-->
-<!--    cursor: pointer;-->
-<!--  }-->
+  a {
+    color: rgba(0, 0, 0, 1);
+    transition: color .3s;
+    overflow: hidden;
+    display: flex;
+    cursor: pointer;
+  }
 
-<!--  a:hover {-->
-<!--    color: var(&#45;&#45;hover_color);-->
-<!--  }-->
-<!--}-->
+  a:hover {
+    color: var(--hover_color);
+  }
+}
 
-<!--.el-card {-->
-<!--  border: none;-->
-<!--  transition: .5s;-->
-<!--  ///deep/.el-card__body{-->
-<!--  //  padding: 20px 20px 20px 0;-->
-<!--  //}-->
-<!--}-->
+.el-card {
+  border: none;
+  transition: .5s;
+  ///deep/.el-card__body{
+  //  padding: 20px 20px 20px 0;
+  //}
+}
 
-<!--.is-null {-->
-<!--  display: flex;-->
-<!--  justify-content: center;-->
-<!--  margin-top: 45px;-->
-<!--  color: #777-->
-<!--}-->
+.is-null {
+  display: flex;
+  justify-content: center;
+  margin-top: 45px;
+  color: #777
+}
 
-<!--//.news-list-item:after {-->
-<!--//  content: "";-->
-<!--//  display: block;-->
-<!--//  width: 100%;-->
-<!--//  position: absolute;-->
-<!--//  bottom: 0;-->
-<!--//  left: 0;-->
-<!--//  border-bottom: 1px dashed #cfcfcf;-->
-<!--//}-->
-<!--//-->
-<!--//.news-list-item:last-of-type:after {-->
-<!--//  content: none-->
-<!--//}-->
+//.news-list-item:after {
+//  content: "";
+//  display: block;
+//  width: 100%;
+//  position: absolute;
+//  bottom: 0;
+//  left: 0;
+//  border-bottom: 1px dashed #cfcfcf;
+//}
+//
+//.news-list-item:last-of-type:after {
+//  content: none
+//}
 
-<!--.item-mask {-->
-<!--  display: block;-->
-<!--  position: absolute;-->
-<!--  left: 0;-->
-<!--  top: 0;-->
-<!--  width: 100%;-->
-<!--  height: 100%;-->
-<!--  background-color: rgba(0, 0, 0, 0);-->
-<!--  transition: all .3s;-->
-<!--  border-radius: 8px;-->
-<!--}-->
+.item-mask {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  transition: all .3s;
+  border-radius: 8px;
+}
 
-<!--//.news-list-item:hover .item-mask {-->
-<!--//  background-color: rgba(0, 0, 0, .03);-->
-<!--//}-->
+//.news-list-item:hover .item-mask {
+//  background-color: rgba(0, 0, 0, .03);
+//}
 
-<!--.item-content {-->
-<!--  margin-left: 40px;-->
-<!--  width: calc(100% - 238px);-->
+.item-content {
+  margin-left: 40px;
+  width: calc(100% - 238px);
 
-<!--  h2 {-->
-<!--    font-size: 20px;-->
-<!--    font-weight: 500;-->
-<!--    overflow: hidden;-->
-<!--    //white-space: nowrap;-->
-<!--    text-overflow: ellipsis;-->
-<!--    display: -webkit-box;-->
-<!--    -webkit-box-orient: vertical;-->
-<!--    -webkit-line-clamp: 2;-->
-<!--  }-->
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    overflow: hidden;
+    //white-space: nowrap;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 
-<!--  p {-->
-<!--    margin: 10px 0;-->
-<!--    font-size: 15px;-->
-<!--    color: #777;-->
-<!--    letter-spacing: 0;-->
-<!--    line-height: 22px;-->
-<!--    overflow: hidden;-->
-<!--    //white-space: nowrap;-->
-<!--    text-overflow: ellipsis;-->
-<!--    display: -webkit-box;-->
-<!--    -webkit-box-orient: vertical;-->
-<!--    -webkit-line-clamp: 1;-->
-<!--  }-->
+  p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #777;
+    letter-spacing: 0;
+    line-height: 22px;
+    overflow: hidden;
+    //white-space: nowrap;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
 
-<!--  span {-->
-<!--    color: #b8b8b8;-->
-<!--    line-height: 14px;-->
-<!--  }-->
-<!--}-->
-<!--</style>-->
+  span {
+    color: #b8b8b8;
+    line-height: 14px;
+  }
+}
+</style>
