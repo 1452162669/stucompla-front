@@ -18,8 +18,12 @@
           <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> {{ post.collectNum }}</span>
           <el-divider><i class="el-icon-view"></i></el-divider>
           <article class="article" v-html="post.detail"></article>
-          <el-divider><i :class="{iconStarColor: isCollect}" style="font-size: 40px" class="el-icon-star-off"
-                         @click="onCollect"></i>
+          <el-divider>
+            <el-button circle size="mini" :disabled="isClick" @click="onCollect"><i
+              :class="{iconStarColor: isCollect}"
+              style="font-size: 30px"
+              class="el-icon-star-off"
+            ></i></el-button>
           </el-divider>
         </div>
         <comment-list :items="post.commentList" v-if='post.commentList!==undefined'></comment-list>
@@ -47,7 +51,7 @@ export default {
     return {
 
       isCollect: false, // 默认未收藏
-
+      isClick: false, // 默认不禁止
       post: {
         title: '',
         createTime: '',
@@ -112,39 +116,70 @@ export default {
       console.log(this.$store.state.user.jwt)
       if (this.$store.state.user.jwt) {
         console.log('执行检查')
-        this.$http.get('/collect/check/' + this.news_path).then(res => {
-          if (res.data.code !== 200) {
-            return false
-          } else {
-            if (res.data.data) {
-              this.isCollect = true
+        return new Promise((resolve, reject) => {
+          this.$http.get('/collect/check/' + this.news_path).then(res => {
+            if (res.data.code !== 200) {
+              resolve(false)
+            } else {
+              if (res.data.data) {
+                this.isCollect = true
+                // console.log(res.data.data)
+              }
+              resolve(res.data.data)
             }
-            return res.data.data
-          }
+          })
+        })
+      } else {
+        return new Promise((resolve, reject) => {
+          resolve(false)
         })
       }
       // 是登陆用户就/collect/check/ 带上postId 看是否已经收藏 true或者false 后台根据postId和request去处理
     },
     // 收藏和取消收藏
     onCollect () {
-      // 执行checkCollect()根据结果改变颜色
-      if (this.isCollect === false) {
-        this.$http.post('/collect/add/' + this.news_path).then(res => {
-          console.log(res)
-          if (res.data.code !== 200) {
-          } else {
-            this.isCollect = true
-          }
-        })
-      } else {
-        this.$http.delete('/collect/delete/' + this.news_path).then(res => {
-          if (res.data.code !== 200) {
-
-          } else {
-            this.isCollect = false
-          }
-        })
-      }
+      // if (this.isClick) {
+      this.isClick = true
+      // console.log(this.checkCollect())
+      // console.log(!this.checkCollect())
+      this.checkCollect().then(res => {
+        if (!res) {
+          this.$http.post('/collect/add/' + this.news_path).then(res => {
+            console.log(res)
+            if (res.data.code !== 200) {
+              // this.$message({
+              //   message: res.data.msg,
+              //   type: 'error'
+              // })
+              this.$emit('update')
+            } else {
+              this.$message({
+                message: '已添加到“我的收藏”',
+                type: 'success'
+              })
+              this.isCollect = true
+              this.isClick = false
+            }
+          })
+        } else {
+          this.$http.delete('/collect/delete/' + this.news_path).then(res => {
+            if (res.data.code !== 200) {
+              this.$message({
+                message: res.data.msg,
+                type: 'error'
+              })
+            } else {
+              this.$message({
+                message: '已取消收藏',
+                type: 'success'
+              })
+              this.isCollect = false
+              this.isClick = false
+            }
+          })
+        }
+      })
+      // }
     },
     // 获取帖子信息
     getPostDetail () {

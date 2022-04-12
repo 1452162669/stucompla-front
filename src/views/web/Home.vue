@@ -1,8 +1,34 @@
 <template>
   <div>
-    <MyHeader></MyHeader>
+    <MyHeader v-model="dialogLoginVisible"></MyHeader>
     <!-- 增加路由 -->
-    <router-view></router-view>
+    <router-view @update="viewLogin()"></router-view>
+    <el-dialog title="欢迎登录" :visible.sync="dialogLoginVisible" :modal-append-to-body="false" :lock-scroll="false"
+               width="25%" :center="true" :show-close="false">
+      <el-form :model="loginForm">
+        <el-form-item label="">
+          <el-input
+            placeholder="用户名"
+            v-model="loginForm.username"
+            prefix-icon="el-icon-user">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-input
+            type="password"
+            placeholder="密码"
+            v-model="loginForm.password"
+            prefix-icon="el-icon-lock"
+            @keyup.enter.native="handleLogin">
+          </el-input>
+        </el-form-item>
+        <el-form-item align="center">
+          <el-button type="primary" @click.native="handleLogin()">登录</el-button>
+          <el-button type="danger" onclick="">注册</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
     <MyFooter></MyFooter>
   </div>
 </template>
@@ -16,7 +42,42 @@ export default {
   components: {
     MyFooter,
     MyHeader
+  },
+  data () {
+    return {
+      dialogLoginVisible: false,
+      loginForm: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    viewLogin () {
+      this.dialogLoginVisible = true
+    },
+    handleLogin () {
+      // 要优化
+      this.$http.post('/user/login/', this.loginForm).then(res => {
+        console.log(res.data)
+        if (res.data.code !== 200) {
+          this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        } else {
+          this.$store.dispatch('user/setJwt', res.data.data)
+          this.dialogLoginVisible = false
+          this.$message({
+            message: '登录成功',
+            type: 'success'
+          })
+        }
+        // console.log('2访问完成。赋值完成。')
+      })
+    }
   }
+
 }
 </script>
 

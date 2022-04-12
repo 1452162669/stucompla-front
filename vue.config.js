@@ -41,7 +41,7 @@ const cdn = {
 module.exports = {
   publicPath: '/',
   devServer: {
-    // 修改完配置文件后，一定要记得重启项目，否则修改不会生效！
+    // 修改完配置文件后，一定要记得重启项目，否则修改不会生效
     proxy: {
       '/dev_api': {
         target: 'http://localhost:8086/',
