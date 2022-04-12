@@ -68,6 +68,14 @@ export default {
   computed: {
     news_path () {
       return this.$route.params.id
+    },
+    dialogLoginVisible: {
+      get () {
+        return this.$store.state.dialogLoginVisible
+      },
+      set (v) {
+        this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: v })
+      }
     }
   },
   created () {
@@ -151,7 +159,9 @@ export default {
               //   message: res.data.msg,
               //   type: 'error'
               // })
-              this.$emit('update')
+              // this.$emit('update')
+              this.dialogLoginVisible = true
+              this.isClick = false
             } else {
               this.$message({
                 message: '已添加到“我的收藏”',
@@ -168,6 +178,7 @@ export default {
                 message: res.data.msg,
                 type: 'error'
               })
+              this.isClick = false
             } else {
               this.$message({
                 message: '已取消收藏',

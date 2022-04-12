@@ -24,5 +24,15 @@ instance.interceptors.request.use(config => {
   // config.headers.Authorization = 'Bearer ' + window.sessionStorage.getItem('token')
   return config
 })
-
+instance.interceptors.response.use(
+  response => {
+    // console.log(response)
+    // console.log(response.headers.authorization)
+    if (response.headers.authorization !== undefined) {
+      store.dispatch('user/setJwt', response.headers.authorization)
+      console.log('刷新jwt了---------------------------------')
+    }
+    return response
+  }
+)
 export default instance

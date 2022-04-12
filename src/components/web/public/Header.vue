@@ -16,8 +16,39 @@
             </h2>
 
           </div>
-          <el-button type="primary" @click="changeDialogLoginVisible()">登录</el-button>
-          <el-button type="danger">注册</el-button>
+          <div style="padding-left: 20px " v-if="!isLogin">
+            <el-button type="primary" @click="changeDialogLoginVisible">登录</el-button>
+            <el-button type="danger">注册</el-button>
+          </div>
+          <div style="padding-left: 20px" v-else>
+            <el-dropdown class="avatar-container">
+              <div class="avatar-wrapper">
+                <el-avatar src="http://localhost:8086/image/1649474344343_1512631150949040128.png"></el-avatar>
+                <!--                <img :src="'http://localhost:8086/image/1649474344343_1512631150949040128.png'" class="user-avatar"-->
+                <!--                     alt="头像">-->
+                <i class="el-icon-caret-bottom"/>
+              </div>
+              <el-dropdown-menu slot="dropdown">
+                <router-link to="/">
+                  <el-dropdown-item>
+                    首页
+                  </el-dropdown-item>
+                </router-link>
+                <a target="_blank" href="https://aerowang.cn">
+                  <el-dropdown-item>个人网站</el-dropdown-item>
+                </a>
+                <el-dropdown-item divided @click.native="logout">
+                  <span style="display:block;">退出登录</span>
+                </el-dropdown-item>
+                <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
+          </div>
         </div>
       </div>
     </div>
@@ -27,14 +58,15 @@
 
 <script>
 import { mapState } from 'vuex'
+import { removeToken } from '../../../utils/auth'
 
 export default {
   name: 'Header',
-  props: ['dialogLoginVisible'],
-  model: {
-    prop: 'dialogLoginVisible',
-    event: 'changeDialog'
-  },
+  // props: ['dialogLoginVisible'],
+  // model: {
+  //   prop: 'dialogLoginVisible',
+  //   event: 'changeDialog'
+  // },
   data () {
     return {
       // dialogFormVisible: false,
@@ -42,6 +74,7 @@ export default {
       //   username: '',
       //   password: ''
       // },
+      isLogin: false,
       navList: [
         {
           title: '首页',
@@ -94,13 +127,44 @@ export default {
       ]
     }
   },
-  computed: mapState(['headerShadowActive', 'headerShow', 'headerLogoShow', 'navDarkActive']),
+  created () {
+    this.getLoginState()
+  },
+  computed: mapState(['headerShadowActive', 'headerShow', 'headerLogoShow', 'navDarkActive', 'dialogLoginVisible']),
   mounted () {
   },
   methods: {
+    logout () {
+      this.$http.delete('/user/logout').then(res => {
+        if (res.data.code !== 200) {
+
+        } else {
+          removeToken() // 必须先删除token
+          // resetRouter()
+          this.$store.dispatch('user/resetState')
+          // resolve()
+          this.$message({
+            message: '已退出',
+            type: 'success'
+          })
+          this.isLogin = false
+          this.$router.replace({
+            path: '/refresh',
+            query: {
+              t: Date.now()
+            }
+          })
+        }
+      })
+    },
+    getLoginState () {
+      this.isLogin = this.$store.state.user.jwt !== undefined
+    },
     changeDialogLoginVisible () {
-      this.$emit('changeDialog', true)
+      // this.$emit('changeDialog', true)
+      this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: true })
     }
+
     // handleLogin () {
     //   // 要优化
     //   this.$http.post('/user/login/', this.loginForm).then(res => {
@@ -127,6 +191,30 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.avatar-container {
+  margin-right: 30px;
+
+  .avatar-wrapper {
+    margin-top: 5px;
+    position: relative;
+
+    .user-avatar {
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+    }
+
+    .el-icon-caret-bottom {
+      cursor: pointer;
+      position: absolute;
+      right: -20px;
+      top: 25px;
+      font-size: 12px;
+    }
+  }
+}
+
 @nav_active_color: #3370ff;
 h2 {
   margin: 0;

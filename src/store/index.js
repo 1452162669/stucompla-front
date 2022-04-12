@@ -12,11 +12,17 @@ export default new Vuex.Store({
     headerShow: false,
     headerLogoShow: true,
     navDarkActive: false,
+
+    dialogLoginVisible: false,
+
     articlePath: ''
   },
   mutations: {
     setBannerHeight (state, value) {
       state.BannerHeight = value.bannerHeight
+    },
+    setDialogLoginVisible (state, value) {
+      state.dialogLoginVisible = value.dialogLoginVisible
     },
     setShadowActive (state, value) {
       state.headerShadowActive = value.headerShadowActive

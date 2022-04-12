@@ -4,12 +4,13 @@ const state = {
   jwt: getToken()
 }
 const mutations = {
-  // RESET_STATE: (state) => {
-  //   // Object.assign(state, getDefaultState())
-  // },
+  RESET_STATE: (state) => {
+    state.jwt = undefined
+  },
   SET_JWT: (state, jwt) => {
     state.jwt = jwt
     setToken(jwt)
+    console.log(state.jwt)
     // localStorage.setItem('jwt', jwt)
   }
   // SET_NAME: (state, name) => {
@@ -24,6 +25,9 @@ const actions = {
   setJwt ({ commit }, jwt) {
     return new Promise(resolve =>
       commit('SET_JWT', jwt))
+  },
+  resetState ({ commit }) {
+    return new Promise(resolve => commit('RESET_STATE'))
   }
 }
 

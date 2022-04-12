@@ -61,24 +61,21 @@
           </el-card>
         </el-row>
         <div class="news-list">
-          <el-tabs class="list-left" v-model="pageInfo.activeName" @tab-click="handleClick">
-            <el-tab-pane :label="newsTabs[0].name" :name="newsTabs[0].id">
-              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[0].id"></news-list>
+          <el-tabs class="list-left" v-model="pageInfo.activeName"
+                   @tab-click="handleClick">
+
+            <el-tab-pane :label="item.categoryName" :name="''+index" v-for="(item,index) in categories" :key="index">
+              <post-list :items="postItems.postList" v-if="pageInfo.activeName===''+item.categoryId"></post-list>
             </el-tab-pane>
-            <el-tab-pane :label="newsTabs[1].name" :name="newsTabs[1].id">
-              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[1].id"></news-list>
-            </el-tab-pane>
-            <el-tab-pane :label="newsTabs[2].name" :name="newsTabs[2].id">
-              <news-list :items="newsItems.list" v-if="pageInfo.activeName===newsTabs[2].id"></news-list>
-            </el-tab-pane>
+
             <el-pagination
               class="pagination"
               background
               @current-change="handleCurrentChange"
-              :current-page.sync="pageInfo.pagenum"
-              :page-size="pageInfo.pagesize"
+              :current-page.sync="postQuery.pageNum"
+              :page-size="postQuery.pageSize"
               layout="prev, pager, next, jumper"
-              :total="newsItems.total"
+              :total="postItems.total"
               :hide-on-single-page="singlePage"
               v-scroll-to="{ element: '.news-container',duration: 300, easing: 'ease',offset: -40  }">
             </el-pagination>
@@ -104,14 +101,15 @@
 </template>
 
 <script>
-import NewsList from '../../components/web/newsList'
 import HotNews from '../../components/web/hotNews'
+import PostList from '../../components/web/postList'
 
 export default {
   name: 'forum',
   components: {
-    HotNews,
-    NewsList
+    PostList,
+    HotNews
+    // NewsList
     // AwFooter,
     // AwHeader
   },
@@ -119,23 +117,16 @@ export default {
     return {
       searchNews: '',
       bestPostsData: [],
-      newsTabs: [
+      categories: [
         {
-          id: '1',
-          name: '最新动态'
-        },
-        {
-          id: '2',
-          name: '典型案例'
-        },
-        {
-          id: '3',
-          name: '通知公告'
+          categoryId: '0',
+          categoryName: '全部'
         }
+
       ],
-      newsItems: {},
+      postItems: {},
       pageInfo: {
-        activeName: '1',
+        activeName: '0',
         // 当前页码
         pagenum: 1,
         // 当前每页显示多少条数据
@@ -143,8 +134,9 @@ export default {
         selectDate: ''
       },
       postQuery: {
-        pageSize: 8,
-        bestPost: true
+        categoryId: undefined,
+        pageNum: 1,
+        pageSize: 8
       },
       // 单页隐藏
       singlePage: '',
@@ -183,7 +175,7 @@ export default {
     },
     // 新闻列表选项卡切换
     handleClick (tab, event) {
-      this.getNewsItems()
+      this.getPostsItems()
     },
     // handleSizeChange (val) {
     //   console.log(`每页 ${val} 条`)
@@ -191,7 +183,26 @@ export default {
     // 新闻列表页码切换
     handleCurrentChange (val) {
       // console.log(`当前页: ${val}`)
-      this.getNewsItems()
+      this.getPostsItems()
+    },
+    getPostsItems () {
+      if (this.pageInfo.activeName !== '0') {
+        this.postQuery.categoryId = this.pageInfo.activeName
+      }
+      this.$http.get('/post/list', {
+        params: this.postQuery
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.postItems = {}
+        } else {
+          console.log(res.data.data)
+          this.postItems = res.data.data
+          // 这里要修复
+          if (this.postItems.total <= this.postItems.pageSize) {
+            this.singlePage = true
+          }
+        }
+      })
     },
     // 根据新闻 类型、日期 查询新闻，并按日期排序
     async getNewsItems () {
@@ -212,7 +223,12 @@ export default {
     },
     // 获取精帖 要改
     async getBestPostsDataList () {
-      const { data: res } = await this.$http.get('/post/list', { params: this.postQuery })
+      const { data: res } = await this.$http.get('/post/list', {
+        params: {
+          bestPost: true,
+          pageSize: 8
+        }
+      })
       console.log(res)
       if (res.code !== 200) {
         this.bestPostsData = []
@@ -228,6 +244,20 @@ export default {
       const imageArr = images.split(',')
       return 'http://localhost:8086/image/' + imageArr[0]
     },
+    getCategories () {
+      this.$http.get('/category/list').then(res => {
+        if (res.data.code !== 200) {
+
+        } else {
+          console.log(res.data.data)
+          res.data.data.forEach(item => {
+            this.categories.push(item)
+          })
+          // this.categories.push(res.data.date)
+          console.log(this.categories)
+        }
+      })
+    },
     async getRecomNews () {
       // const { data: res } = await this.$http.get('/web/recomNews')
       // if (res.status !== 200) {
@@ -239,9 +269,10 @@ export default {
     }
   },
   created () {
-    this.getNewsItems()
+    this.getPostsItems()
     this.getRecomNews()
     this.getBestPostsDataList()
+    this.getCategories()
   },
   mounted () {
     this.$store.commit('setHeaderLogo', {

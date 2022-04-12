@@ -1,6 +1,7 @@
 <template>
   <div>
-    <MyHeader v-model="dialogLoginVisible"></MyHeader>
+    <!--    <MyHeader :dialogLoginVisible.sync="dialogLoginVisible"></MyHeader>-->
+    <MyHeader></MyHeader>
     <!-- 增加路由 -->
     <router-view @update="viewLogin()"></router-view>
     <el-dialog title="欢迎登录" :visible.sync="dialogLoginVisible" :modal-append-to-body="false" :lock-scroll="false"
@@ -43,11 +44,21 @@ export default {
     MyFooter,
     MyHeader
   },
+  computed: {
+    dialogLoginVisible: {
+      get () {
+        return this.$store.state.dialogLoginVisible
+      },
+      set (v) {
+        this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: v })
+      }
+    }
+  },
   data () {
     return {
-      dialogLoginVisible: false,
+      // dialogLoginVisible: false,
       loginForm: {
-        username: '',
+        username: 'test1',
         password: ''
       }
     }
@@ -71,6 +82,13 @@ export default {
           this.$message({
             message: '登录成功',
             type: 'success'
+          })
+          // this.$router.go(0)
+          this.$router.replace({
+            path: '/refresh',
+            query: {
+              t: Date.now()
+            }
           })
         }
         // console.log('2访问完成。赋值完成。')

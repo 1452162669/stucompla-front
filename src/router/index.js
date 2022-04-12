@@ -15,6 +15,11 @@ const routes = [
     component: index
   },
   {
+    path: '/refresh',
+    name: 'refresh',
+    component: () => import('../views/web/refresh')
+  },
+  {
     path: '/stucompla',
     name: 'home',
     component: () => import('../views/web/Home'),
