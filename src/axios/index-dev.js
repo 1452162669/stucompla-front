@@ -26,11 +26,16 @@ instance.interceptors.request.use(config => {
 })
 instance.interceptors.response.use(
   response => {
-    // console.log(response)
+    console.log(response)
     // console.log(response.headers.authorization)
     if (response.headers.authorization !== undefined) {
       store.dispatch('user/setJwt', response.headers.authorization)
       console.log('刷新jwt了---------------------------------')
+    }
+    if (response.headers.error !== undefined) {
+      store.dispatch('user/resetState')
+
+      console.log('jwt过期了，请重新登录---------------------------------')
     }
     return response
   }

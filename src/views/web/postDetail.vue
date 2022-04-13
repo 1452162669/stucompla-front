@@ -26,11 +26,21 @@
             ></i></el-button>
           </el-divider>
         </div>
+        <div style="padding-top: 10px">
+          <span><b>发表评论</b></span>
+          <el-input
+            v-model="commentForm.text"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 8}"
+          />
+          <el-button type="primary" plain @click="createComment()">评论</el-button>
+        </div>
         <comment-list :items="post.commentList" v-if='post.commentList!==undefined'></comment-list>
 
       </div>
       <hot-news class="right"></hot-news>
     </div>
+
     <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
@@ -62,6 +72,12 @@ export default {
         commentNum: '',
         collectNum: '',
         commentList: undefined
+      },
+      commentForm: {
+        postId: this.$route.params.id,
+        parentId: undefined,
+        text: '',
+        images: undefined
       }
     }
   },
@@ -119,6 +135,32 @@ export default {
     }
   },
   methods: {
+    createComment () {
+      console.log(this.commentForm)
+      if (this.$store.state.user.jwt) {
+        this.$http.post('/comment/create', this.commentForm).then(res => {
+          if (res.data.code !== 200) {
+            this.$message({
+              message: res.data.msg,
+              type: 'error'
+            })
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: 'success'
+            })
+            this.$router.replace({
+              path: '/refresh',
+              query: {
+                t: Date.now()
+              }
+            })
+          }
+        })
+      } else {
+        this.dialogLoginVisible = true
+      }
+    },
     // 检查是否收藏
     checkCollect () {
       console.log(this.$store.state.user.jwt)
@@ -234,6 +276,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 .iconStarColor {
   color: #ff8c25;
 }

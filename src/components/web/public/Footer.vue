@@ -1,45 +1,47 @@
 <template>
-  <div class = "footer_container" :style="footerHeight + 'px'">
-    <div class = "footer_content">
-      <div class = "footer_logo footer-content-column">
-        <div class = "logo-container">
-          <img :src = "logo_url" alt = "">
+  <div class="footer_container" :style="footerHeight + 'px'">
+    <div class="footer_content">
+      <div class="footer_logo footer-content-column">
+        <div class="logo-container">
+          <img :src="logo_url" alt="">
           <div class="logo-text">
-            <p class="text1">Xanadu</p>
-            <p class="text2">INTERNET COMPANY</p>
+            <p class="text1">Stucompla</p>
+            <p class="text2">STUDENT COMMUNICATION PLATFORM</p>
           </div>
         </div>
-        <h2>© 2020-2021 Xanadu&nbsp;科技有限公司</h2>
+        <h2>© 2020-2021 Stucompla&nbsp;学生交流平台</h2>
         <h2>X公网安备 xxxxxxxxxxxxxx号 I ICP备xxxxxxxx号-1</h2>
       </div>
-      <div class = "about_us footer-content-column">
+      <div class="about_us footer-content-column">
         <h2>关于我们</h2>
-        <ul class = "about_list">
+        <ul class="about_list">
           <li>
-            <router-link to = "/job" target = "_blank">企业文化</router-link>
+            <!--            <router-link to = "/job" target = "_blank">企业文化</router-link>-->
+            <router-link to="/job" target="_blank">xxxxx</router-link>
           </li>
         </ul>
       </div>
-      <div class = "contact_us footer-content-column">
+      <div class="contact_us footer-content-column">
         <h2>联系我们</h2>
-        <ul class = "contact_list">
-          <li v-for = "(item,index) in contact_way" :key = "index">
-            <a :href = "'mailto:'+item.email">{{ item.name }}</a>
+        <ul class="contact_list">
+          <li v-for="(item,index) in contact_way" :key="index">
+            <a :href="'mailto:'+item.email">{{ item.name }}</a>
           </li>
         </ul>
       </div>
-      <div class = "focus_us footer-content-column">
-        <h2>实时动态与招聘信息，扫码关注我们</h2>
-        <div class = "media">
-          <div :class = "item.name" v-for = "(item,index) in focus_icon" :key = "index">
+      <div class="focus_us footer-content-column">
+        <!--        <h2>实时动态与招聘信息，扫码关注我们</h2>-->
+        <h2>xxxxxxxxxxxxxxxxxxxxxxxx</h2>
+        <div class="media">
+          <div :class="item.name" v-for="(item,index) in focus_icon" :key="index">
             <el-popover
-              placement = "top"
-              trigger = "hover">
-              <div class = "qr_popover">
-                <img :src = "item.qr" alt = "">
+              placement="top"
+              trigger="hover">
+              <div class="qr_popover">
+                <img :src="item.qr" alt="">
                 <h2>{{ item.info }}</h2>
               </div>
-              <img :src = "item.path" :alt = "item.name" slot = "reference">
+              <img :src="item.path" :alt="item.name" slot="reference">
             </el-popover>
           </div>
         </div>
@@ -58,15 +60,18 @@ export default {
       logo_url: require('../../../assets/img/index/logoColor.png'),
       contact_way: [
         {
-          name: '媒体问询',
+          name: 'xxxxx',
+          // name: '媒体问询',
           email: 'aerowangue@126.com'
         },
         {
-          name: '招聘相关',
+          name: 'xxxxx',
+          // name: '招聘相关',
           email: 'aerowangue@126.com'
         },
         {
-          name: '商务合作',
+          name: 'xxxxx',
+          // name: '商务合作',
           email: 'aerowangue@126.com'
         },
         {
@@ -114,16 +119,18 @@ export default {
 }
 </script>
 
-<style lang = "less" scoped>
-*{
+<style lang="less" scoped>
+* {
   margin: 0;
   padding: 0;
 }
-h2{
+
+h2 {
   font-size: 100%;
   font-weight: 400;
   font-variant: normal;
 }
+
 .footer_container {
   width: 100%;
   background: #1f2329;
@@ -225,20 +232,24 @@ h2{
     .logo-container {
       display: flex;
       margin-bottom: 9px;
+
       img {
         height: 50px;
       }
-      .logo-text{
+
+      .logo-text {
         margin-left: 15px;
         position: relative;
         bottom: -6px;
       }
-      .text1{
+
+      .text1 {
         font-size: 21px;
         font-weight: bold;
         margin: 0;
       }
-      .text2{
+
+      .text2 {
         font-size: 12px;
         margin: 0;
       }
@@ -257,15 +268,19 @@ h2{
       h2 {
         text-align: center;
       }
+
       padding-left: 0;
     }
-    .focus_us div:last-of-type > span{
+
+    .focus_us div:last-of-type > span {
       margin-right: 0;
     }
-    .media{
+
+    .media {
       justify-content: center;
     }
-    .logo-container{
+
+    .logo-container {
       justify-content: center;
       text-align: left;
     }

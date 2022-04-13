@@ -28,6 +28,18 @@ const routes = [
         path: 'forum',
         name: 'forum',
         component: () => import('../views/web/forum.vue')
+        // children: [
+        //   {
+        //     path: 'publishPost',
+        //     name: 'publishPost',
+        //     component: () => import('../views/web/publishPost')
+        //   }
+        // ]
+      },
+      {
+        path: 'publishPost',
+        name: 'publishPost',
+        component: () => import('../views/web/publishPost')
       },
       {
         path: 'post/:id',

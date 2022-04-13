@@ -67,7 +67,6 @@
             <el-tab-pane :label="item.categoryName" :name="''+index" v-for="(item,index) in categories" :key="index">
               <post-list :items="postItems.postList" v-if="pageInfo.activeName===''+item.categoryId"></post-list>
             </el-tab-pane>
-
             <el-pagination
               class="pagination"
               background
@@ -95,6 +94,12 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="gb-sider" style="right: auto; display: block; left: 1333.5px;">
+      <router-link to="/stucompla/publishPost">
+        <a target="_blank" class="_newTopic gb-talk"><i class="el-icon-edit-outline"
+                                                        style="font-size: 30px"></i>发帖</a>
+      </router-link>
     </div>
     <!--    <AwFooter></AwFooter>-->
   </div>
@@ -305,6 +310,26 @@ export default {
 </script>
 
 <style lang="less">
+
+.gb-sider a {
+  width: 68px;
+  height: 62px;
+  display: block;
+  background: #FFF;
+  border: 1px solid #d8d8d8;
+  padding: 6px 0 0;
+  text-align: center;
+  line-height: 50px;
+  color: gray;
+}
+
+.gb-sider {
+  position: fixed;
+  right: 100px;
+  bottom: 175px;
+  z-index: 9999;
+  border-bottom: 0;
+}
 
 @hover_color: #3370ff;
 .my-autocomplete {

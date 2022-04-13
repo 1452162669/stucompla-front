@@ -1,4 +1,4 @@
-import { getToken, setToken } from '../../utils/auth'
+import { getToken, removeToken, setToken } from '../../utils/auth'
 
 const state = {
   jwt: getToken()
@@ -6,6 +6,7 @@ const state = {
 const mutations = {
   RESET_STATE: (state) => {
     state.jwt = undefined
+    removeToken()
   },
   SET_JWT: (state, jwt) => {
     state.jwt = jwt
