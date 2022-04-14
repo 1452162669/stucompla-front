@@ -72,7 +72,7 @@ export default {
 }
 
 .el-card {
-  border: none;
+  //border: none;
   transition: .5s;
   ///deep/.el-card__body{
   //  padding: 20px 20px 20px 0;

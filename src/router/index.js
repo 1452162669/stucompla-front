@@ -7,12 +7,11 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/index',
-    redirect: '/'
+    redirect: '/stucompla/index'
   },
   {
     path: '/',
-    name: 'index',
-    component: index
+    redirect: '/index'
   },
   {
     path: '/refresh',
@@ -24,6 +23,11 @@ const routes = [
     name: 'home',
     component: () => import('../views/web/Home'),
     children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: index
+      },
       {
         path: 'forum',
         name: 'forum',
@@ -40,6 +44,11 @@ const routes = [
         path: 'publishPost',
         name: 'publishPost',
         component: () => import('../views/web/publishPost')
+      },
+      {
+        path: 'myCenter',
+        name: 'myCenter',
+        component: () => import('../views/web/myCenter')
       },
       {
         path: 'post/:id',

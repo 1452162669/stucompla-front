@@ -5,7 +5,7 @@
       <div class="news-banner">
         <div class="banner-title">
           <h2>新视野</h2>
-          <h3>了解更多新闻</h3>
+          <h3>了解更多信息</h3>
         </div>
         <el-autocomplete
           class="search-news"
@@ -18,7 +18,7 @@
           @blur="autocompleteFlag=false"
           @clear="searchHandle"
           :fetch-suggestions="querySearchAsync"
-          placeholder="请输入新闻关键词"
+          placeholder="请输入关键词"
           :trigger-on-focus="false">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
           <template slot-scope="{ item }">
@@ -97,8 +97,8 @@
     </div>
     <div class="gb-sider" style="right: auto; display: block; left: 1333.5px;">
       <router-link to="/stucompla/publishPost">
-        <a target="_blank" class="_newTopic gb-talk"><i class="el-icon-edit-outline"
-                                                        style="font-size: 30px"></i>发帖</a>
+        <!-- 如果没有登录，应该直接退出登录窗口，不跳转 -->
+        <i class="el-icon-edit-outline" style="font-size: 30px"></i>发帖
       </router-link>
     </div>
     <!--    <AwFooter></AwFooter>-->
@@ -284,7 +284,7 @@ export default {
       headerLogoShow: false
     })
     this.$store.commit('setShadowActive', {
-      headerShadowActive: false
+      headerShadowActive: true
     })
     this.$store.commit('setNavDarkActive', {
       navDarkActive: true

@@ -16,11 +16,11 @@
             </h2>
 
           </div>
-          <div style="padding-left: 20px " v-if="!isLogin">
+          <div v-if="!isLogin" class="menu-item">
             <el-button type="primary" @click="changeDialogLoginVisible">登录</el-button>
             <el-button type="danger">注册</el-button>
           </div>
-          <div style="padding-left: 20px" v-else>
+          <div v-else class="menu-item">
             <el-dropdown class="avatar-container">
               <div class="avatar-wrapper">
                 <el-avatar src="http://localhost:8086/image/1649474344343_1512631150949040128.png"></el-avatar>
@@ -34,17 +34,17 @@
                     首页
                   </el-dropdown-item>
                 </router-link>
-                <a target="_blank" href="https://aerowang.cn">
-                  <el-dropdown-item>个人网站</el-dropdown-item>
-                </a>
+                <router-link to="/stucompla/myCenter">
+                  <el-dropdown-item>个人中心</el-dropdown-item>
+                </router-link>
                 <el-dropdown-item divided @click.native="logout">
                   <span style="display:block;">退出登录</span>
                 </el-dropdown-item>
-                <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
+                <!--                <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>-->
+                <!--                <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>-->
+                <!--                <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>-->
+                <!--                <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>-->
+                <!--                <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
 
@@ -95,19 +95,19 @@ export default {
         {
           title: '二手交易',
           path: '/stucompla/market'
-        },
-        {
-          title: '新闻中心',
-          path: '/news'
-        },
-        {
-          title: '产品与服务',
-          path: '/product'
-        },
-        {
-          title: '人才招聘',
-          path: '/job'
         }
+        // {
+        //   title: '新闻中心',
+        //   path: '/news'
+        // },
+        // {
+        //   title: '产品与服务',
+        //   path: '/product'
+        // },
+        // {
+        //   title: '人才招聘',
+        //   path: '/job'
+        // }
         // {
         //   title: '客户服务',
         //   path: '/customer'
@@ -158,6 +158,13 @@ export default {
       })
     },
     getLoginState () {
+      // this.$http.get('/user/info').then(res => {
+      //   if (res.data.code !== 200) {
+      //     // this.$message.error('获取账户信息失败')
+      //   } else {
+      //     this.isLogin = true
+      //   }
+      // })
       this.isLogin = this.$store.state.user.jwt !== undefined
     },
     changeDialogLoginVisible () {

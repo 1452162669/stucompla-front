@@ -4,6 +4,7 @@
     <MyHeader></MyHeader>
     <!-- 增加路由 -->
     <router-view @update="viewLogin()"></router-view>
+
     <el-dialog title="欢迎登录" :visible.sync="dialogLoginVisible" :modal-append-to-body="false" :lock-scroll="false"
                width="25%" :center="true" :show-close="false">
       <el-form :model="loginForm">

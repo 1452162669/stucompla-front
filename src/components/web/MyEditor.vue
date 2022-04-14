@@ -37,6 +37,7 @@ export default {
     editor.config.uploadImgMaxSize = 2 * 1024 * 1024
     // 一次最多上传 5 个图片
     editor.config.uploadImgMaxLength = 5
+    editor.config.pasteIgnoreImg = false
     // 自定义上传图片
     editor.config.customUploadImg = function (resultFiles, insertImgFn) {
       var formData = new FormData()

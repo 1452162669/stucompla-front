@@ -1,9 +1,9 @@
 <template>
-  <div class = "overlay">
-    <div class = "overlay-content">
-      <div class = "slogan sofiaBold">
-        <div class = "slogan-title">互联网+时代</div>
-        <div class = "slogan-subtitle">BELIEVE IN YOURSELF</div>
+  <div class="overlay">
+    <div class="overlay-content">
+      <div class="slogan sofiaBold">
+        <div class="slogan-title">学生交流平台</div>
+        <div class="slogan-subtitle">BELIEVE IN YOURSELF</div>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@ export default {
 }
 </script>
 
-<style lang = "less" scoped>
+<style lang="less" scoped>
 .overlay {
   position: absolute;
   width: 80%;
@@ -61,6 +61,7 @@ export default {
   background-image: linear-gradient(270deg, hsla(0, 0%, 100%, 0), #fff 47%, hsla(0, 0%, 100%, 0));
 
 }
+
 .slogan .slogan-subtitle:before {
   left: -50px;
 }

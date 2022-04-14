@@ -1,14 +1,14 @@
 <template>
-  <div class = "index">
-    <AwHeader :class = "index_header"></AwHeader>
-    <div class = "banner-wrap">
-      <Banner :BannerHeight = "BannerHeight"></Banner>
+  <div class="index">
+    <!--    <AwHeader :class="index_header"></AwHeader>-->
+    <div class="banner-wrap">
+      <Banner :BannerHeight="BannerHeight"></Banner>
       <over-lay></over-lay>
       <scroll-hint
-        v-scroll-to = "{ element: '.wrap-block',duration: 300, easing: 'ease',offset: 1  }"></scroll-hint>
+        v-scroll-to="{ element: '.wrap-block',duration: 300, easing: 'ease',offset: 1  }"></scroll-hint>
     </div>
     <index-service></index-service>
-    <AwFooter></AwFooter>
+    <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
 
@@ -16,8 +16,6 @@
 import Banner from '../../components/web/Banner'
 import ScrollHint from '../../components/web/scrollHint'
 import OverLay from '../../components/web/overLayText'
-import AwHeader from '../../components/web/public/Header'
-import AwFooter from '../../components/web/public/Footer'
 import IndexService from '../../components/web/IndexService'
 
 export default {
@@ -26,9 +24,9 @@ export default {
     IndexService,
     Banner,
     ScrollHint,
-    OverLay,
-    AwFooter,
-    AwHeader
+    OverLay
+    // AwFooter,
+    // AwHeader
   },
   data () {
     return {
@@ -99,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang = "less" scoped>
+<style lang="less" scoped>
 .banner-wrap {
   overflow: hidden;
   position: relative;

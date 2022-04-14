@@ -205,7 +205,7 @@ export default {
       headerLogoShow: false
     })
     this.$store.commit('setShadowActive', {
-      headerShadowActive: false
+      headerShadowActive: true
     })
     this.$store.commit('setNavDarkActive', {
       navDarkActive: true

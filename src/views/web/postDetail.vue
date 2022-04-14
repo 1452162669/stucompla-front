@@ -32,6 +32,7 @@
             v-model="commentForm.text"
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 8}"
+            placeholder="友善评论，文明发言"
           />
           <el-button type="primary" plain @click="createComment()">评论</el-button>
         </div>
