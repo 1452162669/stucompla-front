@@ -127,6 +127,13 @@ export default {
       ]
     }
   },
+  watch: {
+    'this.$store.state.user.jwt': {
+      handler: function (newVal, oldVal) {
+        this.isLogin = this.$store.state.user.jwt !== undefined
+      }
+    }
+  },
   created () {
     this.getLoginState()
   },

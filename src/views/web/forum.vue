@@ -193,6 +193,9 @@ export default {
     getPostsItems () {
       if (this.pageInfo.activeName !== '0') {
         this.postQuery.categoryId = this.pageInfo.activeName
+      } else {
+        // 如果点击全部，条件查询里就不要帖子类型
+        this.postQuery.categoryId = undefined
       }
       this.$http.get('/post/list', {
         params: this.postQuery

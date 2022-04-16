@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="news-list-items" v-if="items!==undefined">
+    <ul class="news-list-items" v-if="items!==undefined&&items.length>0">
       <li class="news-list-item" v-for="(item,index) in items"
           :key="index">
         <el-card shadow="hover">

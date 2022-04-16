@@ -34,7 +34,6 @@ instance.interceptors.response.use(
     }
     if (response.headers.error !== undefined) {
       store.dispatch('user/resetState')
-
       console.log('jwt过期了，请重新登录---------------------------------')
     }
     return response

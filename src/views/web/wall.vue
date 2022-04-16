@@ -1,55 +1,55 @@
 <template>
-
-  <el-row :gutter="20" style="margin: 0px">
-    <el-col :span="4" :offset="1">
-      <div class="grid-content bg-purple">
-        <el-card class="box-card">
-          <div v-for="o in 4" :key="o" class="text item">
-            {{ '列表内容 ' + o }}
-          </div>
-        </el-card>
-      </div>
-    </el-col>
-    <el-col :span="12">
-      <div class="grid-content bg-purple">
-        <el-card class="main-card" v-for="item in wallList" :key="item" shadow="hover">
-          {{ item.wallContent }}
-          <br>
-          <br>
-          <span>评论：{{ item.commentNum }} 点赞：{{ item.likeNum }}<br>{{ item.auditTime }}</span>
-        </el-card>
-      </div>
-    </el-col>
-    <el-col :span="6">
-      <div class="grid-content bg-purple">
-        <el-card class="box-card">
-          <el-form
-            label-position="right"
-            label-width="45px"
-            :model="newWall"
-          >
-
-            <el-form-item
-              label="内容:"
+  <div style="padding-top: 90px">
+    <el-row :gutter="20" style="margin: 0px">
+      <el-col :span="4" :offset="1">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+            <div v-for="o in 4" :key="o" class="text item">
+              {{ '列表内容 ' + o }}
+            </div>
+          </el-card>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="grid-content bg-purple">
+          <el-card class="main-card" v-for="item in wallList" :key="item" shadow="hover">
+            {{ item.wallContent }}
+            <br>
+            <br>
+            <span>评论：{{ item.commentNum }} 点赞：{{ item.likeNum }}<br>{{ item.auditTime }}</span>
+          </el-card>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+            <el-form
+              label-position="right"
+              label-width="45px"
+              :model="newWall"
             >
-              <el-input
-                v-model="newWall.wallContent"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 8}"
-              />
-            </el-form-item>
-            <el-form-item label="图片:">
-              <el-upload
-                action="#"
-                list-type="picture-card"
-                :auto-upload="false">
-                <i slot="default" class="el-icon-plus"></i>
-                <div slot="file" slot-scope="{file}">
-                  <img
-                    class="el-upload-list__item-thumbnail"
-                    :src="file.url" alt=""
-                  >
-                  <span class="el-upload-list__item-actions">
+
+              <el-form-item
+                label="内容:"
+              >
+                <el-input
+                  v-model="newWall.wallContent"
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 8}"
+                />
+              </el-form-item>
+              <el-form-item label="图片:">
+                <el-upload
+                  action="#"
+                  list-type="picture-card"
+                  :auto-upload="false">
+                  <i slot="default" class="el-icon-plus"></i>
+                  <div slot="file" slot-scope="{file}">
+                    <img
+                      class="el-upload-list__item-thumbnail"
+                      :src="file.url" alt=""
+                    >
+                    <span class="el-upload-list__item-actions">
         <span
           class="el-upload-list__item-preview"
           @click="handlePictureCardPreview(file)"
@@ -71,20 +71,21 @@
           <i class="el-icon-delete"></i>
         </span>
       </span>
-                </div>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
-            </el-form-item>
-            <el-form-item>
-              <el-button>申请上墙</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-      </div>
-    </el-col>
-  </el-row>
+                  </div>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
+              </el-form-item>
+              <el-form-item>
+                <el-button>申请上墙</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -195,10 +196,6 @@ export default {
 </script>
 
 <style>
-.el-row {
-  padding-top: 90px;
-
-}
 
 .el-col {
   border-radius: 4px;

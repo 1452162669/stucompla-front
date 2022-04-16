@@ -64,7 +64,13 @@ const routes = [
         path: 'market',
         name: 'market',
         component: () => import('../views/web/market.vue')
-      }]
+      },
+      {
+        path: 'addGoods',
+        name: 'addGoods',
+        component: () => import('../views/web/addGoods.vue')
+      }
+    ]
   },
   {
     path: '/admin',
