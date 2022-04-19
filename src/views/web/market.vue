@@ -20,16 +20,16 @@
       </el-col>
     </el-row>
     <el-row :gutter="0" class="el-row-market">
-      <el-col :span="8" :offset="3">
+      <el-col :span="9" :offset="2" >
         <div class="grid-content bg-purple">
-          <el-tabs tabPosition="left">
+          <el-tabs tabPosition="left" >
             <el-tab-pane :label="item.categoryName" :name="''+index"
                          v-for="(item,index) in firstLevelFromGoodsCategoryList"
                          :key="index" style="height: 355px;">
 
               <div v-for="(item,index) in childLevelList(item.categoryId)" :key="index">
                 <h5 style="margin-top: 10px;margin-bottom: 10px;">{{ item.categoryName }}</h5>
-                <el-link :underline="false" style="margin: 0px 15px 5px 0px"
+                <el-link @click="getGoodsList(item.categoryId,item.categoryName)" :underline="false" style="margin: 0px 15px 5px 0px"
                          v-for="(item,index) in childLevelList(item.categoryId)" :key="index">
                   {{ item.categoryName }}
                 </el-link>
@@ -38,7 +38,7 @@
           </el-tabs>
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="11">
         <div class="grid-content bg-purple">
           <div class="block">
             <el-carousel trigger="click" height="365px">
@@ -50,11 +50,44 @@
         </div>
       </el-col>
     </el-row>
+    <el-row class="el-row-market" >
+      <el-col :span="5" :offset="2">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to=" { path: '/refresh',query: {t: Date.now()}} ">全部</el-breadcrumb-item>
+          <el-breadcrumb-item v-if="currentCategoryName!==undefined">{{ currentCategoryName }}</el-breadcrumb-item>
+          <!--        <el-breadcrumb-item>{{ goods.goodsName }}</el-breadcrumb-item>-->
+        </el-breadcrumb>
+      </el-col>
+
+    </el-row>
+    <el-row :gutter="40" class="el-row-market" style="margin: 0px">
+      <el-col :span="10" :offset="7" v-if="goodsList.length<1">
+        <el-empty description="暂无商品" :image-size="300"></el-empty>
+      </el-col>
+      <el-col :span="5"  v-for="(item,index) in goodsList" :key="item.goodsId" :offset="index%4===0?2:0">
+        <router-link :to="`/stucompla/goods/${item.goodsId}`">
+          <el-card :body-style="{ padding: '10px' }" shadow="hover" class="el-card-goods">
+            <img :src="`http://localhost:8086/image/${item.goodsImages[0]}`"
+                 class="image">
+            <div style="padding: 14px;">
+              <span>{{ item.goodsName }}</span><br>
+              <span class="span-goodsDetail">{{ item.goodsDetail }}</span>
+              <div class="bottom clearfix">
+                <time class="time">￥{{ item.goodsPrice }}</time>
+                <!--              <el-button type="text" class="button">操作按钮</el-button>-->
+              </div>
+            </div>
+          </el-card>
+        </router-link>
+
+      </el-col>
+
+    </el-row>
+
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'market',
   components: {
@@ -65,23 +98,15 @@ export default {
   },
   data () {
     return {
-      keyName: '',
+      currentCategoryName: undefined,
+      currentCategoryId: undefined,
+      currentDate: new Date(),
+      count: 0,
+      keyName: undefined,
       goodsCategoryList: [],
+      goodsList: [],
       searchNews: '',
-      newsTabs: [
-        {
-          id: '1',
-          name: '最新动态'
-        },
-        {
-          id: '2',
-          name: '典型案例'
-        },
-        {
-          id: '3',
-          name: '通知公告'
-        }
-      ],
+
       newsItems: {},
       pageInfo: {
         activeName: '1',
@@ -110,14 +135,21 @@ export default {
 
   },
   methods: {
+    load () {
+      // this.count += 2
+    },
     handleSearch () {
       this.$http.get('/goods/getList', {
-        params: { keyName: this.keyName }
+        params: { keyName: this.keyName, goodsCategoryId: this.currentCategoryId }
       }).then(res => {
         if (res.data.code !== 200) {
 
         } else {
-          console.log(res.data.data.goodsList)
+          this.goodsList = res.data.data.goodsList
+          this.goodsList.forEach(function (item) {
+            item.goodsImages = item.goodsImages.split(',')
+          })
+          console.log(this.goodsList)
         }
       })
     },
@@ -139,12 +171,29 @@ export default {
           this.goodsCategoryList = res.data.data.goodsCategoryList
         }
       })
+    },
+    getGoodsList (goodsCategoryId, categoryName) {
+      console.log(goodsCategoryId)
+      this.currentCategoryName = categoryName
+      this.currentCategoryId = goodsCategoryId
+      this.$http.get('/goods/getList', {
+        params: { goodsCategoryId: goodsCategoryId }
+      }).then(res => {
+        if (res.data.code !== 200) {
+
+        } else {
+          this.goodsList = res.data.data.goodsList
+          this.goodsList.forEach(function (item) {
+            item.goodsImages = item.goodsImages.split(',')
+          })
+          console.log(this.goodsList)
+        }
+      })
     }
   },
   created () {
+    this.getGoodsList()
     this.getGoodsCategoryList()
-    // this.getNewsItems()
-    // this.getRecomNews()
   },
   mounted () {
     this.$store.commit('setHeaderLogo', {
@@ -166,11 +215,25 @@ export default {
 <style>
 /*布局样式*/
 .el-row-market {
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
+.el-card-goods :hover{
+  color: red;
+}
+
+.span-goodsDetail{
+  font-size: 12px;
+  white-space:nowrap;/*强制单行显示*/
+  text-overflow:ellipsis;/*超出部分省略号表示*/
+  overflow:hidden;/*超出部分隐藏*/
+  width: 100%;/*设置显示的最大宽度*/
+  display:inline-block;
+}
 .el-col {
-  /*border-radius: 4px;*/
+  padding-top: 20px;
+
 }
 
 .bg-purple-dark {
@@ -219,5 +282,36 @@ export default {
 
 .el-carousel__item:nth-child(2n+1) {
   background-color: #d3dce6;
+}
+
+/* 商品卡片样式 */
+.time {
+  font-size: 20px;
+  color: red;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.button {
+  padding: 0;
+  float: right;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
 }
 </style>

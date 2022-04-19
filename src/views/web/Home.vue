@@ -5,6 +5,7 @@
     <!-- 增加路由 -->
     <router-view @update="viewLogin()"></router-view>
 
+<!--    登录弹窗-->
     <el-dialog title="欢迎登录" :visible.sync="dialogLoginVisible" :modal-append-to-body="false" :lock-scroll="false"
                width="25%" :center="true" :show-close="false">
       <el-form :model="loginForm">
@@ -24,6 +25,43 @@
             @keyup.enter.native="handleLogin">
           </el-input>
         </el-form-item>
+        <el-form-item align="center">
+          <el-button type="primary" @click.native="handleLogin()">登录</el-button>
+          <el-button type="danger" onclick="">注册</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
+
+<!--    注册弹窗-->
+    <el-dialog title="欢迎注册" :visible.sync="dialogRegisterVisible" :modal-append-to-body="false" :lock-scroll="false"
+               width="25%" :center="true" :show-close="false">
+      <el-form :model="loginForm">
+        <el-form-item label="">
+          <el-input
+            placeholder="用户名"
+            v-model="loginForm.username"
+            prefix-icon="el-icon-user">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-input
+            type="password"
+            placeholder="密码"
+            v-model="loginForm.password"
+            prefix-icon="el-icon-lock">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-input
+            type="password"
+            placeholder="重复密码"
+            v-model="loginForm.password"
+            prefix-icon="el-icon-lock"
+            @keyup.enter.native="handleRegister">
+          </el-input>
+        </el-form-item>
+
         <el-form-item align="center">
           <el-button type="primary" @click.native="handleLogin()">登录</el-button>
           <el-button type="danger" onclick="">注册</el-button>
@@ -53,7 +91,16 @@ export default {
       set (v) {
         this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: v })
       }
+    },
+    dialogRegisterVisible: {
+      get () {
+        return this.$store.state.dialogRegisterVisible
+      },
+      set (v) {
+        this.$store.commit('setDialogRegisterVisible', { dialogRegisterVisible: v })
+      }
     }
+
   },
   data () {
     return {
@@ -61,6 +108,11 @@ export default {
       loginForm: {
         username: 'test1',
         password: ''
+      },
+      regForm: {
+        username: '',
+        password: '',
+        secondPassword: ''// 补上其他属性
       }
     }
   },
@@ -94,6 +146,9 @@ export default {
         }
         // console.log('2访问完成。赋值完成。')
       })
+    },
+    handleRegister () {
+      // 注册
     }
   }
 

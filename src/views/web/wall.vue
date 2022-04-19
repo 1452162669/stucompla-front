@@ -12,7 +12,7 @@
       </el-col>
       <el-col :span="12">
         <div class="grid-content bg-purple">
-          <el-card class="main-card" v-for="item in wallList" :key="item" shadow="hover">
+          <el-card class="main-card" v-for="(item,index) in wallList" :key="index" shadow="hover">
             {{ item.wallContent }}
             <br>
             <br>
@@ -29,9 +29,7 @@
               :model="newWall"
             >
 
-              <el-form-item
-                label="内容:"
-              >
+              <el-form-item label="内容:">
                 <el-input
                   v-model="newWall.wallContent"
                   type="textarea"
@@ -40,45 +38,25 @@
               </el-form-item>
               <el-form-item label="图片:">
                 <el-upload
-                  action="#"
+                  action="http://localhost:8086/image/upload"
+                  :headers="myHeader"
+                  name="files"
+                  :limit='3'
+                  :before-upload="beforeUpload"
                   list-type="picture-card"
-                  :auto-upload="false">
-                  <i slot="default" class="el-icon-plus"></i>
-                  <div slot="file" slot-scope="{file}">
-                    <img
-                      class="el-upload-list__item-thumbnail"
-                      :src="file.url" alt=""
-                    >
-                    <span class="el-upload-list__item-actions">
-        <span
-          class="el-upload-list__item-preview"
-          @click="handlePictureCardPreview(file)"
-        >
-          <i class="el-icon-zoom-in"></i>
-        </span>
-        <span
-          v-if="!disabled"
-          class="el-upload-list__item-delete"
-          @click="handleDownload(file)"
-        >
-          <i class="el-icon-download"></i>
-        </span>
-        <span
-          v-if="!disabled"
-          class="el-upload-list__item-delete"
-          @click="handleRemove(file)"
-        >
-          <i class="el-icon-delete"></i>
-        </span>
-      </span>
-                  </div>
+                  :on-success="handleSuccess"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                :on-exceed="handleExceed">
+                  <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                   <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
+
               </el-form-item>
               <el-form-item>
-                <el-button>申请上墙</el-button>
+                <el-button @click="applyWall">申请上墙</el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -90,6 +68,8 @@
 
 <script>
 
+import { getToken } from '../../utils/auth'
+
 export default {
   name: 'wall',
   components: {
@@ -100,18 +80,87 @@ export default {
   },
   data () {
     return {
+      isLogin: false,
+      myHeader: {
+        Authorization: getToken() // 这里应该监控jwt的变化，不然只获取到第一次，后面不会变（可以用计算属性)
+      },
+      newimgArray: [],
+      dialogImageUrl: '',
+      dialogVisible: false,
       wallList: {},
-      newWall: {}
+      newWall: {
+        wallContent: '',
+        wallImages: undefined
+      }
     }
   },
   methods: {
+    getLoginState () {
+      this.isLogin = this.$store.state.user.jwt !== undefined
+    },
+    beforeUpload (file) {
+      return new Promise((resolve, reject) => {
+        if (this.isLogin) {
+          resolve()
+        } else {
+          this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: !this.isLogin })
+          reject(new Error('未登录'))
+        }
+      })
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+      const url = file.response.data[0].replace('http://localhost:8086/image/', '')
+      const paths = url.split('_')
+      const idValue = paths[1].split('.')[0] // 取id 1495352086701932544
+      this.$http.delete('/image/' + idValue).then(res => {
+        if (res.data.code !== 200) {
 
+        } else {
+          console.log(res.data.data)
+        }
+      })
+      const urlIndex = this.newimgArray.indexOf(url)
+      this.newimgArray.splice(urlIndex, 1)
+      console.log(this.newimgArray)
+    },
+    handleSuccess (response, file, fileList) {
+      console.log(response)
+      console.log(file)
+      console.log(fileList)
+      if (response.code === 200) {
+        for (var j = 0; j < response.data.length; j++) {
+          this.newimgArray.push(response.data[j].replace('http://localhost:8086/image/', ''))
+        }
+        console.log(this.newimgArray)
+      } else {
+        alert(response.msg)
+      }
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    handleExceed (files, fileList) {
+      this.$message.error('最多只能上传三张图片')
+    },
     getWallList () {
       this.$http.get('/wall/wallList').then(res => {
         if (res.data.code !== 200) {
 
         } else {
           this.wallList = res.data.data.walls
+        }
+      })
+    },
+    applyWall () {
+      this.newWall.wallImages = this.newimgArray.toString()
+      console.log(this.newWall)
+      this.$http.post('/wall/apply', this.newWall).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.msg)
         }
       })
     },
@@ -161,6 +210,7 @@ export default {
     }
   },
   created () {
+    this.getLoginState()
     this.getWallList()
     this.getNewsItems()
     this.getRecomNews()

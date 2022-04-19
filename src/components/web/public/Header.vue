@@ -18,7 +18,7 @@
           </div>
           <div v-if="!isLogin" class="menu-item">
             <el-button type="primary" @click="changeDialogLoginVisible">登录</el-button>
-            <el-button type="danger">注册</el-button>
+            <el-button type="danger" @click="changeDialogRegisterVisible">注册</el-button>
           </div>
           <div v-else class="menu-item">
             <el-dropdown class="avatar-container">
@@ -177,6 +177,9 @@ export default {
     changeDialogLoginVisible () {
       // this.$emit('changeDialog', true)
       this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: true })
+    },
+    changeDialogRegisterVisible () {
+      this.$store.commit('setDialogRegisterVisible', { dialogRegisterVisible: true })
     }
 
     // handleLogin () {

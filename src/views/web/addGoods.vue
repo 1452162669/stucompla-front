@@ -9,7 +9,6 @@
               label-width="80px"
               :model="newGoods"
             >
-
               <el-form-item
                 label="商品名"
               >
@@ -33,6 +32,7 @@
                   action="http://localhost:8086/image/upload"
                   :headers="myHeader"
                   name="files"
+                  :limit="9"
                   :before-upload="beforeUpload"
                   list-type="picture-card"
                   :on-success="handleSuccess"

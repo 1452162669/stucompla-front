@@ -14,6 +14,7 @@ export default new Vuex.Store({
     navDarkActive: false,
 
     dialogLoginVisible: false,
+    dialogRegisterVisible: false,
 
     articlePath: ''
   },
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     setDialogLoginVisible (state, value) {
       state.dialogLoginVisible = value.dialogLoginVisible
+    },
+    setDialogRegisterVisible (state, value) {
+      state.dialogRegisterVisible = value.dialogRegisterVisible
     },
     setShadowActive (state, value) {
       state.headerShadowActive = value.headerShadowActive

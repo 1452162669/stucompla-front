@@ -243,6 +243,8 @@ export default {
         // console.log(res.data)
         if (res.data.code !== 200) {
           // console.log(res)
+          this.$message.error('帖子不存在')
+          // 应该跳转一个提示不存在的页面
         } else {
           // this.$message.success('获取成功')
           this.post.title = res.data.data.title

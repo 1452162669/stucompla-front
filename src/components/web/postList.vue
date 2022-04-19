@@ -5,6 +5,7 @@
           :key="index">
         <el-card shadow="hover">
           <router-link :to="`/stucompla/post/${item.postId}`">
+<!--          <router-link :to="{name:'postDetail',params:{id: item.postId}}">-->
             <!--<div class = "item-mask"></div>-->
             <img :src="item.cover_img" alt="">
             <div class="item-content">

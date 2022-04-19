@@ -11,7 +11,7 @@
     "animate.css": "^4.1.1",
     "axios": "^0.21.4",
     "core-js": "^3.6.5",
-    "element-ui": "^2.15.1",
+    "element-ui": "^2.15.6",
     "js-cookie": "^2.2.0",
     "mavon-editor": "^2.10.4",
     "vue": "^2.6.11",
