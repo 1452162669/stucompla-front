@@ -40,9 +40,11 @@
     <div class="goodsDetailRight">
       <el-card >
         <h4>单价：{{goods.goodsPrice}}</h4>
-        <h4>购买数量：<el-input-number size="small" style="width: 90px" v-model="buyCount"  controls-position="right" :min="1" :max="goods.goodsCount"></el-input-number></h4>
+        <h4>购买数量：<el-input-number size="small" style="width: 90px" v-model="buyCount"  controls-position="right" :min="1" :max="goods.goodsCount<1?1:goods.goodsCount"></el-input-number>
+        <br><span v-if="goods.goodsCount<1" style="color: red; font-size: 10px">库存已不足</span>
+        </h4>
       <h4>总价：{{goods.goodsPrice*this.buyCount}}</h4>
-        <el-button type="primary" @click="addOrder(goods.goodsId)">立即购买</el-button>
+        <el-button :disabled="goods.goodsCount<1" type="primary" @click="addOrder(goods.goodsId)" >立即购买</el-button>
 <!--        <el-button type="danger" >加入购物车</el-button>-->
       </el-card>
     </div>
