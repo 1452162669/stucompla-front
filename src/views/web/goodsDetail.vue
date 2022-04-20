@@ -1,30 +1,30 @@
 <template>
   <div class="container">
-    <div class="left">
+    <div class="content">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/stucompla/market' }">二手交易首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ goods.goodsCategory.categoryName }}</el-breadcrumb-item>
         <el-breadcrumb-item>{{ goods.goodsName }}</el-breadcrumb-item>
       </el-breadcrumb>
       <el-row class="el-row-market">
-        <el-col :span="20">
+        <el-col :span="24">
           <div class="grid-content bg-purple">
             <el-card >
               <el-row>
                 <el-col :span="3">
-                <el-avatar
-                  :size="90"
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  fit="scale-down"
-                />
-              </el-col>
+                  <el-avatar
+                    :size="90"
+                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                    fit="scale-down"
+                  />
+                </el-col>
                 <el-col :span="13">
-                <h3>{{ goods.user.username }}  </h3>
-                <p><i class="el-icon-s-promotion"></i>{{ goods.createTime }}</p>
-              </el-col>
+                  <h3>{{ goods.user.username }}  </h3>
+                  <p><i class="el-icon-s-promotion"></i>{{ goods.createTime }}</p>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="15">
+                <el-col :span="24">
                   <h3>商品详情</h3>
                   {{goods.goodsDetail}}
                   <h3>图片</h3>
@@ -35,33 +35,47 @@
             </el-card>
           </div>
         </el-col>
-        <el-col :span="4" >
-          <h4>定价：{{goods.goodsPrice}}</h4>
-          <h4>数量：<el-input-number size="medium" style="width: 150px" v-model="buyCount"
-                                  :min="1" :max="999"
-                                  label="描述文字"></el-input-number></h4>
-        </el-col>
       </el-row>
-      <div class="content">
-        <h1>{{ goods.goodsName }}</h1>
-        <span>{{ goods.createTime }}</span>
-        <span title="热度" style="margin-left:19px;font-weight:400"><i
-          class="el-icon-view"></i> {{ goods.viewNum }}</span>
-        <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round"></i> {{  }}</span>
-        <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> {{ }}</span>
-        <el-divider><i class="el-icon-view"></i></el-divider>
-        <article class="article" v-html="goods.goodsDetail"></article>
-<!--        <el-divider>-->
-<!--          <el-button circle size="mini" :disabled="isClick" @click="onCollect"><i-->
-<!--            :class="{iconStarColor: isCollect}"-->
-<!--            style="font-size: 30px"-->
-<!--            class="el-icon-star-off"-->
-<!--          ></i></el-button>-->
-<!--        </el-divider>-->
-      </div>
-
     </div>
+    <div class="goodsDetailRight">
+      <el-card >
+        <h4>单价：{{goods.goodsPrice}}</h4>
+        <h4>购买数量：<el-input-number size="small" style="width: 90px" v-model="buyCount"  controls-position="right" :min="1" :max="goods.goodsCount"></el-input-number></h4>
+      <h4>总价：{{goods.goodsPrice*this.buyCount}}</h4>
+        <el-button type="primary" @click="addOrder(goods.goodsId)">立即购买</el-button>
+<!--        <el-button type="danger" >加入购物车</el-button>-->
+      </el-card>
+    </div>
+<!--    订单详情弹窗-->
+    <el-dialog title="订单信息" :visible.sync="dialogOrderVisible" :modal-append-to-body="false" :lock-scroll="false"
+               width="25%" :center="true" :show-close="false">
+      <el-form label-position="right" label-width="80px" label-suffix=":" :model="OrderForm">
+        <el-form-item label="订单ID">
+          {{OrderForm.orderId}}
+        </el-form-item>
+        <el-form-item label="商品名">
+          {{OrderForm.goods.goodsName}}
+        </el-form-item>
+        <el-form-item label="商品单价">
+          {{OrderForm.goods.goodsPrice}}
+        </el-form-item>
+        <el-form-item label="购买数量">
+          {{OrderForm.buyCount}}
+        </el-form-item>
+        <el-form-item label="总价">
+          {{OrderForm.totalPrice}}
+        </el-form-item>
+        <el-form-item label="创建时间">
+          {{OrderForm.createTime}}
+        </el-form-item>
 
+        <el-form-item align="left">
+          <el-button type="primary" @click.native="handlePay(OrderForm.orderId)">立即支付</el-button>
+          <el-button type="danger" @click="handlePayLater">稍后支付</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
 <!--    <hot-news class="right"></hot-news>-->
   </div>
 
@@ -72,6 +86,18 @@ export default {
   name: 'goodsDetail',
   data () {
     return {
+      dialogOrderVisible: false,
+      OrderForm: {
+        orderId: '',
+        seller: {},
+        buyer: {},
+        goods: {},
+        buyCount: '',
+        totalPrice: '',
+        createTime: '',
+        updateTime: '',
+        orderStatus: ''
+      },
       buyCount: '',
       goods: {
         goodsId: '',
@@ -126,7 +152,37 @@ export default {
           console.log(this.goods)
         }
       })
+    },
+    addOrder (goodsId) {
+      this.$http.post('/market-order/addOrder', {
+        goodsId: goodsId,
+        buyCount: this.buyCount
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          console.log(res.data.data)
+          this.OrderForm = res.data.data
+          this.dialogOrderVisible = true
+        }
+      })
+    },
+    handlePay (orderId) {
+      // 更改订单状态为’1‘-“已支付”    假支付
+      this.$http.post('/market-order/payOrder/' + orderId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.dialogOrderVisible = false
+        }
+      })
+    },
+    handlePayLater () {
+      this.$message.success('订单已保存到“我的订单”，请及时支付')
+      this.dialogOrderVisible = false
     }
+
   }
 }
 </script>
@@ -152,7 +208,7 @@ export default {
   position: relative;
   display: flex;
   justify-content: space-between;
-  max-width: 1200px;
+  max-width: 1000px;
 //background: #d3dce6;
   min-height: 580px;
   margin: 0 auto;
@@ -173,4 +229,7 @@ span {
 }
 }
 
+.goodsDetailRight{
+  padding-top: 180px;
+}
 </style>
