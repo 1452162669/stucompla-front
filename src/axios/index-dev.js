@@ -13,7 +13,7 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(config => {
-  if (store.state.user.jwt) {
+  if (store.state.user.jwt !== undefined) {
     // let each request carry token
     // ['X-Token'] is a custom headers key
     // please modify it according to the actual situation

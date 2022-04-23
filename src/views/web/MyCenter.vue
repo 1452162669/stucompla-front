@@ -17,25 +17,44 @@
 
             <div style="width: 100%;display: flex;justify-content: space-evenly;text-align: center;">
               <div class="data-item" data-v-0c2f6664="">
-                <a class="el-link el-link--default" data-v-0c2f6664="">
-                  <!----><span class="el-link--inner"><p class="headline" data-v-0c2f6664="">
-            帖子
-          </p> <p class="length-num" data-v-0c2f6664="">
-            11
-          </p></span><!---->
-                </a></div>
-              <div class="data-item" data-v-0c2f6664=""><a class="el-link el-link--default" data-v-0c2f6664="">
-                <!----><span class="el-link--inner"><p class="headline" data-v-0c2f6664="">
-            回复
-          </p> <p class="length-num" data-v-0c2f6664="">
-            10
-          </p></span><!----></a></div>
-              <div class="data-item" data-v-0c2f6664=""><a class="el-link el-link--default" data-v-0c2f6664="">
-                <!----><span class="el-link--inner"><p class="headline" data-v-0c2f6664="">
-            收藏
-          </p> <p class="length-num" data-v-0c2f6664="">
-            5
-          </p></span><!----></a></div>
+                <a class="el-link el-link--default" @click="currentMenu='myPost'">
+                  <span class="el-link--inner">
+                    <p class="headline" data-v-0c2f6664="">帖子</p>
+                    <p class="length-num" data-v-0c2f6664="">{{myPostList.total}}</p></span>
+                </a>
+              </div>
+              <div class="data-item" >
+                <a class="el-link el-link--default" @click="currentMenu='myComment'">
+                  <span class="el-link--inner">
+                    <p class="headline" data-v-0c2f6664="">回复</p>
+                    <p class="length-num" data-v-0c2f6664="">10</p>
+                </span>
+                </a>
+              </div>
+              <div class="data-item">
+                <a class="el-link el-link--default" @click="currentMenu='myCollect'">
+                <span class="el-link--inner">
+                  <p class="headline" data-v-0c2f6664="">收藏</p>
+                  <p class="length-num" data-v-0c2f6664="">{{myCollectList.total}}</p>
+                </span>
+                </a>
+              </div>
+              <div class="data-item">
+                <a class="el-link el-link--default" @click="currentMenu='myGoods'">
+                <span class="el-link--inner">
+                  <p class="headline" data-v-0c2f6664="">二手</p>
+                  <p class="length-num" data-v-0c2f6664="">{{myGoodsList.total}}</p>
+                </span>
+                </a>
+              </div>
+              <div class="data-item">
+                <a class="el-link el-link--default" @click="currentMenu='myOrder'">
+                <span class="el-link--inner">
+                  <p class="headline" data-v-0c2f6664="">订单</p>
+                  <p class="length-num" data-v-0c2f6664="">5</p>
+                </span>
+                </a>
+              </div>
             </div>
 
             <ul>
@@ -61,11 +80,12 @@
         <el-col :span="16">
           <el-card>
             <el-tabs
-              v-model="activeName"
+              v-model="currentMenu"
+              class="menu"
             >
               <el-tab-pane
                 label="基本信息"
-                name="first"
+                name="userInfo"
               >
                 <el-form
                   ref="basicInfo"
@@ -147,8 +167,14 @@
                 </el-form>
               </el-tab-pane>
               <el-tab-pane
-                label="账号绑定"
-                name="second"
+                label="我的帖子"
+                name="myPost"
+              >
+                <post-list :items="myPostList.postList"></post-list>
+              </el-tab-pane>
+              <el-tab-pane
+                label="我的回复"
+                name="myComment"
               >
                 <div
                   v-for="(item,index) in bindAccount"
@@ -178,6 +204,98 @@
                   </el-button>
                 </div>
               </el-tab-pane>
+              <el-tab-pane
+                label="我的收藏"
+                name="myCollect"
+              >
+                <post-list :items="myCollectList.postList"></post-list>
+              </el-tab-pane>
+              <el-tab-pane
+                label="我的二手"
+                name="myGoods"
+              >
+                <el-row :gutter="20" class="el-row-market" style="margin: 0px">
+                  <el-col :span="10" :offset="7" v-if="myGoodsList.goodsList.length<1">
+                    <el-empty description="暂无商品" :image-size="300"></el-empty>
+                  </el-col>
+                  <el-col :span="5"  v-for="(item,index) in myGoodsList.goodsList" :key="item.goodsId" :offset="index%4===0?2:0">
+
+                      <el-card :body-style="{ padding: '5px'}" shadow="hover" class="el-card-goods">
+                        <router-link :to="`/stucompla/goods/${item.goodsId}`">
+                        <img :src="`http://localhost:8086/image/${item.goodsImages[0]}`"
+                             class="image">
+                        </router-link>
+                        <div style="padding: 5px;">
+                          <span>{{ item.goodsName }}</span><br>
+                          <span class="span-goodsDetail">{{ item.goodsDetail }}</span>
+                          <span class="price">￥{{ item.goodsPrice }}</span>
+                        </div>
+                        <div align="center">
+                            <el-button type="primary" size="small" @click="$router.push('/stucompla/editGoods/'+item.goodsId)">修改</el-button>
+
+                          <el-popconfirm
+
+                            icon="el-icon-info"
+                            icon-color="red"
+                            title="确定下架该商品？"
+                            style="padding-left: 10px"
+                            @confirm="deleteGoods(item.goodsId)"
+                          >
+                            <el-button  slot="reference" type="danger" size="small">下架</el-button>
+<!--                            <el-button slot="reference">删除</el-button>-->
+                          </el-popconfirm>
+                        </div>
+                      </el-card>
+
+                  </el-col>
+
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane
+                label="我的订单"
+                name="myOrder"
+              >
+                <div
+                  v-for="(item,index) in bindAccount"
+                  :key="index"
+                  class="account-binding"
+                >
+                  <svg-icon
+                    :icon-class="item.icon"
+                    class-name="binding-icon"
+                  />
+                  <div class="account-binding-content">
+                    <p>{{ item.desc }}</p>
+                    <p v-if="item.accountId">
+                      {{ item.accountId }}
+                    </p>
+                    <p v-else>
+                      当前账号未{{ item.desc }}账号
+                    </p>
+                  </div>
+                  <el-button
+                    type="primary"
+                    plain
+                    round
+                    size="small"
+                  >
+                    更换绑定
+                  </el-button>
+                </div>
+              </el-tab-pane>
+              <el-pagination
+                class="pagination"
+                background
+                @current-change="handleCurrentChange"
+                :current-page.sync="Query.pageNum"
+                :page-size="Query.pageSize"
+                layout="prev, pager, next, jumper"
+                :total="showList.total"
+                :hide-on-single-page="singlePage"
+                v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"
+                v-if="currentMenu!=='userInfo'"
+              align="center">
+              </el-pagination>
             </el-tabs>
           </el-card>
         </el-col>
@@ -189,12 +307,16 @@
 <script>
 // import { uploadFile } from '@/api/file'
 // import { getInfoById, updateAccount } from '@/api/user'
+import PostList from '../../components/web/postList'
 
 export default {
   name: 'Index',
+  components: {
+    PostList
+  },
   data () {
     return {
-      activeName: 'first',
+      currentMenu: 'userInfo',
       labelPosition: 'right',
       basicInfo: {
         avatar: 'http://localhost:8086/image/1649474344343_1512631150949040128.png',
@@ -245,7 +367,57 @@ export default {
       uploadDisabled: false,
       // 图片弹窗
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      // 单页隐藏
+      singlePage: '',
+      Query: {
+        userId: undefined,
+        pageNum: 1,
+        pageSize: 8
+      },
+      showList: {},
+      myPostList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        postList: [],
+        total: ''
+      },
+      myCollectList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        postList: [],
+        total: ''
+      },
+      myGoodsList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        goodsList: [],
+        total: ''
+      }
+    }
+  },
+  watch: {
+    currentMenu: {
+      handler (newVal, oldVal) {
+        // if (newVal === 'myPost') {
+        //   this.showList = this.myPostList
+        // }
+        this.Query.pageNum = 1
+        switch (newVal) {
+          case 'myPost':
+            this.showList = this.myPostList
+            break
+          case 'myCollect':
+            this.showList = this.myCollectList
+            break
+          case 'myGoods':
+            this.showList = this.myGoodsList
+            break
+        }
+      }
     }
   },
   mounted () {
@@ -263,7 +435,7 @@ export default {
     })
   },
   created () {
-
+    // this.getMyAll()
   },
   computed: {
     headers () {
@@ -279,29 +451,118 @@ export default {
   // 每次进入路由前，重新获取数据
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.getAccountInfo()
+      vm.getMyAll()
     })
   },
   methods: {
+    async getMyAll () {
+      await this.getAccountInfo()
+      console.log(this.basicInfo.userId)
+      if (this.basicInfo.userId !== undefined) {
+        this.getMyPostList()
+        this.getMyCollectList()
+        this.getMyGoodsList()
+      }
+    },
+    // handleTabsClick (tab, event) {
+    //   if (tab.name === 'myPost') {
+    //     this.showList = this.myPostList
+    //     console.log(this.showList)
+    //   }
+    // },
     // 获取账户信息
     getAccountInfo () {
-      this.basicInfo = {}
-      this.$http.get('/user/info').then(res => {
+      return new Promise(resolve => {
+        this.basicInfo = {}
+        this.$http.get('/user/info').then(res => {
+          if (res.data.code !== 200) {
+            this.$message.error('获取账户信息失败')
+          } else {
+            console.log(res.data.data)
+            this.basicInfo = res.data.data
+          }
+          resolve()
+        })
+      })
+    },
+    // 获取我的帖子列表
+    getMyPostList () {
+      this.Query.userId = this.basicInfo.userId
+      this.$http.get('/post/list', {
+        params: this.Query
+      }).then(res => {
         if (res.data.code !== 200) {
-          this.$message.error('获取账户信息失败')
+          this.myPostList = undefined
         } else {
           console.log(res.data.data)
-          this.basicInfo = res.data.data
+          this.myPostList = res.data.data
         }
       })
-      // getInfoById(this.editId).then(response => {
-      //   const res = response.data
-      //   if (res.status === 200) {
-      //     this.basicInfo = res.data
-      //   } else {
-      //     this.$message.error('获取账户信息失败')
-      //   }
-      // })
+    },
+    // 获取我的评论列表
+    getMyCommentList () {
+
+    },
+    // 获取我的收藏列表
+    getMyCollectList () {
+      this.Query.userId = this.basicInfo.userId
+      this.$http.get('/collect/list', {
+        params: this.Query
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.myCollectList = undefined
+        } else {
+          console.log(res.data.data)
+          this.myCollectList = res.data.data
+        }
+      })
+    },
+    // 获取我的二手列表
+    getMyGoodsList () {
+      this.Query.userId = this.basicInfo.userId
+      this.$http.get('/goods/getList', {
+        params: this.Query
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.myGoodsList = undefined
+        } else {
+          console.log(res.data.data)
+          this.myGoodsList = res.data.data
+          this.myGoodsList.goodsList.forEach(function (item) {
+            item.goodsImages = item.goodsImages.split(',')
+          })
+        }
+      })
+    },
+    // 获取我的订单列表
+    getMyOrderList () {
+
+    },
+    // 帖子列表页码切换
+    handleCurrentChange (val) {
+      // console.log(`当前页: ${val}`)
+      switch (this.currentMenu) {
+        case 'myPost':
+          this.getMyPostList()
+          break
+        case 'myCollect':
+          this.getMyCollectList()
+          break
+        case 'myGoods':
+          this.getMyGoodsList()
+          break
+      }
+    },
+    deleteGoods (goodsId) {
+      // console.log('1111111111111111')
+      this.$http.delete('/goods/' + goodsId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error('删除失败')
+        } else {
+          this.$message.success('删除成功')
+          this.getMyGoodsList()
+        }
+      })
     },
     editAccount () {
       // const updateData = {
@@ -372,6 +633,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/*布局样式*/
+.el-row-market {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+//.el-card-goods :hover{
+//  color: red;
+//}
+
+/* 商品卡片样式 */
+.price {
+  font-size: 20px;
+  color: red;
+}
+
+.span-goodsDetail{
+  font-size: 12px;
+  white-space:nowrap;/*强制单行显示*/
+  text-overflow:ellipsis;/*超出部分省略号表示*/
+  overflow:hidden;/*超出部分隐藏*/
+  width: 100%;/*设置显示的最大宽度*/
+  display:inline-block;
+}
+.image {
+  width: 100%;
+  display: block;
+}
 .el-container {
   //margin: 20px;
 

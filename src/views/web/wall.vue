@@ -89,7 +89,7 @@ export default {
       dialogVisible: false,
       wallList: {},
       newWall: {
-        wallContent: '',
+        wallContent: undefined,
         wallImages: undefined
       }
     }

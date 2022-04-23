@@ -4,14 +4,10 @@
       <el-col :span="14" :offset="5">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <el-form
-              label-position="right"
-              label-width="80px"
-              :model="newGoods"
-            >
-              <el-form-item
-                label="商品名"
-              >
+            <h3 v-if="!isEdit" align="center">发布二手商品</h3>
+            <h3 v-if="isEdit" align="center">修改二手商品</h3>
+            <el-form label-position="right" label-width="80px" :model="newGoods" >
+              <el-form-item label="商品名" >
                 <el-input
                   v-model="newGoods.goodsName"
                   placeholder="品类/品牌/型号，都是大家喜欢搜索的"
@@ -31,6 +27,7 @@
                 <el-upload
                   action="http://localhost:8086/image/upload"
                   :headers="myHeader"
+                  :file-list="fileList"
                   name="files"
                   :limit="9"
                   :before-upload="beforeUpload"
@@ -66,7 +63,9 @@
                                  label="描述文字"></el-input-number>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="addGoods">一键上架</el-button>
+                <el-button v-if="!isEdit" type="primary" @click="addGoods">一键上架</el-button>
+                <el-button v-if="isEdit" type="primary" @click="updateGoods">确定修改</el-button>
+
               </el-form-item>
             </el-form>
           </el-card>
@@ -82,6 +81,13 @@ import { getToken } from '../../utils/auth'
 
 export default {
   name: 'addGoods',
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    },
+    goodsId: Number
+  },
   data () {
     return {
       isLogin: false,
@@ -89,7 +95,9 @@ export default {
         Authorization: getToken()
       },
       newimgArray: [],
+      fileList: [],
       newGoods: {
+        goodsId: this.goodsId,
         goodsName: '',
         goodsDetail: '',
         goodsImages: '',
@@ -106,6 +114,30 @@ export default {
   },
   created () {
     this.getLoginState()
+    if (this.isEdit) {
+      this.$http.get('/goods/' + this.goodsId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error('商品不存在')
+          // 应该跳转一个提示不存在的页面
+        } else {
+          // console.log(res.data.data)
+          var goodsVo = res.data.data
+          this.newGoods.goodsCategoryId = goodsVo.goodsCategory.categoryId
+          this.newGoods.goodsDetail = goodsVo.goodsDetail
+          this.newGoods.goodsName = goodsVo.goodsName
+          this.newGoods.goodsPrice = goodsVo.goodsPrice
+          this.newGoods.goodsCount = goodsVo.goodsCount
+          // console.log(this.goods)
+          this.newGoods.goodsImages = goodsVo.goodsImages.split(',')
+          this.newGoods.goodsImages.forEach(item => {
+            var imgUrl = 'http://localhost:8086/image/' + item
+            this.fileList.push({ url: imgUrl })
+          })
+          this.newimgArray = this.newGoods.goodsImages
+          console.log(this.newGoods.goodsImages)
+        }
+      })
+    }
     this.getGoodsCategoryList()
   },
   computed: {
@@ -159,9 +191,15 @@ export default {
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
-      const url = file.response.data[0].replace('http://localhost:8086/image/', '')
+      var idValue = ''
+      var url = ''
+      if (file.response !== undefined) {
+        url = file.response.data[0].replace('http://localhost:8086/image/', '')
+      } else {
+        url = file.url.replace('http://localhost:8086/image/', '')
+      }
       const paths = url.split('_')
-      const idValue = paths[1].split('.')[0] // 取id 1495352086701932544
+      idValue = paths[1].split('.')[0] // 取id 1495352086701932544
       this.$http.delete('/image/' + idValue).then(res => {
         if (res.data.code !== 200) {
 
@@ -239,6 +277,27 @@ export default {
           })
         }
       })
+    },
+    updateGoods () {
+      this.newGoods.goodsImages = this.newimgArray.toString()
+      console.log(this.newGoods)
+      this.getLoginState()
+      if (this.isLogin) {
+        // this.newGoods.
+        this.$http.post('/goods/edit', this.newGoods).then(res => {
+          if (res.data.code !== 200) {
+            this.$message({
+              message: res.data.msg,
+              type: 'error'
+            })
+          } else {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          }
+        })
+      }
     }
   }
 }

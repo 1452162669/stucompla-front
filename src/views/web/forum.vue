@@ -178,14 +178,16 @@ export default {
     searchHandle () {
       if (this.autocompleteFlag) this.$refs.autocomplete.activated = true
     },
-    // 新闻列表选项卡切换
+    // 帖子列表选项卡切换
     handleClick (tab, event) {
+      // 切换tabs时重置页码
+      this.postQuery.pageNum = 1
       this.getPostsItems()
     },
     // handleSizeChange (val) {
     //   console.log(`每页 ${val} 条`)
     // },
-    // 新闻列表页码切换
+    // 帖子列表页码切换
     handleCurrentChange (val) {
       // console.log(`当前页: ${val}`)
       this.getPostsItems()

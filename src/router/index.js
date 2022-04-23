@@ -66,9 +66,14 @@ const routes = [
         component: () => import('../views/web/market.vue')
       },
       {
-        path: 'addGoods',
-        name: 'addGoods',
-        component: () => import('../views/web/addGoods.vue')
+        path: 'createGoods',
+        name: 'createGoods',
+        component: () => import('../views/web/createGoods')
+      },
+      {
+        path: 'editGoods/:id',
+        name: 'editGoods',
+        component: () => import('../views/web/editGoods')
       },
       {
         path: 'goods/:id',

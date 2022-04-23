@@ -15,7 +15,7 @@
       </el-col>
       <el-col :span="2" :offset="2">
         <div class="grid-content bg-purple" align="right">
-          <el-button type="primary" plain @click="toAddGoods">我要卖二手</el-button>
+          <el-button type="primary" plain @click="toCreateGoods">我要卖二手</el-button>
         </div>
       </el-col>
     </el-row>
@@ -153,8 +153,8 @@ export default {
         }
       })
     },
-    toAddGoods () {
-      this.$router.push('/stucompla/addGoods')
+    toCreateGoods () {
+      this.$router.push('/stucompla/createGoods')
     },
     childLevelList (parentId) {
       return this.goodsCategoryList.filter((item, index) => {
