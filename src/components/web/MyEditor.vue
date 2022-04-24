@@ -23,12 +23,31 @@ export default {
       editorData: ''
     }
   },
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
+  props: {
+    value: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    value: function (value) {
+      if (value !== this.editor.txt.html()) {
+        this.editor.txt.html(this.value)
+      }
+    }
+    // value为编辑框输入的内容，这里监听了一下值，当父组件调用得时候，如果给value赋值了，子组件将会显示父组件赋给的值
+  },
   mounted () {
     const editor = new WangEditor('#demo1')
 
     // 配置 onchange 回调函数，将数据同步到 vue 中
     editor.config.onchange = (newHtml) => {
       this.editorData = newHtml
+      this.$emit('change', this.editorData) // 将内容同步到父组件中
       // console.log(editor.$textElem.elems[0])
     }
     // 配置限制类型

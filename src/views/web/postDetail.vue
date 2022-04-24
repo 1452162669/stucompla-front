@@ -4,7 +4,7 @@
     <div class="container">
       <div class="left">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/stucompla/forum' }">交流首页</el-breadcrumb-item>
           <el-breadcrumb-item>{{ post.categoryName }}</el-breadcrumb-item>
           <el-breadcrumb-item>{{ post.title }}</el-breadcrumb-item>
         </el-breadcrumb>
@@ -14,8 +14,28 @@
           <span>{{ post.createTime }}</span>
           <span title="热度" style="margin-left:19px;font-weight:400"><i
             class="el-icon-view"></i> {{ post.viewNum }}</span>
-          <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round"></i> {{ post.commentNum }}</span>
-          <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> {{ post.collectNum }}</span>
+          <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round" ></i> {{ post.commentNum }}</span>
+          <span title="收藏" style="margin-left:19px">
+<!--            <i class="el-icon-star-off" :class="{iconStarColor: isCollect}" @click="onCollect" ></i>-->
+<!--            <el-button type="text"><i class="el-icon-star-off" :class="{iconStarColor: isCollect}" @click="onCollect" ></i></el-button>-->
+            <button :disabled="isClick"><i class="el-icon-star-off" :class="{iconStarColor: isCollect}" style="cursor: pointer" @click="onCollect" ></i></button>
+            {{ post.collectNum }}
+          </span>
+          <span style="float: right" v-if="isPublishUser">
+            <el-button type="primary" size="small" @click="$router.push('/stucompla/editPost/'+post.postId)">修改</el-button>
+            <el-popconfirm
+
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除该帖吗？删除后所有相关信息将丢失，此操作不可恢复！"
+              style="padding-left: 10px"
+              @confirm="deletePost(post.postId)"
+            >
+                            <el-button  slot="reference" type="danger" size="small">删除</el-button>
+                          </el-popconfirm>
+<!--            <el-button type="danger" size="small" >删除</el-button>-->
+          </span>
+
           <el-divider><i class="el-icon-view"></i></el-divider>
           <article class="article" v-html="post.detail"></article>
           <el-divider>
@@ -60,10 +80,11 @@ export default {
   },
   data () {
     return {
-
+      isPublishUser: false,
       isCollect: false, // 默认未收藏
       isClick: false, // 默认不禁止
       post: {
+        postId: '',
         title: '',
         createTime: '',
         detail: '',
@@ -72,7 +93,8 @@ export default {
         viewNum: '',
         commentNum: '',
         collectNum: '',
-        commentList: undefined
+        commentList: undefined,
+        userId: undefined
       },
       commentForm: {
         postId: this.$route.params.id,
@@ -96,9 +118,7 @@ export default {
     }
   },
   created () {
-    this.getPostDetail()
-    this.checkCollect()
-    this.getCommentListFromPostId(this.news_path)
+    this.initThisPage()
   },
   mounted () {
     this.$store.commit('setHeaderLogo', {
@@ -136,6 +156,12 @@ export default {
     }
   },
   methods: {
+    async initThisPage () {
+      await this.getPostDetail()
+      await this.checkCollect()
+      this.getCommentListFromPostId(this.news_path)
+      this.checkPublishUser()
+    },
     createComment () {
       console.log(this.commentForm)
       if (this.$store.state.user.jwt) {
@@ -160,6 +186,20 @@ export default {
         })
       } else {
         this.dialogLoginVisible = true
+      }
+    },
+    checkPublishUser () {
+      if (this.$store.state.user.jwt) {
+        this.$http.get('/user/info').then(res => {
+          if (res.data.code !== 200) {
+
+          } else {
+            console.log(this.post.userId === res.data.data.userId)
+            console.log(res.data.data.userId)
+            console.log(this.post.userId)
+            this.isPublishUser = this.post.userId === res.data.data.userId
+          }
+        })
       }
     },
     // 检查是否收藏
@@ -212,6 +252,7 @@ export default {
               })
               this.isCollect = true
               this.isClick = false
+              this.post.collectNum++
             }
           })
         } else {
@@ -229,6 +270,7 @@ export default {
               })
               this.isCollect = false
               this.isClick = false
+              this.post.collectNum--
             }
           })
         }
@@ -238,25 +280,43 @@ export default {
     // 获取帖子信息
     getPostDetail () {
       // const { data: res } = await this.$http.get('/post/' + this.news_path)
-      this.$http.get('/post/' + this.news_path).then(res => {
-        // console.log('1访问后台完成')
-        // console.log(res.data)
+      return new Promise(resolve => {
+        this.$http.get('/post/' + this.news_path).then(res => {
+          // console.log('1访问后台完成')
+          // console.log(res.data)
+          if (res.data.code !== 200) {
+            // console.log(res)
+            this.$message.error('帖子不存在')
+            // 应该跳转一个提示不存在的页面
+          } else {
+            // this.$message.success('获取成功')
+            console.log(res.data.data.postId)
+            this.post.postId = res.data.data.postId
+            console.log(this.post.postId)
+            this.post.title = res.data.data.title
+            this.post.createTime = res.data.data.createTime
+            this.post.detail = res.data.data.detail
+            this.post.categoryName = res.data.data.category.categoryName
+            this.post.viewNum = res.data.data.viewNum
+            this.post.commentNum = res.data.data.commentNum
+            this.post.collectNum = res.data.data.collectNum
+            this.post.userId = res.data.data.user.userId
+
+            // category: res.data.category
+          }
+          resolve()
+          // console.log('1赋值完成·')
+        })
+      })
+    },
+    deletePost (postId) {
+      this.$http.delete('/post/' + postId).then(res => {
         if (res.data.code !== 200) {
-          // console.log(res)
-          this.$message.error('帖子不存在')
-          // 应该跳转一个提示不存在的页面
+          this.$message.error('删除失败')
         } else {
-          // this.$message.success('获取成功')
-          this.post.title = res.data.data.title
-          this.post.createTime = res.data.data.createTime
-          this.post.detail = res.data.data.detail
-          this.post.categoryName = res.data.data.category.categoryName
-          this.post.viewNum = res.data.data.viewNum
-          this.post.commentNum = res.data.data.commentNum
-          this.post.collectNum = res.data.data.collectNum
-          // category: res.data.category
+          this.$message.success('删除成功')
+          this.$router.back()
         }
-        // console.log('1赋值完成·')
       })
     },
     getCommentListFromPostId (postId) {

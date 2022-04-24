@@ -64,8 +64,8 @@
               </el-form-item>
               <el-form-item>
                 <el-button v-if="!isEdit" type="primary" @click="addGoods">一键上架</el-button>
-                <el-button v-if="isEdit" type="primary" @click="updateGoods">确定修改</el-button>
-
+                <el-button v-if="isEdit" type="primary" @click="updateGoods">确认修改</el-button>
+                <el-button @click="goBack">取消</el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -298,6 +298,9 @@ export default {
           }
         })
       }
+    },
+    goBack () {
+      this.$router.back()
     }
   }
 }

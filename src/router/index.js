@@ -41,9 +41,14 @@ const routes = [
         // ]
       },
       {
-        path: 'publishPost',
-        name: 'publishPost',
-        component: () => import('../views/web/publishPost')
+        path: 'createPost',
+        name: 'createPost',
+        component: () => import('../views/web/createPost')
+      },
+      {
+        path: 'editPost/:id',
+        name: 'editPost',
+        component: () => import('../views/web/editPost')
       },
       {
         path: 'myCenter',

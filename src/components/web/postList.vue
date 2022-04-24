@@ -17,7 +17,7 @@
               <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round"></i> {{
                   item.commentNum
                 }}</span>
-              <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off"></i> {{ item.collectNum }}</span>
+              <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off" @click="onCollect"></i> {{ item.collectNum }}</span>
             </div>
           </router-link>
         </el-card>
@@ -37,6 +37,9 @@ export default {
     }
   },
   methods: {
+    onCollect () {
+      console.log('1111111111111111111')
+    },
     setArticlePath (path) {
       console.log(path)
       this.$store.commit('SET_ARTICLE_PATH', {

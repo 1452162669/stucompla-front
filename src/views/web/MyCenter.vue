@@ -222,8 +222,10 @@
 
                       <el-card :body-style="{ padding: '5px'}" shadow="hover" class="el-card-goods">
                         <router-link :to="`/stucompla/goods/${item.goodsId}`">
-                        <img :src="`http://localhost:8086/image/${item.goodsImages[0]}`"
+                        <el-image :src="`http://localhost:8086/image/${item.goodsImages[0]}`"
                              class="image">
+
+                        </el-image>
                         </router-link>
                         <div style="padding: 5px;">
                           <span>{{ item.goodsName }}</span><br>
@@ -408,12 +410,15 @@ export default {
         this.Query.pageNum = 1
         switch (newVal) {
           case 'myPost':
+            this.getMyPostList()
             this.showList = this.myPostList
             break
           case 'myCollect':
+            this.getMyCollectList()
             this.showList = this.myCollectList
             break
           case 'myGoods':
+            this.getMyGoodsList()
             this.showList = this.myGoodsList
             break
         }

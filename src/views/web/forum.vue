@@ -96,7 +96,7 @@
       </div>
     </div>
     <div class="gb-sider" style="right: auto; display: block; left: 1333.5px;">
-      <router-link to="/stucompla/publishPost">
+      <router-link to="/stucompla/createPost">
         <!-- 如果没有登录，应该直接退出登录窗口，不跳转 -->
         <i class="el-icon-edit-outline" style="font-size: 30px"></i>发帖
       </router-link>

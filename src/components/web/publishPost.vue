@@ -1,7 +1,10 @@
 <template>
   <div style="padding-top: 80px;padding-left: 120px;padding-right: 160px;">
     <!--    <h3 style="margin: 30px 0 15px">发表新帖子</h3>-->
+    <h3 v-if="!isEdit" align="center">发布新帖</h3>
+    <h3 v-if="isEdit"  align="center">编辑帖子</h3>
     <el-form ref="form" :model="form" label-width="80px">
+
       <el-form-item label="标题">
         <el-input v-model="form.title"></el-input>
       </el-form-item>
@@ -24,12 +27,13 @@
       <!--      <br/>-->
       <!--      <br/>-->
       <el-form-item label="内容">
-        <MyEditor ref="MyEditor"></MyEditor>
+        <MyEditor ref="MyEditor" v-model="form.detail" @change="change"></MyEditor>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">立即发布</el-button>
-        <el-button>取消</el-button>
+        <el-button v-if="!isEdit" type="primary" @click="onSubmit">立即发布</el-button>
+        <el-button v-if="isEdit" type="primary" @click="updatePost">确认修改</el-button>
+        <el-button @click="goBack">取消</el-button>
       </el-form-item>
     </el-form>
 
@@ -37,7 +41,7 @@
 </template>
 
 <script>
-import MyEditor from '../../components/web/MyEditor'
+import MyEditor from './MyEditor'
 import axios from 'axios'
 
 export default {
@@ -45,9 +49,17 @@ export default {
   components: {
     MyEditor: MyEditor
   },
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    },
+    postId: Number
+  },
   data () {
     return {
       form: {
+        postId: undefined,
         title: '',
         categoryId: '',
         detail: '',
@@ -57,6 +69,33 @@ export default {
     }
   },
   methods: {
+    goBack () {
+      this.$router.back()
+    },
+    updatePost () {
+      console.log('图片：' + this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData))
+      this.form.images = this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData).toString()
+      this.form.detail = this.$refs.MyEditor.getEditorData()
+      console.log(this.form)
+      console.log(this.form.images)
+      this.form.postId = this.postId
+      this.$http.post('/post/edit', this.form).then(res => {
+        if (res.data.code !== 200) {
+          this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        } else {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+        }
+      })
+    },
+    change (val) {
+      this.form.detail = val
+    },
     onSubmit () {
       console.log('图片：' + this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData))
       this.form.images = this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData).toString()
@@ -99,8 +138,24 @@ export default {
       })
     }
   },
-  mounted () {
+  created () {
     this.getCategories()
+    if (this.isEdit) {
+      this.$http.get('/post/' + this.postId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+          // 应该跳转一个提示不存在的页面
+        } else {
+          // console.log(res.data.data)
+          var postVo = res.data.data
+          this.form.categoryId = postVo.category.categoryId
+          this.form.detail = postVo.detail
+          this.form.title = postVo.title
+        }
+      })
+    }
+  },
+  mounted () {
     this.$store.commit('setHeaderLogo', {
       headerLogoShow: false
     })
@@ -113,28 +168,28 @@ export default {
     this.$store.commit('setHeaderShow', {
       headerShow: false
     })
-  },
-  beforeRouteLeave (to, from, next) {
-    // 导航离开该组件的对应路由时调用
-    // 可以访问组件实例 `this`
-    if (to.name === 'index') {
-      this.$store.commit('setHeaderLogo', {
-        headerLogoShow: true
-      })
-      this.$store.commit('setShadowActive', {
-        headerShadowActive: false
-      })
-      this.$store.commit('setNavDarkActive', {
-        navDarkActive: false
-      })
-      this.$store.commit('setHeaderShow', {
-        headerShow: false
-      })
-      next()
-    } else {
-      next()
-    }
   }
+  // beforeRouteLeave (to, from, next) {
+  //   // 导航离开该组件的对应路由时调用
+  //   // 可以访问组件实例 `this`
+  //   if (to.name === 'index') {
+  //     this.$store.commit('setHeaderLogo', {
+  //       headerLogoShow: true
+  //     })
+  //     this.$store.commit('setShadowActive', {
+  //       headerShadowActive: false
+  //     })
+  //     this.$store.commit('setNavDarkActive', {
+  //       navDarkActive: false
+  //     })
+  //     this.$store.commit('setHeaderShow', {
+  //       headerShow: false
+  //     })
+  //     next()
+  //   } else {
+  //     next()
+  //   }
+  // }
 }
 </script>
 

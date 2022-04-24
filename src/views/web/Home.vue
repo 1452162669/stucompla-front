@@ -113,7 +113,8 @@ export default {
         username: '',
         password: '',
         secondPassword: ''// 补上其他属性
-      }
+      },
+      userId: undefined
     }
   },
   methods: {
