@@ -219,13 +219,9 @@
                     <el-empty description="暂无商品" :image-size="300"></el-empty>
                   </el-col>
                   <el-col :span="5"  v-for="(item,index) in myGoodsList.goodsList" :key="item.goodsId" :offset="index%4===0?2:0">
-
                       <el-card :body-style="{ padding: '5px'}" shadow="hover" class="el-card-goods">
                         <router-link :to="`/stucompla/goods/${item.goodsId}`">
-                        <el-image :src="`http://localhost:8086/image/${item.goodsImages[0]}`"
-                             class="image">
-
-                        </el-image>
+                          <el-image :src="`http://localhost:8086/image/${item.goodsImages[0]}`" class="image"></el-image>
                         </router-link>
                         <div style="padding: 5px;">
                           <span>{{ item.goodsName }}</span><br>
@@ -257,33 +253,104 @@
                 label="我的订单"
                 name="myOrder"
               >
-                <div
-                  v-for="(item,index) in bindAccount"
-                  :key="index"
-                  class="account-binding"
-                >
-                  <svg-icon
-                    :icon-class="item.icon"
-                    class-name="binding-icon"
-                  />
-                  <div class="account-binding-content">
-                    <p>{{ item.desc }}</p>
-                    <p v-if="item.accountId">
-                      {{ item.accountId }}
-                    </p>
-                    <p v-else>
-                      当前账号未{{ item.desc }}账号
-                    </p>
-                  </div>
-                  <el-button
-                    type="primary"
-                    plain
-                    round
-                    size="small"
-                  >
-                    更换绑定
-                  </el-button>
+                <div align="center" v-loading="loading" element-loading-text="加载中...">
+                  <ul class="news-list-items" v-if="myOrderList.orderList.length">
+                    <li class="news-list-item" v-for="(item,index) in myOrderList.orderList"
+                        :key="index"
+                        style="padding: 0 10px 10px 0;">
+                      <el-card shadow="hover" style="width: 700px" >
+<!--                        <router-link :to="`/stucompla/post/${item.postId}`">-->
+                          <!--          <router-link :to="{name:'postDetail',params:{id: item.postId}}">-->
+                          <!--<div class = "item-mask"></div>-->
+<!--                        <div slot="header" align="left">-->
+<!--                          -->
+<!--&lt;!&ndash;                          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>&ndash;&gt;-->
+<!--                        </div>-->
+                        <el-row>
+                          <div align="left" style="padding-bottom: 10px">
+                          <span >
+                            订单号：
+                            <router-link :to="`/stucompla/post/${item.postId}`">
+<!--                              这里应该跳转订单详情页-->
+                              {{item.orderId}}
+                            </router-link>
+                            <!--                            <a @click="orderDetail(item.orderId)"></a>-->
+                          </span>
+                          <span style="float: right;color: #f84521">{{getOrderStatus(item.orderStatus)}}</span>
+                          </div>
+                        </el-row>
+                        <el-row>
+                          <el-col :span="7">
+                            <router-link :to="`/stucompla/post/${item.goods.postId}`">
+                              <img style="width: 100%;border-radius: 5px" :src="`http://localhost:8086/image/${item.goods.goodsImages[0]}`" alt="">
+                            </router-link>
+                          </el-col>
+                          <el-col :span="9" :offset="1" align="left">
+                              <h3 style="margin: 0 0 8px 0" class="single-show">{{ item.goods.goodsName }}</h3>
+                              <p style="margin: 0 0 8px 0" class="single-show">备注：{{  }}</p>
+                            <p style="margin: 0 0 8px 0">创建时间：{{item.createTime}}</p>
+                          </el-col>
+                          <el-col :span="7" align="right">
+                            <h3 style="margin: 0 0 8px 0">￥{{item.goods.goodsPrice}}</h3>
+                            <p style="margin: 0 0 8px 0">x{{item.buyCount}}</p>
+                            <h3 style="color: #f84521;margin: 0 0 8px 0">￥{{ item.totalPrice }}</h3>
+                            <div align="right">
+                              <el-button type="primary"
+                                         size="small"
+                                         v-if="item.orderStatus===0"
+                                         @click="handlePay(item.orderId,index)">立即支付</el-button>
+                              <el-button type="primary"
+                                         size="small"
+                                         v-if="item.orderStatus===2"
+                                         @click="handleReceipt(item.orderId,index)">确认签收</el-button>
+                              <el-popconfirm
+                                icon="el-icon-info"
+                                icon-color="red"
+                                title="确定删除该订单？"
+                                style="padding-left: 10px"
+                                @confirm="deleteOrder(item.orderId,i)"
+                                v-if="item.orderStatus===5"
+                              >
+                                <el-button slot="reference"
+                                           type="danger"
+                                           size="small"
+                                           align="right">删除订单</el-button>
+                              </el-popconfirm>
+
+                            </div>
+                          </el-col>
+                        </el-row>
+<!--                        <el-row >-->
+<!--                          <div align="right">-->
+<!--                          <el-button type="primary"-->
+<!--                                     size="small"-->
+<!--                                     v-if="item.orderStatus===0"-->
+<!--                                     @click="handlePay(item.orderId,index)">立即支付</el-button>-->
+<!--                          <el-popconfirm-->
+<!--                            icon="el-icon-info"-->
+<!--                            icon-color="red"-->
+<!--                            title="确定删除该订单？"-->
+<!--                            style="padding-left: 10px"-->
+<!--                            @confirm="deleteOrder(item.orderId,i)"-->
+<!--                          >-->
+<!--                            <el-button slot="reference"-->
+<!--                                       type="danger"-->
+<!--                                       size="small"-->
+<!--                                       align="right">删除订单</el-button>-->
+<!--                          </el-popconfirm>-->
+
+<!--                          </div>-->
+<!--                        </el-row>-->
+
+<!--                          <img :src="item.cover_img" alt="">-->
+
+<!--                        </router-link>-->
+                      </el-card>
+                    </li>
+                  </ul>
+                  <span class="is-null" v-else >你还没有创建订单</span>
                 </div>
+
               </el-tab-pane>
               <el-pagination
                 class="pagination"
@@ -310,6 +377,7 @@
 // import { uploadFile } from '@/api/file'
 // import { getInfoById, updateAccount } from '@/api/user'
 import PostList from '../../components/web/postList'
+import login from './login'
 
 export default {
   name: 'Index',
@@ -318,6 +386,7 @@ export default {
   },
   data () {
     return {
+      loading: true,
       currentMenu: 'userInfo',
       labelPosition: 'right',
       basicInfo: {
@@ -398,6 +467,13 @@ export default {
         pages: '',
         goodsList: [],
         total: ''
+      },
+      myOrderList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        orderList: [],
+        total: ''
       }
     }
   },
@@ -420,6 +496,10 @@ export default {
           case 'myGoods':
             this.getMyGoodsList()
             this.showList = this.myGoodsList
+            break
+          case 'myOrder':
+            this.getMyOrderList()
+            this.showList = this.myOrderList
             break
         }
       }
@@ -467,6 +547,7 @@ export default {
         this.getMyPostList()
         this.getMyCollectList()
         this.getMyGoodsList()
+        this.getMyOrderList()
       }
     },
     // handleTabsClick (tab, event) {
@@ -541,7 +622,69 @@ export default {
     },
     // 获取我的订单列表
     getMyOrderList () {
-
+      this.$http.get('/market-order/myOrder', {
+        params: this.Query
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.myOrderList = undefined
+        } else {
+          console.log(res.data.data)
+          this.myOrderList = res.data.data
+          this.myOrderList.orderList.forEach(function (item) {
+            item.goods.goodsImages = item.goods.goodsImages.split(',')
+          })
+          this.loading = false
+        }
+      })
+    },
+    orderDetail (orderId) {
+      // this.$router.push({
+      //   path: 'orderDetail',
+      //   query: {
+      //     orderId: orderId
+      //   }
+      // })
+    },
+    deleteOrder (orderId, index) {
+      this.$http.delete('/market-order/' + orderId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          // 删除成功 从列表中移除
+          this.myOrderList.orderList.splice(index, 1)
+        }
+      })
+    },
+    handlePay (orderId, index) {
+      // 更改订单状态为’1‘-“已支付”    假支付
+      this.$http.post('/market-order/payOrder/' + orderId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getMyOrderList()
+        }
+      })
+    },
+    handleReceipt () {
+      console.log('这里写签收相关操作')
+    },
+    getOrderStatus (status) {
+      console.log(status)
+      if (status === 0) {
+        return '待支付'
+      } else if (status === 1) {
+        return '待发货'
+      } else if (status === 2) {
+        return '待签收'
+      } else if (status === 3) {
+        return '已签收'
+      } else if (status === 4) {
+        return '已退货'
+      } else if (status === 5) {
+        return '订单完成'
+      }
     },
     // 帖子列表页码切换
     handleCurrentChange (val) {
@@ -555,6 +698,9 @@ export default {
           break
         case 'myGoods':
           this.getMyGoodsList()
+          break
+        case 'myOrder':
+          this.getMyOrderList()
           break
       }
     },
@@ -774,5 +920,20 @@ export default {
 
 .binding-icon {
   font-size: 40px;
+}
+
+.is-null {
+  display: flex;
+  justify-content: center;
+  margin-top: 45px;
+  color: #777
+}
+
+.single-show{
+  white-space:nowrap;/*强制单行显示*/
+  text-overflow:ellipsis;/*超出部分省略号表示*/
+  overflow:hidden;/*超出部分隐藏*/
+  width: 100%;/*设置显示的最大宽度*/
+  display:inline-block;
 }
 </style>

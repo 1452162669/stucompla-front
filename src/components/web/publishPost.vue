@@ -144,6 +144,7 @@ export default {
       this.$http.get('/post/' + this.postId).then(res => {
         if (res.data.code !== 200) {
           this.$message.error(res.data.msg)
+          this.$router.push('/stucompla/forum')
           // 应该跳转一个提示不存在的页面
         } else {
           // console.log(res.data.data)
