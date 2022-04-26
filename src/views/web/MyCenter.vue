@@ -352,19 +352,25 @@
                 </div>
 
               </el-tab-pane>
-              <el-pagination
-                class="pagination"
-                background
-                @current-change="handleCurrentChange"
-                :current-page.sync="Query.pageNum"
-                :page-size="Query.pageSize"
-                layout="prev, pager, next, jumper"
-                :total="showList.total"
-                :hide-on-single-page="singlePage"
-                v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"
-                v-if="currentMenu!=='userInfo'"
-              align="center">
-              </el-pagination>
+              <el-tab-pane
+                label="销售订单"
+                name="mySalesOrders"
+              >
+                <router-view></router-view>
+              </el-tab-pane>
+<!--              <el-pagination-->
+<!--                class="pagination"-->
+<!--                background-->
+<!--                @current-change="handleCurrentChange"-->
+<!--                :current-page.sync="Query.pageNum"-->
+<!--                :page-size="Query.pageSize"-->
+<!--                layout="prev, pager, next, jumper"-->
+<!--                :total="showList.total"-->
+<!--                :hide-on-single-page="singlePage"-->
+<!--                v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"-->
+<!--                v-if="currentMenu!=='userInfo'"-->
+<!--              align="center">-->
+<!--              </el-pagination>-->
             </el-tabs>
           </el-card>
         </el-col>
@@ -377,7 +383,6 @@
 // import { uploadFile } from '@/api/file'
 // import { getInfoById, updateAccount } from '@/api/user'
 import PostList from '../../components/web/postList'
-import login from './login'
 
 export default {
   name: 'Index',
@@ -474,6 +479,13 @@ export default {
         pages: '',
         orderList: [],
         total: ''
+      },
+      mySalesOrderList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        orderList: [],
+        total: ''
       }
     }
   },
@@ -500,6 +512,11 @@ export default {
           case 'myOrder':
             this.getMyOrderList()
             this.showList = this.myOrderList
+            break
+          case 'mySalesOrders':
+            this.$router.push('/stucompla/myCenter/mySalesOrders')
+            // this.getMySalesOrders()
+            // this.showList = this.mySalesOrderList
             break
         }
       }
@@ -548,6 +565,7 @@ export default {
         this.getMyCollectList()
         this.getMyGoodsList()
         this.getMyOrderList()
+        // this.getMySalesOrders()
       }
     },
     // handleTabsClick (tab, event) {
@@ -637,6 +655,23 @@ export default {
         }
       })
     },
+    // getMySalesOrders () {
+    //   this.$router.push('/stucompla/myCenter/mySalesOrders')
+    //   // this.$http.get('/market-order/mySalesOrders', {
+    //   //   params: this.Query
+    //   // }).then(res => {
+    //   //   if (res.data.code !== 200) {
+    //   //     this.mySalesOrderList = undefined
+    //   //   } else {
+    //   //     console.log(res.data.data)
+    //   //     this.mySalesOrderList = res.data.data
+    //   //     this.mySalesOrderList.orderList.forEach(function (item) {
+    //   //       item.goods.goodsImages = item.goods.goodsImages.split(',')
+    //   //     })
+    //   //     // this.loading = false
+    //   //   }
+    //   // })
+    // },
     orderDetail (orderId) {
       // this.$router.push({
       //   path: 'orderDetail',
@@ -667,8 +702,16 @@ export default {
         }
       })
     },
-    handleReceipt () {
-      console.log('这里写签收相关操作')
+    handleReceipt (orderId, index) {
+      this.$http.post('/market-order/receipt/' + orderId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getMyOrderList()
+        }
+      })
+      // console.log('这里写签收相关操作')
     },
     getOrderStatus (status) {
       console.log(status)
@@ -702,6 +745,9 @@ export default {
         case 'myOrder':
           this.getMyOrderList()
           break
+        // case 'mySalesOrders':
+        //   this.getMySalesOrders()
+        //   break
       }
     },
     deleteGoods (goodsId) {

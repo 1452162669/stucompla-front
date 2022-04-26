@@ -5,13 +5,13 @@ import index from '../views/web/index'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/index',
-    redirect: '/stucompla/index'
-  },
+  // {
+  //   path: '/index',
+  //   redirect: '/stucompla/index'
+  // },
   {
     path: '/',
-    redirect: '/index'
+    redirect: '/stucompla/index'
   },
   {
     path: '/refresh',
@@ -53,7 +53,14 @@ const routes = [
       {
         path: 'myCenter',
         name: 'myCenter',
-        component: () => import('../views/web/myCenter')
+        component: () => import('../views/web/myCenter'),
+        children: [
+          {
+            path: 'mySalesOrders',
+            name: 'mySalesOrders',
+            component: () => import('../views/web/mySalesOrders')
+          }
+        ]
       },
       {
         path: 'post/:id',
