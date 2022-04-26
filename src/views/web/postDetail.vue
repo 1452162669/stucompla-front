@@ -54,6 +54,22 @@
             :autosize="{ minRows: 2, maxRows: 8}"
             placeholder="友善评论，文明发言"
           />
+          <el-upload
+            action="http://localhost:8086/image/upload"
+            :headers="myHeader"
+            name="files"
+            :limit='1'
+            :before-upload="beforeUpload"
+            list-type="picture-card"
+            :on-success="handleSuccess"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-exceed="handleExceed">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogImageVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
           <el-button type="primary" plain @click="createComment()">评论</el-button>
         </div>
         <comment-list :items="post.commentList" v-if='post.commentList!==undefined'></comment-list>
@@ -69,6 +85,7 @@
 <script>
 import HotNews from '../../components/web/hotNews'
 import CommentList from '../../components/web/commentList'
+import { getToken } from '../../utils/auth'
 
 export default {
   name: 'postDetail',
@@ -80,6 +97,7 @@ export default {
   },
   data () {
     return {
+      isLogin: false,
       isPublishUser: false,
       isCollect: false, // 默认未收藏
       isClick: false, // 默认不禁止
@@ -101,7 +119,13 @@ export default {
         parentId: undefined,
         text: '',
         images: undefined
-      }
+      },
+      myHeader: {
+        Authorization: getToken() // 这里应该监控jwt的变化，不然只获取到第一次，后面不会变（可以用计算属性)
+      },
+      newimgArray: [],
+      dialogImageVisible: false,
+      dialogImageUrl: ''
     }
   },
   computed: {
@@ -156,7 +180,14 @@ export default {
     }
   },
   methods: {
+    getLoginState () {
+      return new Promise(resolve => {
+        this.isLogin = this.$store.state.user.jwt !== undefined
+        resolve()
+      })
+    },
     async initThisPage () {
+      await this.getLoginState()
       await this.getPostDetail()
       await this.checkCollect()
       this.getCommentListFromPostId(this.news_path)
@@ -165,6 +196,7 @@ export default {
     createComment () {
       console.log(this.commentForm)
       if (this.$store.state.user.jwt) {
+        this.commentForm.images = this.newimgArray.toString()
         this.$http.post('/comment/create', this.commentForm).then(res => {
           if (res.data.code !== 200) {
             this.$message({
@@ -333,6 +365,52 @@ export default {
         }
         // console.log('2访问完成。赋值完成。')
       })
+    },
+    beforeUpload (file) {
+      return new Promise((resolve, reject) => {
+        if (this.isLogin) {
+          resolve()
+        } else {
+          this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: !this.isLogin })
+          reject(new Error('未登录'))
+        }
+      })
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+      const url = file.response.data[0].replace('http://localhost:8086/image/', '')
+      const paths = url.split('_')
+      const idValue = paths[1].split('.')[0] // 取id 1495352086701932544
+      this.$http.delete('/image/' + idValue).then(res => {
+        if (res.data.code !== 200) {
+
+        } else {
+          console.log(res.data.data)
+        }
+      })
+      const urlIndex = this.newimgArray.indexOf(url)
+      this.newimgArray.splice(urlIndex, 1)
+      console.log(this.newimgArray)
+    },
+    handleSuccess (response, file, fileList) {
+      console.log(response)
+      console.log(file)
+      console.log(fileList)
+      if (response.code === 200) {
+        for (var j = 0; j < response.data.length; j++) {
+          this.newimgArray.push(response.data[j].replace('http://localhost:8086/image/', ''))
+        }
+        console.log(this.newimgArray)
+      } else {
+        alert(response.msg)
+      }
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogImageVisible = true
+    },
+    handleExceed (files, fileList) {
+      this.$message.error('只能上传一张图片')
     }
   }
 }
