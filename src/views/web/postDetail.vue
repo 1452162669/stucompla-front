@@ -128,6 +128,13 @@ export default {
       dialogImageUrl: ''
     }
   },
+  watch: {
+    news_path: {
+      handler (newVal, oldVal) {
+        this.initThisPage()
+      }
+    }
+  },
   computed: {
     news_path () {
       return this.$route.params.id

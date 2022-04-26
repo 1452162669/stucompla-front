@@ -176,33 +176,7 @@
                 label="我的回复"
                 name="myComment"
               >
-                <div
-                  v-for="(item,index) in bindAccount"
-                  :key="index"
-                  class="account-binding"
-                >
-                  <svg-icon
-                    :icon-class="item.icon"
-                    class-name="binding-icon"
-                  />
-                  <div class="account-binding-content">
-                    <p>{{ item.desc }}</p>
-                    <p v-if="item.accountId">
-                      {{ item.accountId }}
-                    </p>
-                    <p v-else>
-                      当前账号未{{ item.desc }}账号
-                    </p>
-                  </div>
-                  <el-button
-                    type="primary"
-                    plain
-                    round
-                    size="small"
-                  >
-                    更换绑定
-                  </el-button>
-                </div>
+                <comment-list :items="myCommentList.comments" :is-my-center=true ></comment-list>
               </el-tab-pane>
               <el-tab-pane
                 label="我的收藏"
@@ -358,19 +332,19 @@
               >
                 <router-view></router-view>
               </el-tab-pane>
-<!--              <el-pagination-->
-<!--                class="pagination"-->
-<!--                background-->
-<!--                @current-change="handleCurrentChange"-->
-<!--                :current-page.sync="Query.pageNum"-->
-<!--                :page-size="Query.pageSize"-->
-<!--                layout="prev, pager, next, jumper"-->
-<!--                :total="showList.total"-->
-<!--                :hide-on-single-page="singlePage"-->
-<!--                v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"-->
-<!--                v-if="currentMenu!=='userInfo'"-->
-<!--              align="center">-->
-<!--              </el-pagination>-->
+              <el-pagination
+                class="pagination"
+                background
+                @current-change="handleCurrentChange"
+                :current-page.sync="Query.pageNum"
+                :page-size="Query.pageSize"
+                layout="prev, pager, next, jumper"
+                :total="showList.total"
+                :hide-on-single-page="singlePage"
+                v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"
+                v-if="currentMenu!=='userInfo'"
+              align="center">
+              </el-pagination>
             </el-tabs>
           </el-card>
         </el-col>
@@ -383,11 +357,13 @@
 // import { uploadFile } from '@/api/file'
 // import { getInfoById, updateAccount } from '@/api/user'
 import PostList from '../../components/web/postList'
+import commentList from '../../components/web/commentList'
 
 export default {
   name: 'Index',
   components: {
-    PostList
+    PostList,
+    commentList
   },
   data () {
     return {
@@ -451,7 +427,8 @@ export default {
         pageNum: 1,
         pageSize: 8
       },
-      showList: {},
+      showList: {
+      },
       myPostList: {
         current: '',
         pageSize: '',
@@ -486,6 +463,13 @@ export default {
         pages: '',
         orderList: [],
         total: ''
+      },
+      myCommentList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        comments: [],
+        total: ''
       }
     }
   },
@@ -499,19 +483,19 @@ export default {
         switch (newVal) {
           case 'myPost':
             this.getMyPostList()
-            this.showList = this.myPostList
+            break
+          case 'myComment':
+            this.getMyCommentList()
+            // console.log('我是', this.showList)
             break
           case 'myCollect':
             this.getMyCollectList()
-            this.showList = this.myCollectList
             break
           case 'myGoods':
             this.getMyGoodsList()
-            this.showList = this.myGoodsList
             break
           case 'myOrder':
             this.getMyOrderList()
-            this.showList = this.myOrderList
             break
           case 'mySalesOrders':
             this.$router.push('/stucompla/myCenter/mySalesOrders')
@@ -559,15 +543,48 @@ export default {
   methods: {
     async getMyAll () {
       await this.getAccountInfo()
-      console.log(this.basicInfo.userId)
-      if (this.basicInfo.userId !== undefined) {
-        this.getMyPostList()
-        this.getMyCollectList()
-        this.getMyGoodsList()
-        this.getMyOrderList()
-        // this.getMySalesOrders()
-      }
+      // console.log(this.basicInfo.userId)
+      // if (this.basicInfo.userId !== undefined) {
+      //   this.getMyPostList()
+      //   this.getMyCollectList()
+      //   this.getMyGoodsList()
+      //   this.getMyOrderList()
+      //   // this.getMySalesOrders()
+      // }
     },
+    // async changeBefore (activeName, oldActiveName) {
+    //   this.Query.pageNum = 1
+    //   console.log(activeName)
+    //   switch (activeName) {
+    //     case 'myPost':
+    //       this.getMyPostList()
+    //       this.showList = this.myPostList
+    //       break
+    //     case 'myComment':
+    //       await this.getMyCommentList()
+    //       // console.log(this.myCommentList)
+    //       this.showList = this.myCommentList
+    //       break
+    //     case 'myCollect':
+    //       this.getMyCollectList()
+    //       this.showList = this.myCollectList
+    //       break
+    //     case 'myGoods':
+    //       this.getMyGoodsList()
+    //       this.showList = this.myGoodsList
+    //       break
+    //     case 'myOrder':
+    //       this.getMyOrderList()
+    //       this.showList = this.myOrderList
+    //       break
+    //     case 'mySalesOrders':
+    //       this.$router.push('/stucompla/myCenter/mySalesOrders')
+    //       // this.getMySalesOrders()
+    //       // this.showList = this.mySalesOrderList
+    //       break
+    //   }
+    //   return true
+    // },
     // handleTabsClick (tab, event) {
     //   if (tab.name === 'myPost') {
     //     this.showList = this.myPostList
@@ -600,12 +617,23 @@ export default {
         } else {
           console.log(res.data.data)
           this.myPostList = res.data.data
+          this.showList = this.myPostList
         }
       })
     },
     // 获取我的评论列表
-    getMyCommentList () {
-
+    async getMyCommentList () {
+      await this.$http.get('/comment/myList/' + this.Query.pageNum + '/' + this.Query.pageSize).then(res => {
+        // console.log(res.data)
+        if (res.data.code !== 200) {
+          this.myCommentList = undefined
+        } else {
+          this.myCommentList = res.data.data
+          this.showList = this.myCommentList
+          console.log('我是myCommentList')
+          console.log(this.myCommentList)
+        }
+      })
     },
     // 获取我的收藏列表
     getMyCollectList () {
@@ -618,6 +646,7 @@ export default {
         } else {
           console.log(res.data.data)
           this.myCollectList = res.data.data
+          this.showList = this.myCollectList
         }
       })
     },
@@ -635,6 +664,7 @@ export default {
           this.myGoodsList.goodsList.forEach(function (item) {
             item.goodsImages = item.goodsImages.split(',')
           })
+          this.showList = this.myGoodsList
         }
       })
     },
@@ -651,6 +681,7 @@ export default {
           this.myOrderList.orderList.forEach(function (item) {
             item.goods.goodsImages = item.goods.goodsImages.split(',')
           })
+          this.showList = this.myOrderList
           this.loading = false
         }
       })
@@ -735,6 +766,9 @@ export default {
       switch (this.currentMenu) {
         case 'myPost':
           this.getMyPostList()
+          break
+        case 'myComment':
+          this.getMyCommentList()
           break
         case 'myCollect':
           this.getMyCollectList()

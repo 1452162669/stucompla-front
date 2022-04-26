@@ -36,11 +36,11 @@
 <!--    注册弹窗-->
     <el-dialog title="欢迎注册" :visible.sync="dialogRegisterVisible" :modal-append-to-body="false" :lock-scroll="false"
                width="25%" :center="true" :show-close="false">
-      <el-form :model="loginForm">
+      <el-form :model="regForm">
         <el-form-item label="">
           <el-input
             placeholder="用户名"
-            v-model="loginForm.username"
+            v-model="regForm.username"
             prefix-icon="el-icon-user">
           </el-input>
         </el-form-item>
@@ -48,7 +48,7 @@
           <el-input
             type="password"
             placeholder="密码"
-            v-model="loginForm.password"
+            v-model="regForm.password"
             prefix-icon="el-icon-lock">
           </el-input>
         </el-form-item>
@@ -56,14 +56,14 @@
           <el-input
             type="password"
             placeholder="重复密码"
-            v-model="loginForm.password"
+            v-model="regForm.secondPassword"
             prefix-icon="el-icon-lock"
             @keyup.enter.native="handleRegister">
           </el-input>
         </el-form-item>
 
         <el-form-item align="center">
-          <el-button type="primary" @click.native="handleLogin()">登录</el-button>
+<!--          <el-button type="primary" @click.native="handleLogin()">登录</el-button>-->
           <el-button type="danger" onclick="">注册</el-button>
         </el-form-item>
       </el-form>

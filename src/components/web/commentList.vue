@@ -16,13 +16,14 @@
               <h3 style="margin: 10px 0 5px 0">{{ item.user.username }}  </h3>
               <p style="margin: 0 0 0px 0;font-size: 15px"><i class="el-icon-s-promotion"></i>{{ item.createTime }}</p>
             </el-col>
-            <el-col :span="5" align="right">
+            <el-col :span="5" align="right" v-if="!isMyCenter">
               <span style="padding-right: 20px;color: #c59d85">{{items.length-index}}楼</span>
               <el-popover
                 placement="right"
                 :title="`回复 ${item.user.username}`"
                 width="200"
-                trigger="click">
+                trigger="click"
+              >
                 <el-form
                   label-position="right"
                   label-width="45px"
@@ -58,7 +59,8 @@
             </el-col>
           </el-row>
           <div class="item-content" >
-            <div style="background-color: #f1f0f0;border-radius: 5px;padding: 5px 10px 5px 10px" v-if="item.parentCommentVo!==null" >
+            <div style="background-color: #f1f0f0;border-radius: 5px;padding: 5px 10px 5px 10px"
+                 v-if="item.parentCommentVo!==null" >
               <p style="margin: 5px 0 5px 0">回复 {{item.parentCommentVo.user.username}}</p>
               <p style="margin: 5px 0 5px 0">{{item.parentCommentVo.text}}</p>
             </div>
@@ -68,6 +70,11 @@
               v-if="item.images!==null"
               :src="`http://localhost:8086/image/${item.images}`"
               fit="fill"></el-image>
+            <div style="background-color: #f1f0f0;border-radius: 5px;padding: 5px 10px 5px 10px"
+                 v-if="isMyCenter" >
+              <p style="margin: 5px 0 5px 0">原贴：{{item.postVo.title}}</p>
+              <p style="margin: 5px 0 5px 0">分类：{{item.postVo.category.categoryName}}</p>
+            </div>
           </div>
         </el-card>
       </li>
@@ -82,7 +89,13 @@ import { getToken } from '../../utils/auth'
 
 export default {
   name: 'commentList',
-  props: ['items'],
+  props: {
+    items: Array,
+    isMyCenter: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       currentPage: 1,

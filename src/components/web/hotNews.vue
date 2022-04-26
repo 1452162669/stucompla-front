@@ -1,12 +1,12 @@
 <template>
   <el-card class="hot-news">
     <h3 class="hot-title">热门帖子</h3>
-    <ul class="hot-list" v-if="hotNews.length!==0">
-      <li class="hot-list-item" v-for="(item,index) in hotNews" :key="index">
+    <ul class="hot-list" v-if="hotPosts.length!==0">
+      <li class="hot-list-item" v-for="(item,index) in hotPosts" :key="index">
         <span class="num-top">{{ index + 1 }}</span>
         <p>
-          <router-link :to="`/news/${item.news_path}`">{{ item.news_title }}</router-link>
-          <span class="hot-date">{{ item.publish_time }}</span>
+          <router-link :to="`/stucompla/post/${item.postId}`">{{ item.title }}</router-link>
+          <span class="hot-date">{{ item.createTime }}</span>
         </p>
       </li>
     </ul>
@@ -20,16 +20,30 @@ export default {
   data () {
     return {
       //  热门新闻列表
-      hotNews: []
+      hotPosts: []
     }
   },
   created () {
-    this.getHotNews()
+    this.getHotPosts()
   },
   methods: {
     // 获取热门新闻
-    async getHotNews () {
-      //   const { data: res } = await this.$http.get('/web/hotnews')
+    async getHotPosts () {
+      const { data: res } = await this.$http.get('/post/list', {
+        params: {
+          sort: '-view_num',
+          pageNum: 1,
+          pageSize: 11
+        }
+      })
+      console.log(res)
+      if (res.code !== 200) {
+        this.hotPosts = []
+      } else {
+        // this.$message.success('获取成功')
+        this.hotPosts = res.data.postList
+      }
+      // const { data: res } = await this.$http.get('/web/hotnews')
       //   if (res.status !== 200) {
       //     this.hotNews = []
       //   } else {
