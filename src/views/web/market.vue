@@ -140,7 +140,11 @@ export default {
     },
     handleSearch () {
       this.$http.get('/goods/getList', {
-        params: { keyName: this.keyName, goodsCategoryId: this.currentCategoryId }
+        params: {
+          keyName: this.keyName,
+          goodsCategoryId: this.currentCategoryId,
+          goodsStatus: true
+        }
       }).then(res => {
         if (res.data.code !== 200) {
 
@@ -177,7 +181,10 @@ export default {
       this.currentCategoryName = categoryName
       this.currentCategoryId = goodsCategoryId
       this.$http.get('/goods/getList', {
-        params: { goodsCategoryId: goodsCategoryId }
+        params: {
+          goodsCategoryId: goodsCategoryId,
+          goodsStatus: true
+        }
       }).then(res => {
         if (res.data.code !== 200) {
 

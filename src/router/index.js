@@ -63,6 +63,11 @@ const routes = [
         ]
       },
       {
+        path: 'myMessage',
+        name: 'myMessage',
+        component: () => import('../views/web/myMessage')
+      },
+      {
         path: 'post/:id',
         name: 'postDetail',
         component: () => import('../views/web/postDetail.vue')

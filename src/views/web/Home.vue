@@ -121,9 +121,9 @@ export default {
     viewLogin () {
       this.dialogLoginVisible = true
     },
-    handleLogin () {
+    async handleLogin () {
       // 要优化
-      this.$http.post('/user/login/', this.loginForm).then(res => {
+      await this.$http.post('/user/login/', this.loginForm).then(res => {
         console.log(res.data)
         if (res.data.code !== 200) {
           this.$message({
@@ -144,6 +144,15 @@ export default {
               t: Date.now()
             }
           })
+        }
+        // console.log('2访问完成。赋值完成。')
+      })
+      await this.$http.post('/letter/myUnReadTotal/').then(res => {
+        console.log(res.data)
+        if (res.data.code !== 200) {
+
+        } else {
+          this.$store.dispatch('user/setUnReadTotal', res.data.data)
         }
         // console.log('2访问完成。赋值完成。')
       })

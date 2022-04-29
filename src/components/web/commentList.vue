@@ -8,9 +8,18 @@
             <el-col :span="2">
               <el-avatar
                 :size="60"
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                v-if="item.user.avatar===null||item.user.avatar.length===0"
+                :src="require('../../assets/img/defaultAvatar.png')"
                 fit="scale-down"
               />
+              <el-avatar
+                :size="60"
+                v-else
+                :src="`http://localhost:8086/image/${item.user.avatar}`"
+                fit="scale-down"
+              ></el-avatar>
+<!--              <el-avatar :style="`background:${getColorByName('item.user.username')}`"> {{ item.user.username }} </el-avatar>-->
+
             </el-col>
             <el-col :span="17">
               <h3 style="margin: 10px 0 5px 0">{{ item.user.username }}  </h3>
@@ -51,7 +60,7 @@
                   <el-dialog :visible.sync="dialogImageVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
-                  <el-button type="primary" plain @click="reply(item.postId,item.commentId)">评论</el-button>
+                  <el-button type="primary" plain @click="reply(item.postId,item.commentId)">回复</el-button>
                 </el-form>
                 <el-button  type="primary" plain size="mini" style="margin: 10px 0 5px 0"
                             slot="reference">回复</el-button>
@@ -116,6 +125,14 @@ export default {
   created () {
   },
   methods: {
+    getColorByName (userName) {
+      var temp = []
+      temp.push('#')
+      for (let index = 0; index < userName.length; index++) {
+        temp.push(parseInt(userName[index].charCodeAt(0), 10).toString(16))
+      }
+      return temp.slice(0, 5).join('').slice(0, 4)
+    },
     reply (postId, commentId) {
       console.log(this.replyForm)
       if (this.$store.state.user.jwt) {

@@ -32,14 +32,24 @@
           <span>{{ row.orderId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="买家ID" align="left">
+      <el-table-column label="买家ID" align="left" width="70">
         <template slot-scope="{row}">
           <span>{{ row.buyer.userId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品ID" align="left" >
+      <el-table-column label="商品ID" align="left" width="70">
         <template slot-scope="{row}">
-          <span>{{ row.goods.goodsId }}</span>
+          <span>{{ row.goodsId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商品名" align="left" >
+        <template slot-scope="{row}">
+          <span>{{ row.goodsName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="单价" align="left" width="60">
+        <template slot-scope="{row}">
+          <span>{{ row.goodsPrice }}</span>
         </template>
       </el-table-column>
       <el-table-column label="购买数量" align="left">
@@ -207,8 +217,8 @@ export default {
         } else {
           this.list = res.data.data.orderList
           this.list.forEach(function (item) {
-            if (item.goods.goodsImages !== null) {
-              item.goods.goodsImages = item.goods.goodsImages.split(',')
+            if (item.goodsImages !== null) {
+              item.goodsImages = item.goodsImages.split(',')
             }
           })
           // console.log(this.list)

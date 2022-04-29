@@ -37,14 +37,15 @@
                 <router-link to="/stucompla/myCenter">
                   <el-dropdown-item>个人中心</el-dropdown-item>
                 </router-link>
+                <router-link to="/stucompla/myMessage">
+                  <el-dropdown-item>
+                    我的消息
+                    <el-badge class="mark" :value="total" v-if="total!==undefined&&total>0"/>
+                  </el-dropdown-item>
+                </router-link>
                 <el-dropdown-item divided @click.native="logout">
                   <span style="display:block;">退出登录</span>
                 </el-dropdown-item>
-                <!--                <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>-->
-                <!--                <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>-->
-                <!--                <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>-->
-                <!--                <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>-->
-                <!--                <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
 
@@ -59,6 +60,7 @@
 <script>
 import { mapState } from 'vuex'
 import { removeToken } from '../../../utils/auth'
+import { getUnReadTotal } from '../../../utils/letter'
 
 export default {
   name: 'Header',
@@ -74,6 +76,7 @@ export default {
       //   username: '',
       //   password: ''
       // },
+      total: getUnReadTotal(),
       isLogin: false,
       navList: [
         {
@@ -128,11 +131,17 @@ export default {
     }
   },
   watch: {
-    'this.$store.state.user.jwt': {
+    '$store.state.user.jwt': {
       handler: function (newVal, oldVal) {
-        this.isLogin = this.$store.state.user.jwt !== undefined
+        this.isLogin = newVal !== undefined
+      }
+    },
+    '$store.state.user.unReadTotal': {
+      handler: function (newVal, oldVal) {
+        this.total = newVal
       }
     }
+
   },
   created () {
     this.getLoginState()

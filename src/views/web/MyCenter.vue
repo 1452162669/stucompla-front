@@ -3,7 +3,7 @@
 
     <el-container>
       <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :span="6">
           <el-card class="user-info">
             <el-avatar
               :size="100"
@@ -77,7 +77,7 @@
             </ul>
           </el-card>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="18">
           <el-card>
             <el-tabs
               v-model="currentMenu"
@@ -203,19 +203,30 @@
                           <span class="price">￥{{ item.goodsPrice }}</span>
                         </div>
                         <div align="center">
-                            <el-button type="primary" size="small" @click="$router.push('/stucompla/editGoods/'+item.goodsId)">修改</el-button>
+                          <el-button type="primary" size="small" @click="$router.push('/stucompla/editGoods/'+item.goodsId)">修改</el-button>
 
                           <el-popconfirm
-
+                            v-if="item.goodsStatus==true"
                             icon="el-icon-info"
                             icon-color="red"
                             title="确定下架该商品？"
                             style="padding-left: 10px"
-                            @confirm="deleteGoods(item.goodsId)"
+                            @confirm="unShelve(item.goodsId)"
                           >
-                            <el-button  slot="reference" type="danger" size="small">下架</el-button>
+                            <el-button  slot="reference" type="warning" size="small">下架</el-button>
 <!--                            <el-button slot="reference">删除</el-button>-->
                           </el-popconfirm>
+                          <el-button @click="upGoods(item.goodsId)" v-else size="small" type="primary">上架</el-button>
+                          <el-popconfirm
+                            icon="el-icon-info"
+                            icon-color="red"
+                            title="确定删除该商品？此操作不可恢复！"
+                            style="padding-left: 10px"
+                            @confirm="deleteGoods(item.goodsId)"
+                          >
+                            <el-button  slot="reference" type="danger" size="small">删除</el-button>
+                          </el-popconfirm>
+
                         </div>
                       </el-card>
 
@@ -244,7 +255,7 @@
                           <div align="left" style="padding-bottom: 10px">
                           <span >
                             订单号：
-                            <router-link :to="`/stucompla/post/${item.postId}`">
+                            <router-link :to="`/stucompla/post/${item.goodsId}`">
 <!--                              这里应该跳转订单详情页-->
                               {{item.orderId}}
                             </router-link>
@@ -255,17 +266,17 @@
                         </el-row>
                         <el-row>
                           <el-col :span="7">
-                            <router-link :to="`/stucompla/post/${item.goods.postId}`">
-                              <img style="width: 100%;border-radius: 5px" :src="`http://localhost:8086/image/${item.goods.goodsImages[0]}`" alt="">
+                            <router-link :to="`/stucompla/goods/${item.goodsId}`">
+                              <img style="width: 100%;border-radius: 5px" :src="`http://localhost:8086/image/${item.goodsImages[0]}`" alt="">
                             </router-link>
                           </el-col>
                           <el-col :span="9" :offset="1" align="left">
-                              <h3 style="margin: 0 0 8px 0" class="single-show">{{ item.goods.goodsName }}</h3>
+                              <h3 style="margin: 0 0 8px 0" class="single-show">{{ item.goodsName }}</h3>
                               <p style="margin: 0 0 8px 0" class="single-show">备注：{{  }}</p>
                             <p style="margin: 0 0 8px 0">创建时间：{{item.createTime}}</p>
                           </el-col>
                           <el-col :span="7" align="right">
-                            <h3 style="margin: 0 0 8px 0">￥{{item.goods.goodsPrice}}</h3>
+                            <h3 style="margin: 0 0 8px 0">￥{{item.goodsPrice}}</h3>
                             <p style="margin: 0 0 8px 0">x{{item.buyCount}}</p>
                             <h3 style="color: #f84521;margin: 0 0 8px 0">￥{{ item.totalPrice }}</h3>
                             <div align="right">
@@ -434,42 +445,42 @@ export default {
         pageSize: '',
         pages: '',
         postList: [],
-        total: ''
+        total: '0'
       },
       myCollectList: {
         current: '',
         pageSize: '',
         pages: '',
         postList: [],
-        total: ''
+        total: '0'
       },
       myGoodsList: {
         current: '',
         pageSize: '',
         pages: '',
         goodsList: [],
-        total: ''
+        total: '0'
       },
       myOrderList: {
         current: '',
         pageSize: '',
         pages: '',
         orderList: [],
-        total: ''
+        total: '0'
       },
       mySalesOrderList: {
         current: '',
         pageSize: '',
         pages: '',
         orderList: [],
-        total: ''
+        total: '0'
       },
       myCommentList: {
         current: '',
         pageSize: '',
         pages: '',
         comments: [],
-        total: ''
+        total: '0'
       }
     }
   },
@@ -544,13 +555,14 @@ export default {
     async getMyAll () {
       await this.getAccountInfo()
       // console.log(this.basicInfo.userId)
-      // if (this.basicInfo.userId !== undefined) {
-      //   this.getMyPostList()
-      //   this.getMyCollectList()
-      //   this.getMyGoodsList()
-      //   this.getMyOrderList()
-      //   // this.getMySalesOrders()
-      // }
+      if (this.basicInfo.userId !== undefined) {
+        await this.getMyPostList()
+        await this.getMyCommentList()
+        await this.getMyCollectList()
+        await this.getMyGoodsList()
+        await this.getMyOrderList()
+        // this.getMySalesOrders()
+      }
     },
     // async changeBefore (activeName, oldActiveName) {
     //   this.Query.pageNum = 1
@@ -636,9 +648,9 @@ export default {
       })
     },
     // 获取我的收藏列表
-    getMyCollectList () {
+    async getMyCollectList () {
       this.Query.userId = this.basicInfo.userId
-      this.$http.get('/collect/list', {
+      await this.$http.get('/collect/list', {
         params: this.Query
       }).then(res => {
         if (res.data.code !== 200) {
@@ -651,9 +663,9 @@ export default {
       })
     },
     // 获取我的二手列表
-    getMyGoodsList () {
+    async getMyGoodsList () {
       this.Query.userId = this.basicInfo.userId
-      this.$http.get('/goods/getList', {
+      await this.$http.get('/goods/getList', {
         params: this.Query
       }).then(res => {
         if (res.data.code !== 200) {
@@ -669,8 +681,8 @@ export default {
       })
     },
     // 获取我的订单列表
-    getMyOrderList () {
-      this.$http.get('/market-order/myOrder', {
+    async getMyOrderList () {
+      await this.$http.get('/market-order/myOrder', {
         params: this.Query
       }).then(res => {
         if (res.data.code !== 200) {
@@ -679,7 +691,7 @@ export default {
           console.log(res.data.data)
           this.myOrderList = res.data.data
           this.myOrderList.orderList.forEach(function (item) {
-            item.goods.goodsImages = item.goods.goodsImages.split(',')
+            item.goodsImages = item.goodsImages.split(',')
           })
           this.showList = this.myOrderList
           this.loading = false
@@ -788,13 +800,34 @@ export default {
       // console.log('1111111111111111')
       this.$http.delete('/goods/' + goodsId).then(res => {
         if (res.data.code !== 200) {
-          this.$message.error('删除失败')
+          this.$message.error(res.data.msg)
         } else {
-          this.$message.success('删除成功')
+          this.$message.success(res.data.data)
           this.getMyGoodsList()
         }
       })
     },
+    upGoods (goodsId) {
+      this.$http.post('/goods/putMyGoods/' + goodsId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getMyGoodsList()
+        }
+      })
+    },
+    unShelve (goodsId) {
+      this.$http.post('/goods/unShelveMyGoods/' + goodsId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getMyGoodsList()
+        }
+      })
+    },
+
     editAccount () {
       // const updateData = {
       //   username: this.basicInfo.accountName,

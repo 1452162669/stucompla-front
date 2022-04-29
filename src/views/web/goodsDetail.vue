@@ -45,6 +45,23 @@
         </h4>
       <h4>总价：{{goods.goodsPrice*this.buyCount}}</h4>
         <el-button :disabled="goods.goodsCount<1" type="primary" @click="addOrder(goods.goodsId)" >立即购买</el-button>
+        <el-popover
+          placement="right"
+          :title="`联系 ${goods.user.username}`"
+          width="200"
+          trigger="click"
+        >
+
+          <el-input
+            v-model="letterDetail"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 8}"
+            placeholder="请输入沟通内容"
+          />
+          <el-button type="primary" @click="sendLetter(goods.user.userId)">发送</el-button>
+          <el-button type="primary"  style="margin: 10px 0 5px 0"
+                      slot="reference">联系卖家</el-button>
+        </el-popover>
 <!--        <el-button type="danger" >加入购物车</el-button>-->
       </el-card>
     </div>
@@ -114,8 +131,8 @@ export default {
         updateTime: '',
         user: {},
         viewNum: ''
-
-      }
+      },
+      letterDetail: undefined
     }
   },
   computed: {
@@ -183,8 +200,20 @@ export default {
     handlePayLater () {
       this.$message.success('订单已保存到“我的订单”，请及时支付')
       this.dialogOrderVisible = false
+    },
+    sendLetter (receiverId) {
+      this.$http.post('/letter/send', {
+        letterDetail: this.letterDetail,
+        receiverId: receiverId
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success('发送成功，具体对话请前往“我的消息”中查看！')
+          this.$router.go(0)
+        }
+      })
     }
-
   }
 }
 </script>
