@@ -121,6 +121,18 @@ export default {
     viewLogin () {
       this.dialogLoginVisible = true
     },
+    // 获取账户信息
+    getAccountInfo () {
+      this.$http.get('/user/info').then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error('获取账户信息失败')
+        } else {
+          console.log(22222222222222222222222)
+          console.log(res.data.data.avatar)
+          this.$store.dispatch('user/setAvatar', res.data.data.avatar)
+        }
+      })
+    },
     async handleLogin () {
       // 要优化
       await this.$http.post('/user/login/', this.loginForm).then(res => {
@@ -133,6 +145,7 @@ export default {
         } else {
           this.$store.dispatch('user/setJwt', res.data.data)
           this.dialogLoginVisible = false
+          this.getAccountInfo()
           this.$message({
             message: '登录成功',
             type: 'success'

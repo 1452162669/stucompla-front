@@ -7,12 +7,20 @@
           <el-card class="user-info">
             <el-avatar
               :size="100"
-              :src="basicInfo.avatar"
+              v-if="basicInfo.avatar!=null&&basicInfo.avatar.length>0"
+              :src="`http://localhost:8086/image/${basicInfo.avatar}`"
               fit="scale-down"
-            />
+            ></el-avatar>
+            <el-avatar
+            :size="100"
+            v-else
+            :src="require('../../assets/img/defaultAvatar.png')"
+            fit="scale-down"
+          ></el-avatar>
+
             <h3 style="font-size: 21px;font-weight: 500;">{{ basicInfo.username }}</h3>
             <p style="font-size: 14px;">
-              尚未佩妥剑，转眼即江湖
+              {{basicInfo.signature!=null?basicInfo.signature:'你还没有个性签名'}}
             </p>
 
             <div style="width: 100%;display: flex;justify-content: space-evenly;text-align: center;">
@@ -94,14 +102,9 @@
                   :model="basicInfo"
                 >
                   <el-form-item
-                    label="姓名"
+                    label="用户名"
                   >
                     <el-input v-model="basicInfo.username"/>
-                  </el-form-item>
-                  <el-form-item
-                    label="账户名"
-                  >
-                    <el-input v-model="basicInfo.accountName"/>
                   </el-form-item>
                   <el-form-item
                     label="性别"
@@ -119,51 +122,49 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item
-                    label="个人简介"
+                    label="个人签名"
                   >
                     <el-input
-                      v-model="basicInfo.description"
+                      v-model="basicInfo.signature"
                       type="textarea"
                       :rows="2"
-                      placeholder="请输入内容"
+                      :maxlength="25"
+                      placeholder="请输入你的个性签名"
                     />
                   </el-form-item>
                   <el-form-item
                     label="头像"
                   >
-                    <!--                  <el-upload-->
-                    <!--                    ref="uploadImg"-->
-                    <!--                    :action="action"-->
-                    <!--                    :http-request="uploadFile"-->
-                    <!--                    :headers="headers"-->
-                    <!--                    list-type="picture-card"-->
-                    <!--                    :file-list="fileList"-->
-                    <!--                    :limit="1"-->
-                    <!--                    :class="{ disabled: uploadDisabled }"-->
-                    <!--                    :before-upload="beforeImgUpload"-->
-                    <!--                    :on-progress="imgOnProgress"-->
-                    <!--                    :on-preview="handlePictureCardPreview"-->
-                    <!--                    :on-remove="handleRemove"-->
-                    <!--                  >-->
-                    <i class="el-icon-plus"/>
-                    <!--                  </el-upload>-->
+                    <el-upload
+                      action="http://localhost:8086/image/upload"
+                      :headers="myHeader"
+                      :file-list="fileList"
+                      name="files"
+                      :limit="1"
+                      :before-upload="beforeUpload"
+                      list-type="picture-card"
+                      :on-success="handleSuccess"
+                      :on-preview="handlePictureCardPreview"
+                      :on-remove="handleRemove"
+                      :on-exceed="handleExceed">
+                      <i class="el-icon-plus"></i>
+                    </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
-                      <img
-                        width="100%"
-                        :src="dialogImageUrl"
-                        alt=""
-                      >
+                      <img width="100%" :src="dialogImageUrl" alt="">
                     </el-dialog>
                   </el-form-item>
-                  <el-button
-                    type="primary"
-                    plain
-                    round
-                    size="small"
-                    @click="editAccount"
+                  <el-form-item
                   >
-                    确认修改
-                  </el-button>
+                    <el-button
+                      type="primary"
+                      plain
+                      round
+                      size="small"
+                      @click="editAccount"
+                    >
+                      确认修改
+                    </el-button>
+                  </el-form-item>
                 </el-form>
               </el-tab-pane>
               <el-tab-pane
@@ -381,13 +382,11 @@ export default {
       loading: true,
       currentMenu: 'userInfo',
       labelPosition: 'right',
+      myHeader: {
+        Authorization: this.$store.state.user.jwt
+      },
       basicInfo: {
-        avatar: 'http://localhost:8086/image/1649474344343_1512631150949040128.png',
-        // name: '',
-        userName: '',
-        sex: '',
-        description: '',
-        location: ''
+
       },
       sexOptions: [
         {
@@ -397,10 +396,6 @@ export default {
         {
           label: '女',
           value: '女'
-        },
-        {
-          label: '保密',
-          value: '保密'
         }
       ],
       bindAccount: [
@@ -431,6 +426,7 @@ export default {
       // 图片弹窗
       dialogImageUrl: '',
       dialogVisible: false,
+      newImgArray: [],
       // 单页隐藏
       singlePage: '',
       Query: {
@@ -485,6 +481,11 @@ export default {
     }
   },
   watch: {
+    'this.$store.state.user.jwt': {
+      handler (newVal) {
+        this.myHeader.Authorization = newVal
+      }
+    },
     currentMenu: {
       handler (newVal, oldVal) {
         // if (newVal === 'myPost') {
@@ -535,11 +536,6 @@ export default {
     // this.getMyAll()
   },
   computed: {
-    headers () {
-      return {
-        // 'Authorization': 'Bearer ' + this.$store.getters.token // 直接从本地获取token就行
-      }
-    },
     editId () {
       return this.$store.getters.id
     }
@@ -564,45 +560,6 @@ export default {
         // this.getMySalesOrders()
       }
     },
-    // async changeBefore (activeName, oldActiveName) {
-    //   this.Query.pageNum = 1
-    //   console.log(activeName)
-    //   switch (activeName) {
-    //     case 'myPost':
-    //       this.getMyPostList()
-    //       this.showList = this.myPostList
-    //       break
-    //     case 'myComment':
-    //       await this.getMyCommentList()
-    //       // console.log(this.myCommentList)
-    //       this.showList = this.myCommentList
-    //       break
-    //     case 'myCollect':
-    //       this.getMyCollectList()
-    //       this.showList = this.myCollectList
-    //       break
-    //     case 'myGoods':
-    //       this.getMyGoodsList()
-    //       this.showList = this.myGoodsList
-    //       break
-    //     case 'myOrder':
-    //       this.getMyOrderList()
-    //       this.showList = this.myOrderList
-    //       break
-    //     case 'mySalesOrders':
-    //       this.$router.push('/stucompla/myCenter/mySalesOrders')
-    //       // this.getMySalesOrders()
-    //       // this.showList = this.mySalesOrderList
-    //       break
-    //   }
-    //   return true
-    // },
-    // handleTabsClick (tab, event) {
-    //   if (tab.name === 'myPost') {
-    //     this.showList = this.myPostList
-    //     console.log(this.showList)
-    //   }
-    // },
     // 获取账户信息
     getAccountInfo () {
       return new Promise(resolve => {
@@ -613,10 +570,68 @@ export default {
           } else {
             console.log(res.data.data)
             this.basicInfo = res.data.data
+            this.newImgArray = []
+            if (this.basicInfo.avatar != null && this.basicInfo.avatar.length > 0) {
+              var imgUrl = 'http://localhost:8086/image/' + this.basicInfo.avatar
+              this.fileList.push({ url: imgUrl })
+              this.newImgArray.push(this.basicInfo.avatar)
+            }
           }
           resolve()
         })
       })
+    },
+    beforeUpload (file) {
+      return new Promise((resolve, reject) => {
+        if (this.$store.state.user.jwt) {
+          resolve()
+        } else {
+          this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: !this.isLogin })
+          reject(new Error('未登录'))
+        }
+      })
+    },
+    handleSuccess (response, file, fileList) {
+      console.log(response)
+      console.log(file)
+      console.log(fileList)
+      if (response.code === 200) {
+        for (var j = 0; j < response.data.length; j++) {
+          this.newImgArray.push(response.data[j].replace('http://localhost:8086/image/', ''))
+        }
+        console.log(this.newImgArray)
+      } else {
+        alert(response.msg)
+      }
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+      var idValue = ''
+      var url = ''
+      if (file.response !== undefined) {
+        url = file.response.data[0].replace('http://localhost:8086/image/', '')
+      } else {
+        url = file.url.replace('http://localhost:8086/image/', '')
+      }
+      const paths = url.split('_')
+      idValue = paths[1].split('.')[0] // 取id 1495352086701932544
+      this.$http.delete('/image/' + idValue).then(res => {
+        if (res.data.code !== 200) {
+
+        } else {
+          console.log(res.data.data)
+        }
+      })
+      const urlIndex = this.newImgArray.indexOf(url)
+      this.newImgArray.splice(urlIndex, 1)
+      console.log(this.newImgArray)
+    },
+    handleExceed (files, fileList) {
+      this.$message.error('请先移除之前的头像')
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     // 获取我的帖子列表
     getMyPostList () {
@@ -698,23 +713,6 @@ export default {
         }
       })
     },
-    // getMySalesOrders () {
-    //   this.$router.push('/stucompla/myCenter/mySalesOrders')
-    //   // this.$http.get('/market-order/mySalesOrders', {
-    //   //   params: this.Query
-    //   // }).then(res => {
-    //   //   if (res.data.code !== 200) {
-    //   //     this.mySalesOrderList = undefined
-    //   //   } else {
-    //   //     console.log(res.data.data)
-    //   //     this.mySalesOrderList = res.data.data
-    //   //     this.mySalesOrderList.orderList.forEach(function (item) {
-    //   //       item.goods.goodsImages = item.goods.goodsImages.split(',')
-    //   //     })
-    //   //     // this.loading = false
-    //   //   }
-    //   // })
-    // },
     orderDetail (orderId) {
       // this.$router.push({
       //   path: 'orderDetail',
@@ -828,15 +826,22 @@ export default {
       })
     },
 
-    editAccount () {
-      // const updateData = {
-      //   username: this.basicInfo.accountName,
-      //   name: this.basicInfo.name,
-      //   password: this.basicInfo.password,
-      //   sex: this.basicInfo.sex,
-      //   introduction: this.basicInfo.description,
-      //   avatar: this.basicInfo.avatar
-      // }
+    async editAccount () {
+      const updateData = {
+        userId: this.basicInfo.userId,
+        username: this.basicInfo.username,
+        sex: this.basicInfo.sex,
+        signature: this.basicInfo.signature,
+        avatar: this.newImgArray.toString()
+      }
+      await this.$http.post('/user/editUserInfo', updateData).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+        }
+      })
+      await this.$router.go(0)
       // updateAccount(this.editId, updateData).then(response => {
       //   const res = response.data
       //   if (res.status === 200) {
@@ -851,46 +856,6 @@ export default {
       //     this.getAccountInfo()
       //   }
       // })
-    },
-    // 上传文件
-    uploadFile (param) {
-      const formData = new FormData()
-      formData.append('file', param.file)
-      // uploadFile(formData).then(response => {
-      //   const res = response.data
-      //   // 上传状态
-      //   if (res.status === 200) {
-      //     this.basicInfo.avatar = res.data.fileUrl
-      //     param.onSuccess()
-      //     this.uploadDisabled = true
-      //   } else {
-      //     this.basicInfo.avatar = ''
-      //     this.$message.error('上传失败,请联系管理员！')
-      //     param.onError()
-      //     this.uploadDisabled = false
-      //   }
-      // })
-    },
-    beforeImgUpload (file) {
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (!isLt1M) {
-        this.$message.error('上传封面图片大小不能超过 1MB!')
-      }
-      return isLt1M
-    },
-    // 上传中
-    imgOnProgress (event, file) {
-      this.uploadDisabled = true
-    },
-    // 移除头像
-    handleRemove (file) {
-      this.uploadDisabled = false
-    },
-    // 查看头像
-    handlePictureCardPreview (file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
     }
   }
 }

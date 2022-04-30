@@ -110,9 +110,13 @@ export default {
           this.$message.error(res.data.msg)
         } else {
           this.$message.success('发送成功')
-          this.$router.go(0)
+          this.letterDetail = undefined
+          // this.letterList.push()
+          // this.$router.go(0)
         }
       })
+      await this.getLetterListBySessionId(this.sessionId)
+      this.selfScrollDown()
     }
   }
 }

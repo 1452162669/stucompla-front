@@ -23,7 +23,17 @@
           <div v-else class="menu-item">
             <el-dropdown class="avatar-container">
               <div class="avatar-wrapper">
-                <el-avatar src="http://localhost:8086/image/1649474344343_1512631150949040128.png"></el-avatar>
+<!--                <el-avatar src="http://localhost:8086/image/1649474344343_1512631150949040128.png">-->
+
+<!--                </el-avatar>-->
+                <el-avatar
+                  v-if="avatar!=null&&avatar.length>0"
+                  :src="`http://localhost:8086/image/${avatar}`"
+                ></el-avatar>
+                <el-avatar
+                  v-else
+                  :src="require('../../../assets/img/defaultAvatar.png')"
+                ></el-avatar>
                 <!--                <img :src="'http://localhost:8086/image/1649474344343_1512631150949040128.png'" class="user-avatar"-->
                 <!--                     alt="头像">-->
                 <i class="el-icon-caret-bottom"/>
@@ -59,7 +69,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { removeToken } from '../../../utils/auth'
+import { removeToken, getAvatar } from '../../../utils/auth'
 import { getUnReadTotal } from '../../../utils/letter'
 
 export default {
@@ -76,6 +86,7 @@ export default {
       //   username: '',
       //   password: ''
       // },
+      avatar: getAvatar(),
       total: getUnReadTotal(),
       isLogin: false,
       navList: [
@@ -136,6 +147,13 @@ export default {
         this.isLogin = newVal !== undefined
       }
     },
+    '$store.state.user.avatar': {
+      handler: function (newVal, oldVal) {
+        this.avatar = newVal
+        console.log('更新了')
+        // console.log(this.avatar)
+      }
+    },
     '$store.state.user.unReadTotal': {
       handler: function (newVal, oldVal) {
         this.total = newVal
@@ -148,6 +166,18 @@ export default {
   },
   computed: mapState(['headerShadowActive', 'headerShow', 'headerLogoShow', 'navDarkActive', 'dialogLoginVisible']),
   mounted () {
+    // 在mounted 声明周期中创建定时器
+    if (this.isLogin) {
+      const timer = setInterval(() => {
+        // 这里调用调用需要执行的方法，1为自定义的参数，由于特殊的需求它将用来区分，定时器调用和手工调用，然后执行不同的业务逻辑
+        this.getUnReadTotal('1')
+      }, 15000) // 每15秒执行1次
+      // 通过$once来监听定时器，在beforeDestroy钩子可以被清除
+      this.$once('hook:beforeDestroy', () => {
+        // 在页面销毁时，销毁定时器
+        clearInterval(timer)
+      })
+    }
   },
   methods: {
     logout () {
@@ -171,6 +201,19 @@ export default {
             }
           })
         }
+      })
+    },
+    async getUnReadTotal () {
+      await this.$http.post('/letter/myUnReadTotal/').then(res => {
+        console.log(res.data)
+        if (res.data.code !== 200) {
+
+        } else {
+          console.log('获取成功')
+          console.log(res.data.data)
+          this.$store.dispatch('user/setUnReadTotal', res.data.data)
+        }
+        // console.log('2访问完成。赋值完成。')
       })
     },
     getLoginState () {
