@@ -7,27 +7,29 @@
           <h2>新视野</h2>
           <h3>了解更多信息</h3>
         </div>
-        <el-autocomplete
-          class="search-news"
-          popper-class="my-autocomplete"
-          highlight-first-item
-          v-model="searchNews"
-          clearable
-          ref="autocomplete"
-          @focus="autocompleteFlag=true"
-          @blur="autocompleteFlag=false"
-          @clear="searchHandle"
-          :fetch-suggestions="querySearchAsync"
-          placeholder="请输入关键词"
-          :trigger-on-focus="false">
+        <el-input style="width: 46%;"
+                  placeholder="请输入关键词"
+                  v-model="searchTitle"
+                  @keyup.enter.native="handleSearch(searchTitle)"
+        >
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          <template slot-scope="{ item }">
-            <router-link :to="item.news_path" target="_blank">
-              <div class="name" v-html="item.news_title"></div>
-              <span class="desc" v-html="item.news_desc"></span>
-            </router-link>
-          </template>
-        </el-autocomplete>
+        </el-input>
+<!--        <el-autocomplete-->
+<!--          class="search-news"-->
+<!--          popper-class="my-autocomplete"-->
+<!--          highlight-first-item-->
+<!--          v-model="searchNews"-->
+<!--          clearable-->
+<!--          ref="autocomplete"-->
+<!--          @focus="autocompleteFlag=true"-->
+<!--          @blur="autocompleteFlag=false"-->
+<!--          @clear="searchHandle"-->
+<!--          :fetch-suggestions="querySearchAsync"-->
+<!--          placeholder="请输入关键词"-->
+<!--          :trigger-on-focus="false">-->
+<!--          <i slot="prefix" class="el-input__icon el-icon-search"></i>-->
+
+<!--        </el-autocomplete>-->
       </div>
       <div class="news-container">
         <!--        <div class="news-card">-->
@@ -60,7 +62,7 @@
             </el-carousel>
           </el-card>
         </el-row>
-        <div class="news-list">
+        <div class="news-list" id="post-list">
           <el-tabs class="list-left" v-model="pageInfo.activeName"
                    @tab-click="handleClick">
 
@@ -120,6 +122,7 @@ export default {
   },
   data () {
     return {
+      searchTitle: undefined,
       searchNews: '',
       bestPostsData: [],
       categories: [
@@ -140,6 +143,7 @@ export default {
       },
       postQuery: {
         categoryId: undefined,
+        title: undefined,
         pageNum: 1,
         pageSize: 8
       },
@@ -191,6 +195,25 @@ export default {
     handleCurrentChange (val) {
       // console.log(`当前页: ${val}`)
       this.getPostsItems()
+    },
+    handleSearch (searchTitle) {
+      this.postQuery.title = searchTitle
+      this.getPostsItems()
+      // 这个方法因为有标头，所以不准
+      // document.getElementById('post-list').scrollIntoView({
+      //   block: 'start',
+      //   inline: 'nearest',
+      //   behavior: 'smooth'
+      // })
+      // 这个方法可以设置偏移
+      const element = document.getElementById('post-list')
+      const headerOffset = 50
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition - headerOffset
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
     },
     getPostsItems () {
       if (this.pageInfo.activeName !== '0') {

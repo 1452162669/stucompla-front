@@ -11,6 +11,7 @@
 
         <div class="content">
           <h1>{{ post.title }}</h1>
+          <p>作者：{{post.userName}}</p>
           <span>{{ post.createTime }}</span>
           <span title="热度" style="margin-left:19px;font-weight:400"><i
             class="el-icon-view"></i> {{ post.viewNum }}</span>
@@ -72,7 +73,7 @@
           </el-dialog>
           <el-button type="primary" plain @click="createComment()">评论</el-button>
         </div>
-        <comment-list :items="post.commentList" v-if='post.commentList!==undefined'></comment-list>
+        <comment-list :items="post.commentList" :post-info="post" v-if='post.commentList!==undefined'></comment-list>
 
       </div>
       <hot-news class="right"></hot-news>
@@ -112,7 +113,8 @@ export default {
         commentNum: '',
         collectNum: '',
         commentList: undefined,
-        userId: undefined
+        userId: undefined,
+        userName: undefined
       },
       commentForm: {
         postId: this.$route.params.id,
@@ -129,6 +131,11 @@ export default {
     }
   },
   watch: {
+    '$store.state.user.jwt': {
+      handler: function (newVal, oldVal) {
+        this.myHeader.Authorization = newVal
+      }
+    },
     news_path: {
       handler (newVal, oldVal) {
         this.initThisPage()
@@ -197,13 +204,15 @@ export default {
       await this.getLoginState()
       await this.getPostDetail()
       await this.checkCollect()
-      this.getCommentListFromPostId(this.news_path)
-      this.checkPublishUser()
+      await this.getCommentListFromPostId(this.news_path)
+      await this.checkPublishUser()
     },
     createComment () {
       console.log(this.commentForm)
       if (this.$store.state.user.jwt) {
-        this.commentForm.images = this.newimgArray.toString()
+        if (this.newimgArray.length > 0) {
+          this.commentForm.images = this.newimgArray.toString()
+        }
         this.$http.post('/comment/create', this.commentForm).then(res => {
           if (res.data.code !== 200) {
             this.$message({
@@ -215,6 +224,7 @@ export default {
               message: res.data.msg,
               type: 'success'
             })
+            // this.getCommentListFromPostId()
             this.$router.replace({
               path: '/refresh',
               query: {
@@ -340,6 +350,7 @@ export default {
             this.post.commentNum = res.data.data.commentNum
             this.post.collectNum = res.data.data.collectNum
             this.post.userId = res.data.data.user.userId
+            this.post.userName = res.data.data.user.username
 
             // category: res.data.category
           }

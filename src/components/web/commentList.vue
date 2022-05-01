@@ -3,7 +3,7 @@
     <ul style="margin: 10px 0 0 0" v-if="items!==undefined">
       <li style="margin: 0px 0 5px 0;" v-for="(item,index) in items"
           :key="index">
-        <el-card shadow="hover" >
+        <el-card shadow="always" >
           <el-row>
             <el-col :span="2">
               <el-avatar
@@ -25,8 +25,10 @@
               <h3 style="margin: 10px 0 5px 0">{{ item.user.username }}  </h3>
               <p style="margin: 0 0 0px 0;font-size: 15px"><i class="el-icon-s-promotion"></i>{{ item.createTime }}</p>
             </el-col>
-            <el-col :span="5" align="right" v-if="!isMyCenter">
-              <span style="padding-right: 20px;color: #c59d85">{{items.length-index}}楼</span>
+            <el-col :span="2" align="right" v-if="!isMyCenter">
+              <span style="padding-right: 0px;color: #c59d85">{{items.length-index}}楼</span>
+            </el-col>
+            <el-col :span="2" align="right" v-if="!isMyCenter">
               <el-popover
                 placement="right"
                 :title="`回复 ${item.user.username}`"
@@ -62,10 +64,27 @@
                   </el-dialog>
                   <el-button type="primary" plain @click="reply(item.postId,item.commentId)">回复</el-button>
                 </el-form>
-                <el-button  type="primary" plain size="mini" style="margin: 10px 0 5px 0"
-                            slot="reference">回复</el-button>
+                <el-link type="primary" slot="reference">
+                  回复
+                </el-link>
+<!--                <el-button  type="text" plain  style="margin: 10px 0 5px 0"-->
+<!--                            slot="reference">回复</el-button>-->
               </el-popover>
             </el-col>
+            <el-col :span="1" align="right" v-if="(postInfo!=undefined&&postInfo.userId==userId)||item.user.userId==userId">
+              <el-popconfirm
+                icon="el-icon-info"
+                icon-color="red"
+                title="确定删除该评论？"
+                style="padding-left: 10px"
+                @confirm="deleteComment(item.commentId)"
+              >
+                <el-link type="primary" slot="reference">
+                  删除
+                </el-link>
+              </el-popconfirm>
+            </el-col>
+
           </el-row>
           <div class="item-content" >
             <div style="background-color: #f1f0f0;border-radius: 5px;padding: 5px 10px 5px 10px"
@@ -81,8 +100,10 @@
               fit="fill"></el-image>
             <div style="background-color: #f1f0f0;border-radius: 5px;padding: 5px 10px 5px 10px"
                  v-if="isMyCenter" >
-              <p style="margin: 5px 0 5px 0">原贴：{{item.postVo.title}}</p>
-              <p style="margin: 5px 0 5px 0">分类：{{item.postVo.category.categoryName}}</p>
+              <router-link :to="`/stucompla/post/${item.postId}`">
+                <p style="margin: 5px 0 5px 0">原贴：{{item.postVo.title}}</p>
+                <p style="margin: 5px 0 5px 0">分类：{{item.postVo.category.categoryName}}</p>
+              </router-link>
             </div>
           </div>
         </el-card>
@@ -94,12 +115,13 @@
 
 <script>
 
-import { getToken } from '../../utils/auth'
+import { getToken, getUserId } from '../../utils/auth'
 
 export default {
   name: 'commentList',
   props: {
     items: Array,
+    postInfo: Object,
     isMyCenter: {
       type: Boolean,
       default: false
@@ -107,6 +129,7 @@ export default {
   },
   data () {
     return {
+      userId: getUserId(),
       currentPage: 1,
       replyForm: {
         postId: undefined,
@@ -120,6 +143,19 @@ export default {
       newImgArray: [],
       dialogImageVisible: false,
       dialogImageUrl: ''
+    }
+  },
+  watch: {
+    '$store.state.user.jwt': {
+      handler: function (newVal, oldVal) {
+        this.myHeader.Authorization = newVal
+      }
+    },
+    '$store.state.user.userId': {
+      handler: function (newVal, oldVal) {
+        this.userId = newVal
+        // console.log(this.avatar)
+      }
     }
   },
   created () {
@@ -163,6 +199,21 @@ export default {
       } else {
         this.$store.commit('setDialogLoginVisible', { dialogLoginVisible: true })
       }
+    },
+    deleteComment (commentId) {
+      this.$http.delete('/comment/' + commentId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          const _this = this
+          this.items.forEach(function (item, index) {
+            if (item.commentId === commentId) {
+              _this.items.splice(index, 1)
+            }
+          })
+        }
+      })
     },
     setArticlePath (path) {
       console.log(path)

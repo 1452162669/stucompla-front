@@ -127,9 +127,8 @@ export default {
         if (res.data.code !== 200) {
           this.$message.error('获取账户信息失败')
         } else {
-          console.log(22222222222222222222222)
-          console.log(res.data.data.avatar)
           this.$store.dispatch('user/setAvatar', res.data.data.avatar)
+          this.$store.dispatch('user/setUserId', res.data.data.userId)
         }
       })
     },
