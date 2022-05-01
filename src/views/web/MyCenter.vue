@@ -569,6 +569,8 @@ export default {
             this.$message.error('获取账户信息失败')
           } else {
             console.log(res.data.data)
+            this.$store.dispatch('user/setAvatar', res.data.data.avatar)
+            this.$store.dispatch('user/setUserId', res.data.data.userId)
             this.basicInfo = res.data.data
             this.newImgArray = []
             if (this.basicInfo.avatar != null && this.basicInfo.avatar.length > 0) {
