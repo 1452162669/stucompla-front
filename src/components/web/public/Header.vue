@@ -27,7 +27,7 @@
 
 <!--                </el-avatar>-->
                 <el-avatar
-                  v-if="avatar!=null&&avatar.length>0"
+                  v-if="avatar!=null&&avatar!=undefined&&avatar.length>0"
                   :src="`http://localhost:8086/image/${avatar}`"
                 ></el-avatar>
                 <el-avatar

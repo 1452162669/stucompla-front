@@ -16,6 +16,16 @@
             {{ item.wallContent }}
             <br>
             <br>
+            <div v-if="item.wallImages!=null&&item.wallImages.length>0" >
+              <!--做一个图片预览-->
+              <el-image
+                v-for="(image,index) in item.wallImages"
+                style="width: 120px; height: 120px;margin-right: 10px;border-radius: 5px"
+                :key="index"
+                :src="`http://localhost:8086/image/${image}`"
+              />
+            </div>
+
             <span>评论：{{ item.commentNum }} 点赞：{{ item.likeNum }}<br>{{ item.auditTime }}</span>
           </el-card>
         </div>
@@ -150,6 +160,16 @@ export default {
 
         } else {
           this.wallList = res.data.data.walls
+          this.wallList.forEach(function (item) {
+            if (item.wallImages != null && item.wallImages.length > 0) {
+              item.wallImages = item.wallImages.split(',')
+            }
+          })
+          // console.log(this.wallList.wallImages)
+          // if (this.wallList.wallImages != null && this.wallList.wallImages.length > 0) {
+          //   this.wallList.wallImages = this.wallList.wallImages.split(',')
+          // }
+          // console.log(this.wallList.wallImages)
         }
       })
     },
