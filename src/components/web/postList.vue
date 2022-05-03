@@ -18,8 +18,28 @@
                   item.commentNum
                 }}</span>
               <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off" @click="onCollect"></i> {{ item.collectNum }}</span>
+              <el-alert
+                v-if="isMyCenter&&item.postStatus==1"
+                title="已被管理员锁定"
+                type="error"
+                style="width: 140px"
+                :closable="false">
+              </el-alert>
             </div>
           </router-link>
+          <p align="right" v-if="isMyCenter">
+            <el-button type="primary" size="small" @click="$router.push('/stucompla/editPost/'+item.postId)">修改</el-button>
+            <el-popconfirm
+              icon="el-icon-info"
+              icon-color="red"
+              title="确定删除该帖吗？删除后所有相关信息将丢失，此操作不可恢复！"
+              style="padding-left: 10px"
+              @confirm="deletePost(item.postId)"
+            >
+              <el-button  slot="reference" type="danger" size="small">删除</el-button>
+            </el-popconfirm>
+
+          </p>
         </el-card>
       </li>
     </ul>
@@ -30,7 +50,13 @@
 <script>
 export default {
   name: 'postList',
-  props: ['items'],
+  props: {
+    items: Array,
+    isMyCenter: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       currentPage: 1
@@ -39,6 +65,16 @@ export default {
   methods: {
     onCollect () {
       console.log('1111111111111111111')
+    },
+    deletePost (postId) {
+      this.$http.delete('/post/' + postId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error('删除失败')
+        } else {
+          this.$message.success('删除成功')
+          this.$router.go(0)
+        }
+      })
     },
     setArticlePath (path) {
       console.log(path)

@@ -145,7 +145,8 @@ export default {
         categoryId: undefined,
         title: undefined,
         pageNum: 1,
-        pageSize: 8
+        pageSize: 8,
+        postStatus: 0
       },
       // 单页隐藏
       singlePage: '',
@@ -196,9 +197,9 @@ export default {
       // console.log(`当前页: ${val}`)
       this.getPostsItems()
     },
-    handleSearch (searchTitle) {
+    async handleSearch (searchTitle) {
       this.postQuery.title = searchTitle
-      this.getPostsItems()
+      await this.getPostsItems()
       // 这个方法因为有标头，所以不准
       // document.getElementById('post-list').scrollIntoView({
       //   block: 'start',
@@ -215,14 +216,14 @@ export default {
         behavior: 'smooth'
       })
     },
-    getPostsItems () {
+    async getPostsItems () {
       if (this.pageInfo.activeName !== '0') {
         this.postQuery.categoryId = this.pageInfo.activeName
       } else {
         // 如果点击全部，条件查询里就不要帖子类型
         this.postQuery.categoryId = undefined
       }
-      this.$http.get('/post/list', {
+      await this.$http.get('/post/list', {
         params: this.postQuery
       }).then(res => {
         if (res.data.code !== 200) {
@@ -259,7 +260,8 @@ export default {
       const { data: res } = await this.$http.get('/post/list', {
         params: {
           bestPost: true,
-          pageSize: 8
+          pageSize: 8,
+          postStatus: 0
         }
       })
       console.log(res)
@@ -277,8 +279,8 @@ export default {
       const imageArr = images.split(',')
       return 'http://localhost:8086/image/' + imageArr[0]
     },
-    getCategories () {
-      this.$http.get('/category/list').then(res => {
+    async getCategories () {
+      await this.$http.get('/category/list').then(res => {
         if (res.data.code !== 200) {
 
         } else {
@@ -301,11 +303,11 @@ export default {
       // }
     }
   },
-  created () {
-    this.getPostsItems()
-    this.getRecomNews()
-    this.getBestPostsDataList()
-    this.getCategories()
+  async created () {
+    await this.getCategories()
+    await this.getPostsItems()
+    await this.getRecomNews()
+    await this.getBestPostsDataList()
   },
   mounted () {
     this.$store.commit('setHeaderLogo', {

@@ -329,29 +329,35 @@ export default {
     // 获取帖子信息
     getPostDetail () {
       // const { data: res } = await this.$http.get('/post/' + this.news_path)
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         this.$http.get('/post/' + this.news_path).then(res => {
           // console.log('1访问后台完成')
           // console.log(res.data)
           if (res.data.code !== 200) {
             // console.log(res)
-            this.$message.error('帖子不存在')
+            this.$message.error(res.data.msg)
+            this.$router.back()
             // 应该跳转一个提示不存在的页面
           } else {
             // this.$message.success('获取成功')
             console.log(res.data.data.postId)
-            this.post.postId = res.data.data.postId
-            console.log(this.post.postId)
-            this.post.title = res.data.data.title
-            this.post.createTime = res.data.data.createTime
-            this.post.detail = res.data.data.detail
-            this.post.categoryName = res.data.data.category.categoryName
-            this.post.viewNum = res.data.data.viewNum
-            this.post.commentNum = res.data.data.commentNum
-            this.post.collectNum = res.data.data.collectNum
-            this.post.userId = res.data.data.user.userId
-            this.post.userName = res.data.data.user.username
-
+            if (res.data.data.postStatus === 1) {
+              this.$message.error('该帖已被锁定，如需申诉，请联系管理员1452162669@qq.com')
+              this.$router.back()
+              reject(new Error('状态异常'))
+            } else {
+              this.post.postId = res.data.data.postId
+              console.log(this.post.postId)
+              this.post.title = res.data.data.title
+              this.post.createTime = res.data.data.createTime
+              this.post.detail = res.data.data.detail
+              this.post.categoryName = res.data.data.category.categoryName
+              this.post.viewNum = res.data.data.viewNum
+              this.post.commentNum = res.data.data.commentNum
+              this.post.collectNum = res.data.data.collectNum
+              this.post.userId = res.data.data.user.userId
+              this.post.userName = res.data.data.user.username
+            }
             // category: res.data.category
           }
           resolve()

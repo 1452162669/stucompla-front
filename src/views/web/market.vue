@@ -308,7 +308,9 @@ export default {
 }
 
 .image {
-  width: 100%;
+  /*固定图片显示*/
+  width: 240px;
+  height: 168px;
   display: block;
 }
 

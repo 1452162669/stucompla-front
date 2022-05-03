@@ -171,7 +171,7 @@
                 label="我的帖子"
                 name="myPost"
               >
-                <post-list :items="myPostList.postList"></post-list>
+                <post-list :items="myPostList.postList" :is-my-center=true></post-list>
               </el-tab-pane>
               <el-tab-pane
                 label="我的回复"
