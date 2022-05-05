@@ -186,6 +186,56 @@
                 <post-list :items="myCollectList.postList"></post-list>
               </el-tab-pane>
               <el-tab-pane
+                label="我的墙列表"
+                name="myWall"
+              >
+                <el-row>
+                  <el-col :span="18" :offset="3">
+                    <el-card class="main-card" v-for="(item,index) in myWallList.walls" :key="index" shadow="hover">
+                      {{ item.wallContent }}
+                      <br>
+                      <br>
+                      <div v-if="item.wallImages!=null&&item.wallImages.length>0" >
+                        <!--做一个图片预览-->
+                        <el-image
+                          v-for="(image,index) in item.wallImages"
+                          style="width: 120px; height: 120px;margin-right: 10px;border-radius: 5px"
+                          :key="index"
+                          :src="`http://localhost:8086/image/${image}`"
+                        />
+                      </div>
+
+                      <span>申请时间：{{ item.createtime }} </span>
+                      <span style="padding-left: 10px" v-if="item.auditTime!==null"> 审核时间：{{ item.auditTime }}</span>
+                      <span>
+                        <el-alert
+                          v-if="item.auditState==2"
+                          title="审核不通过"
+                          type="error"
+                          style="width: 120px;float: right"
+                          :closable="false">
+              </el-alert>
+                        <el-alert
+                          v-if="item.auditState==1"
+                          title="审核通过"
+                          type="success"
+                          style="width: 100px;float: right"
+                          :closable="false">
+              </el-alert>
+                        <el-alert
+                          v-if="item.auditState==0"
+                          title="未审核"
+                          type="info"
+                          style="width: 90px;float: right"
+                          :closable="false">
+              </el-alert>
+                      </span>
+                    </el-card>
+                  </el-col>
+                </el-row>
+
+              </el-tab-pane>
+              <el-tab-pane
                 label="我的二手"
                 name="myGoods"
               >
@@ -477,6 +527,13 @@ export default {
         pages: '',
         comments: [],
         total: '0'
+      },
+      myWallList: {
+        current: '',
+        pageSize: '',
+        pages: '',
+        walls: [],
+        total: '0'
       }
     }
   },
@@ -502,6 +559,9 @@ export default {
             break
           case 'myCollect':
             this.getMyCollectList()
+            break
+          case 'myWall':
+            this.getMyWallList()
             break
           case 'myGoods':
             this.getMyGoodsList()
@@ -555,6 +615,7 @@ export default {
         await this.getMyPostList()
         await this.getMyCommentList()
         await this.getMyCollectList()
+        await this.getMyWallList()
         await this.getMyGoodsList()
         await this.getMyOrderList()
         // this.getMySalesOrders()
@@ -679,6 +740,26 @@ export default {
         }
       })
     },
+    // 获取我的表白墙列表
+    async getMyWallList () {
+      await this.$http.get('/wall/myWallList', {
+        params: this.Query
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.myWallList = undefined
+        } else {
+          console.log(res.data.data)
+          this.myWallList = res.data.data
+          this.myWallList.walls.forEach(function (item) {
+            if (item.wallImages != null && item.wallImages.length > 0) {
+              item.wallImages = item.wallImages.split(',')
+            }
+          })
+          this.showList = this.myWallList
+        }
+      })
+    },
+
     // 获取我的二手列表
     async getMyGoodsList () {
       this.Query.userId = this.basicInfo.userId
@@ -785,6 +866,9 @@ export default {
         case 'myCollect':
           this.getMyCollectList()
           break
+        case 'myWall':
+          this.getMyWallList()
+          break
         case 'myGoods':
           this.getMyGoodsList()
           break
@@ -888,10 +972,14 @@ export default {
   width: 100%;/*设置显示的最大宽度*/
   display:inline-block;
 }
+
 .image {
-  width: 100%;
+  /*固定图片显示*/
+  width: 240px;
+  height: 168px;
   display: block;
 }
+
 .el-container {
   //margin: 20px;
 
@@ -1015,5 +1103,10 @@ export default {
   overflow:hidden;/*超出部分隐藏*/
   width: 100%;/*设置显示的最大宽度*/
   display:inline-block;
+}
+
+.main-card {
+  width: 100%;
+  margin-bottom: 10px;
 }
 </style>

@@ -27,7 +27,7 @@
         </el-form-item>
         <el-form-item align="center">
           <el-button type="primary" @click.native="handleLogin()">登录</el-button>
-          <el-button type="danger" onclick="">注册</el-button>
+          <el-button type="danger" @click.native="dialogLoginVisible=false;dialogRegisterVisible=true">注册</el-button>
         </el-form-item>
       </el-form>
 
@@ -44,6 +44,19 @@
             prefix-icon="el-icon-user">
           </el-input>
         </el-form-item>
+<!--        <el-form-item label="" >-->
+<!--          <el-select-->
+<!--            v-model="regForm.sex"-->
+<!--            placeholder="性别"-->
+<!--          >-->
+<!--            <el-option-->
+<!--              v-for="item in sexOptions"-->
+<!--              :key="item.value"-->
+<!--              :label="item.label"-->
+<!--              :value="item.value"-->
+<!--            />-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
         <el-form-item label="">
           <el-input
             type="password"
@@ -64,7 +77,7 @@
 
         <el-form-item align="center">
 <!--          <el-button type="primary" @click.native="handleLogin()">登录</el-button>-->
-          <el-button type="danger" onclick="">注册</el-button>
+          <el-button type="danger" @click="handleRegister()">注册</el-button>
         </el-form-item>
       </el-form>
 
@@ -112,8 +125,18 @@ export default {
       regForm: {
         username: '',
         password: '',
-        secondPassword: ''// 补上其他属性
+        secondPassword: '' // 补上其他属性
       },
+      // sexOptions: [
+      //   {
+      //     label: '男',
+      //     value: '男'
+      //   },
+      //   {
+      //     label: '女',
+      //     value: '女'
+      //   }
+      // ],
       userId: undefined
     }
   },
@@ -169,7 +192,16 @@ export default {
         // console.log('2访问完成。赋值完成。')
       })
     },
-    handleRegister () {
+    async handleRegister () {
+      await this.$http.post('/user/register', this.regForm).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.dialogRegisterVisible = false
+          console.log(res.data.msg)
+          this.$message.success(res.data.msg)
+        }
+      })
       // 注册
     }
   }

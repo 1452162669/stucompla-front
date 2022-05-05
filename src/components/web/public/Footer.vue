@@ -57,7 +57,7 @@ export default {
     return {
       footerHeight: '',
       curWidth: '',
-      logo_url: require('../../../assets/img/index/logoColor.png'),
+      logo_url: require('../../../assets/img/index/stucomplaLogoColor3.png'),
       contact_way: [
         {
           name: 'xxxxx',

@@ -133,10 +133,12 @@ export default {
       ],
       logo_img: [
         {
-          path: require('../../../assets/img/index/logo.png')
+          // path: require('../../../assets/img/index/logo.png')
+          path: require('../../../assets/img/index/stucomplaLogo3.png')
         },
         {
-          path: require('../../../assets/img/index/logoColor.png')
+          // path: require('../../../assets/img/index/logoColor.png')
+          path: require('../../../assets/img/index/stucomplaLogoColor3.png')
         }
       ]
     }

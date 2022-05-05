@@ -26,7 +26,8 @@
               />
             </div>
 
-            <span>评论：{{ item.commentNum }} 点赞：{{ item.likeNum }}<br>{{ item.auditTime }}</span>
+<!--            <span>评论：{{ item.commentNum }} 点赞：{{ item.likeNum }}<br>{{ item.auditTime }}</span>-->
+            <span>{{ item.auditTime }}</span>
           </el-card>
         </div>
       </el-col>

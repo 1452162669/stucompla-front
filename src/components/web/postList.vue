@@ -7,17 +7,18 @@
           <router-link :to="`/stucompla/post/${item.postId}`">
 <!--          <router-link :to="{name:'postDetail',params:{id: item.postId}}">-->
             <!--<div class = "item-mask"></div>-->
-            <img :src="item.cover_img" alt="">
+            <img :src="item.images[0]" alt="" v-if="item.images!=null&&item.images.length>0">
             <div class="item-content">
               <h2>{{ item.title }}</h2>
               <p>{{ item.news_desc }}</p>
+              <span style="padding-right: 10px" v-if="!isMyCenter">{{ item.user.username }}</span>
               <span>{{ item.createTime }}</span>
               <span title="热度" style="margin-left:19px;font-weight:400"><i
                 class="el-icon-view"></i> {{ item.viewNum }}</span>
               <span title="评论" style="margin-left:19px"><i class="el-icon-chat-line-round"></i> {{
                   item.commentNum
                 }}</span>
-              <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off" @click="onCollect"></i> {{ item.collectNum }}</span>
+              <span title="收藏" style="margin-left:19px"><i class="el-icon-star-off" ></i> {{ item.collectNum }}</span>
               <el-alert
                 v-if="isMyCenter&&item.postStatus==1"
                 title="已被管理员锁定"
@@ -62,9 +63,40 @@ export default {
       currentPage: 1
     }
   },
+  watch: {
+    items: {
+      handler (newVal, oldVal) {
+        this.handleImg()
+      }
+    }
+  },
+  // async created () {
+  //   await this.handleImg()
+  // },
   methods: {
-    onCollect () {
-      console.log('1111111111111111111')
+    async handleImg () {
+      await this.items.forEach(function (item) {
+        if (item.images != null && item.images.length > 0) {
+          item.images = item.images.split(',')
+          item.images[0] = 'http://localhost:8086/image/' + item.images[0]
+        } else {
+          var content = item.detail
+          const imgReg = /<img.*?(?:>|\/>)/gi // 匹配图片中的img标签
+          const srcReg = /src=['"]?([^'"]*)['"]?/i // 匹配图片中的src
+          const srcArr = []
+          const arr = content.match(imgReg) // 筛选出所有的img
+          if (arr != null) {
+            // console.log(arr)
+            for (let i = 0; i < arr.length; i++) {
+              const src = arr[i].match(srcReg)
+              // 获取图片地址
+              srcArr.push(src[1])
+            }
+            console.log(srcArr)
+            item.images = srcArr
+          }
+        }
+      })
     },
     deletePost (postId) {
       this.$http.delete('/post/' + postId).then(res => {
@@ -74,12 +106,6 @@ export default {
           this.$message.success('删除成功')
           this.$router.go(0)
         }
-      })
-    },
-    setArticlePath (path) {
-      console.log(path)
-      this.$store.commit('SET_ARTICLE_PATH', {
-        path: path
       })
     }
   }
