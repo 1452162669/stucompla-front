@@ -95,77 +95,123 @@
                 label="基本信息"
                 name="userInfo"
               >
-                <el-form
-                  ref="basicInfo"
-                  label-position="right"
-                  label-width="80px"
-                  :model="basicInfo"
-                >
-                  <el-form-item
-                    label="用户名"
+                <el-row>
+                  <el-col :span="11">
+                    <el-card>
+                      <el-form
+                    ref="basicInfo"
+                    label-position="right"
+                    label-width="80px"
+                    :model="basicInfo"
                   >
-                    <el-input v-model="basicInfo.username"/>
-                  </el-form-item>
-                  <el-form-item
-                    label="性别"
-                  >
-                    <el-select
-                      v-model="basicInfo.sex"
-                      placeholder="请选择"
+                        <h3 align="center">修改基本信息</h3>
+                    <el-form-item
+                      label="用户名"
                     >
-                      <el-option
-                        v-for="item in sexOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                      <el-input v-model="basicInfo.username"/>
+                    </el-form-item>
+                    <el-form-item
+                      label="性别"
+                    >
+                      <el-select
+                        v-model="basicInfo.sex"
+                        placeholder="请选择"
+                      >
+                        <el-option
+                          v-for="item in sexOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item
+                      label="个人签名"
+                    >
+                      <el-input
+                        v-model="basicInfo.signature"
+                        type="textarea"
+                        :rows="2"
+                        :maxlength="25"
+                        placeholder="请输入你的个性签名"
                       />
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item
-                    label="个人签名"
-                  >
-                    <el-input
-                      v-model="basicInfo.signature"
-                      type="textarea"
-                      :rows="2"
-                      :maxlength="25"
-                      placeholder="请输入你的个性签名"
-                    />
-                  </el-form-item>
-                  <el-form-item
-                    label="头像"
-                  >
-                    <el-upload
-                      action="http://localhost:8086/image/upload"
-                      :headers="myHeader"
-                      :file-list="fileList"
-                      name="files"
-                      :limit="1"
-                      :before-upload="beforeUpload"
-                      list-type="picture-card"
-                      :on-success="handleSuccess"
-                      :on-preview="handlePictureCardPreview"
-                      :on-remove="handleRemove"
-                      :on-exceed="handleExceed">
-                      <i class="el-icon-plus"></i>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
-                      <img width="100%" :src="dialogImageUrl" alt="">
-                    </el-dialog>
-                  </el-form-item>
-                  <el-form-item
-                  >
-                    <el-button
-                      type="primary"
-                      plain
-                      round
-                      size="small"
-                      @click="editAccount"
+                    </el-form-item>
+                    <el-form-item
+                      label="头像"
                     >
-                      确认修改
-                    </el-button>
-                  </el-form-item>
-                </el-form>
+                      <el-upload
+                        action="http://localhost:8086/image/upload"
+                        :headers="myHeader"
+                        :file-list="fileList"
+                        name="files"
+                        :limit="1"
+                        :before-upload="beforeUpload"
+                        list-type="picture-card"
+                        :on-success="handleSuccess"
+                        :on-preview="handlePictureCardPreview"
+                        :on-remove="handleRemove"
+                        :on-exceed="handleExceed">
+                        <i class="el-icon-plus"></i>
+                      </el-upload>
+                      <el-dialog :visible.sync="dialogVisible">
+                        <img width="100%" :src="dialogImageUrl" alt="">
+                      </el-dialog>
+                    </el-form-item>
+                    <el-form-item
+                    >
+                      <el-button
+                        type="primary"
+                        plain
+                        round
+                        size="small"
+                        @click="editAccount"
+                      >
+                        确认修改
+                      </el-button>
+                    </el-form-item>
+                  </el-form>
+                    </el-card>
+                  </el-col>
+<el-col :span="12" :offset="1">
+  <el-card>
+    <el-form
+      ref="basicInfo"
+      label-position="right"
+      label-width="80px"
+      :model="changePwdForm"
+    >
+      <h3 align="center">修改密码</h3>
+      <el-form-item
+        label="旧密码"
+      >
+        <el-input v-model="changePwdForm.oldPassword" type="password"/>
+      </el-form-item>
+      <el-form-item
+        label="新密码"
+      >
+        <el-input v-model="changePwdForm.inPassword" type="password"/>
+      </el-form-item>
+      <el-form-item
+        label="重复密码"
+      >
+        <el-input v-model="changePwdForm.secondPassword" type="password" @keyup.enter.native="changePwd"/>
+      </el-form-item>
+      <el-form-item
+      >
+        <el-button
+          type="primary"
+          plain
+          round
+          size="small"
+          @click="changePwd"
+        >
+          确认修改
+        </el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
+</el-col>
+                </el-row>
               </el-tab-pane>
               <el-tab-pane
                 label="我的帖子"
@@ -183,7 +229,7 @@
                 label="我的收藏"
                 name="myCollect"
               >
-                <post-list :items="myCollectList.postList"></post-list>
+                <post-list :items="myCollectList.postList" :is-my-center=true></post-list>
               </el-tab-pane>
               <el-tab-pane
                 label="我的墙列表"
@@ -339,19 +385,23 @@
                                          size="small"
                                          v-if="item.orderStatus===2"
                                          @click="handleReceipt(item.orderId,index)">确认签收</el-button>
-                              <el-popconfirm
-                                icon="el-icon-info"
-                                icon-color="red"
-                                title="确定删除该订单？"
-                                style="padding-left: 10px"
-                                @confirm="deleteOrder(item.orderId,i)"
-                                v-if="item.orderStatus===5"
-                              >
-                                <el-button slot="reference"
-                                           type="danger"
-                                           size="small"
-                                           align="right">删除订单</el-button>
-                              </el-popconfirm>
+                              <el-button type="primary"
+                                         size="small"
+                                         v-if="item.orderStatus===3"
+                                         @click="handleReturn(item.orderId,index)">申请退货</el-button>
+<!--                              <el-popconfirm-->
+<!--                                icon="el-icon-info"-->
+<!--                                icon-color="red"-->
+<!--                                title="确定删除该订单？"-->
+<!--                                style="padding-left: 10px"-->
+<!--                                @confirm="deleteOrder(item.orderId,i)"-->
+<!--                                v-if="item.orderStatus===5"-->
+<!--                              >-->
+<!--                                <el-button slot="reference"-->
+<!--                                           type="danger"-->
+<!--                                           size="small"-->
+<!--                                           align="right">删除订单</el-button>-->
+<!--                              </el-popconfirm>-->
 
                             </div>
                           </el-col>
@@ -420,6 +470,7 @@
 // import { getInfoById, updateAccount } from '@/api/user'
 import PostList from '../../components/web/postList'
 import commentList from '../../components/web/commentList'
+import { removeToken } from '../../utils/auth'
 
 export default {
   name: 'Index',
@@ -437,6 +488,11 @@ export default {
       },
       basicInfo: {
 
+      },
+      changePwdForm: {
+        oldPassword: '',
+        inPassword: '',
+        secondPassword: ''
       },
       sexOptions: [
         {
@@ -465,8 +521,7 @@ export default {
           desc: '绑定支付宝'
         }
       ],
-      oldPassword: '',
-      newPassword: '',
+
       // 图片默认提交地址，未使用。
       action: '',
       // 上传文件列表
@@ -804,17 +859,17 @@ export default {
       //   }
       // })
     },
-    deleteOrder (orderId, index) {
-      this.$http.delete('/market-order/' + orderId).then(res => {
-        if (res.data.code !== 200) {
-          this.$message.error(res.data.msg)
-        } else {
-          this.$message.success(res.data.data)
-          // 删除成功 从列表中移除
-          this.myOrderList.orderList.splice(index, 1)
-        }
-      })
-    },
+    // deleteOrder (orderId, index) {
+    //   this.$http.delete('/market-order/' + orderId).then(res => {
+    //     if (res.data.code !== 200) {
+    //       this.$message.error(res.data.msg)
+    //     } else {
+    //       this.$message.success(res.data.data)
+    //       // 删除成功 从列表中移除
+    //       this.myOrderList.orderList.splice(index, 1)
+    //     }
+    //   })
+    // },
     handlePay (orderId, index) {
       // 更改订单状态为’1‘-“已支付”    假支付
       this.$http.post('/market-order/payOrder/' + orderId).then(res => {
@@ -837,6 +892,16 @@ export default {
       })
       // console.log('这里写签收相关操作')
     },
+    handleReturn (orderId, index) {
+      this.$http.post('/market-order/applyReturn/' + orderId).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getMyOrderList()
+        }
+      })
+    },
     getOrderStatus (status) {
       console.log(status)
       if (status === 0) {
@@ -848,9 +913,9 @@ export default {
       } else if (status === 3) {
         return '已签收'
       } else if (status === 4) {
-        return '已退货'
+        return '退货中'
       } else if (status === 5) {
-        return '订单完成'
+        return '已退货'
       }
     },
     // 帖子列表页码切换
@@ -942,6 +1007,32 @@ export default {
       //     this.getAccountInfo()
       //   }
       // })
+    },
+    async changePwd () {
+      await this.$http.post('/user/changePassword', null, {
+        params: {
+          oldPassword: this.changePwdForm.oldPassword,
+          inPassword: this.changePwdForm.inPassword,
+          secondPassword: this.changePwdForm.secondPassword
+        }
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$http.delete('/user/logout').then(res => {
+            if (res.data.code !== 200) {
+
+            } else {
+              removeToken() // 必须先删除token
+              // resetRouter()
+              this.$store.dispatch('user/resetState')
+              this.$message.success('修改成功，请重新登录')
+
+              this.$router.push('/')
+            }
+          })
+        }
+      })
     }
   }
 }

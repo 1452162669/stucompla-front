@@ -83,6 +83,35 @@
           <el-button size="mini" type="primary" @click="handleSend(row.orderId)" v-if="row.orderStatus===1">
             发货
           </el-button>
+          <el-popover
+            placement="left"
+            title="审核"
+            width="240"
+            trigger="click"
+            v-if="row.orderStatus===4"
+          >
+            <div style="text-align: center">
+              <p>
+                <el-radio v-model="auditRadio" :label=1 :value=1>审核通过</el-radio>
+                <el-radio v-model="auditRadio" :label=0 :value=0>审核不通过</el-radio>
+              </p>
+              <p v-if="auditRadio==0">
+                <el-input v-model="auditCause" type="textarea" :maxlength="30" placeholder="请填写退货审核不通过的原因（必填）" />
+              </p>
+              <p style="">
+                <el-button size="mini" type="primary" @click="handleAudit(row)">
+                  确定
+                </el-button>
+              </p>
+            </div>
+            <el-button slot="reference" size="mini" type="primary">
+              审核
+            </el-button>
+            <!--            <el-button slot="reference">click 激活</el-button>-->
+          </el-popover>
+<!--          <el-button size="mini" type="primary" @click="handleAudit(row.orderId)" v-if="row.orderStatus===4">-->
+<!--            审核-->
+<!--          </el-button>-->
 
         </template>
       </el-table-column>
@@ -128,7 +157,7 @@ export default {
   },
   data () {
     return {
-      auditRadio: '1',
+      auditRadio: 1,
       auditCause: undefined,
       tableKey: 0,
       list: null,
@@ -144,11 +173,11 @@ export default {
         sort: '+order_id',
         orderStatus: undefined
       },
-      // 0-未付 1-已付 2-已发货 3-已签收 4-已退货 5-订单完成
+      // 0-未付 1-已付 2-已发货 3-已签收 4-退货中 5-已退货
       statusOptions: [
         { label: '待支付', key: '0' }, { label: '待发货', key: '1' },
         { label: '待签收', key: '2' }, { label: '已签收', key: '3' },
-        { label: '已退货', key: '4' }, { label: '订单完成', key: '5' }],
+        { label: '退货中', key: '4' }, { label: '已退货', key: '5' }],
       sortOptions: [
         { label: 'ID升序', key: '+order_id' },
         { label: 'ID降序', key: '-order_id' },
@@ -198,9 +227,9 @@ export default {
       } else if (status === 3) {
         return '已签收'
       } else if (status === 4) {
-        return '已退货'
+        return '退货中'
       } else if (status === 5) {
-        return '订单完成'
+        return '已退货'
       }
     },
     // 帖子列表页码切换
@@ -345,6 +374,20 @@ export default {
       })
     },
     handleAudit (row) {
+      this.$http.post('/market-order/auditReturn', null, {
+        params: {
+          orderId: row.orderId,
+          auditState: this.auditRadio,
+          cause: this.auditCause
+        }
+      }).then(res => {
+        if (res.data.code !== 200) {
+          this.$message.error(res.data.msg)
+        } else {
+          this.$message.success(res.data.data)
+          this.getList()
+        }
+      })
       // auditWall({
       //   wallId: row.wallId,
       //   auditState: this.auditRadio,
