@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div id="demo1" style="padding-right: 120px"></div>
+    <div id="demo1" style="padding-right: 120px "></div>
     <!-- <button type="button" class="btn" @click="getEditorData">获取当前内容</button>
     <h3>内容预览</h3>
     <textarea name="" id="" cols="170" rows="20" readonly v-model="editorData"></textarea>
@@ -90,43 +90,8 @@ export default {
     this.editor = editor
   },
   methods: {
-    getEditorData () { // 获取html（加上样式、删除多余图片）
-      let htmlData = this.editor.txt.html()
-      // 加样式
-      htmlData += `<style>/* table 样式 */
-table {border-top: 1px solid #ccc;
-border-left: 1px solid #ccc;
-}
-table td,
-table th {
-border-bottom: 1px solid #ccc;
-border-right: 1px solid #ccc;
-padding: 3px 5px;
-}
-table th {border-bottom: 2px solid #ccc;text-align: center;}
-/* blockquote 样式 */
-blockquote {
-display: block;border-left: 8px solid #d0e5f2;padding: 5px 10px;
-margin: 10px 0;line-height: 1.4;font-size: 100%;background-color: #f1f1f1;}
-/* code 样式 */
-code {
-  display: inline-block;
-  *display: inline;
-  *zoom: 1;
-  background-color: #f1f1f1;
-  border-radius: 3px;
-  padding: 3px 5px;
-  margin: 0 3px;
-}
-pre code {
-  display: block;
-}
-
-/* ul ol 样式 */
-ul, ol {
-  margin: 10px 0 10px 20px;
-}
-</style>`
+    getEditorData () { // 获取html（删除多余图片）
+      const htmlData = this.editor.txt.html()
       // 删除上传后被删除的图片
       this.deleteExtraImg(newimgArray, this.getImgFromHtml(htmlData))
       return htmlData
@@ -177,7 +142,16 @@ ul, ol {
 }
 </script>
 
-<style scoped>
+<style lang="less" >
+.w-e-toolbar {
+  z-index: 2!important;
+}
+.w-e-menu {
+  z-index: 2 !important;
+}
+.w-e-text-container {
+  z-index: 1 !important;
+}
 .home {
   width: 1200px;
   margin: auto;

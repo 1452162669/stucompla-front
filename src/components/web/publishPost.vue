@@ -1,6 +1,5 @@
 <template>
   <div style="padding-top: 80px;padding-left: 120px;padding-right: 160px;">
-    <!--    <h3 style="margin: 30px 0 15px">发表新帖子</h3>-->
     <h3 v-if="!isEdit" align="center">发布新帖</h3>
     <h3 v-if="isEdit"  align="center">编辑帖子</h3>
     <el-form ref="form" :model="form" label-width="80px">
@@ -17,18 +16,6 @@
         </el-select>
 
       </el-form-item>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <!--      <br/>-->
-      <!--      <br/>-->
-      <!--      <br/>-->
-      <!--      <br/>-->
-      <!--      <br/>-->
       <el-form-item label="内容">
         <MyEditor ref="MyEditor" v-model="form.detail" @change="change"></MyEditor>
       </el-form-item>
@@ -103,9 +90,6 @@ export default {
       console.log('图片：' + this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData))
       this.form.images = this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData).toString()
       this.form.detail = this.$refs.MyEditor.getEditorData()
-      console.log(this.form)
-      console.log(this.form.images)
-      // console.log(this.$store.state.token)
       axios.post('http://localhost:8086/post/publish', this.form, {
         headers: {
           Authorization: this.$store.state.user.jwt
@@ -124,7 +108,6 @@ export default {
           })
         }
       })
-      console.log('submit!!!!!')
     },
     getCategories () {
       axios.get('http://localhost:8086/category/list').then(res => {
@@ -173,79 +156,5 @@ export default {
       headerShow: false
     })
   }
-  // beforeRouteLeave (to, from, next) {
-  //   // 导航离开该组件的对应路由时调用
-  //   // 可以访问组件实例 `this`
-  //   if (to.name === 'index') {
-  //     this.$store.commit('setHeaderLogo', {
-  //       headerLogoShow: true
-  //     })
-  //     this.$store.commit('setShadowActive', {
-  //       headerShadowActive: false
-  //     })
-  //     this.$store.commit('setNavDarkActive', {
-  //       navDarkActive: false
-  //     })
-  //     this.$store.commit('setHeaderShow', {
-  //       headerShow: false
-  //     })
-  //     next()
-  //   } else {
-  //     next()
-  //   }
-  // }
 }
 </script>
-
-<style>
-
-/*.el-form {*/
-/*  width: 100%;*/
-/*}*/
-
-/*::v-deep {*/
-
-/*.el-form-item:nth-child(1) .el-form-item__content,*/
-/*.el-form-item:nth-child(2) .el-form-item__content,*/
-/*.el-form-item:nth-child(3) .el-form-item__content,*/
-/*.el-form-item:nth-child(4) .el-form-item__content {*/
-/*  margin-left: 28px;*/
-/*}*/
-
-/*.el-form-item:nth-child(5) .el-form-item__content {*/
-/*  margin-left: 10px;*/
-/*}*/
-
-/*.el-form-item:nth-child(6) .el-form-item__content {*/
-/*  margin-left: 77px;*/
-/*}*/
-
-/*.el-input__inner {*/
-/*  width: 500px;*/
-/*}*/
-
-/*.el-textarea__inner {*/
-/*  width: 500px;*/
-/*}*/
-
-/*.el-form-item:nth-child(4) .el-form-item__content {*/
-/*  width: 100%;*/
-/*}*/
-
-/*}*/
-
-/*.el-form-item:nth-child(4) .editor {*/
-/*  !*max-width: 1100 px;*!*/
-/*  z-index: 200;*/
-/*}*/
-
-/*.el-form-item:nth-child(5) span {*/
-/*  line-height: 28px;*/
-/*  margin-top: 120px;*/
-/*}*/
-
-/*.el-form-item:nth-child(5) .warning {*/
-/*  color: #ff461f*/
-/*}*/
-
-</style>
