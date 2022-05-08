@@ -142,7 +142,7 @@
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
-  name: 'ComplexTable',
+  name: 'MySalesOrders',
   // components: { Pagination },
   // directives: { waves },
   filters: {
@@ -166,11 +166,11 @@ export default {
       singlePage: '',
       listQuery: {
         pageNum: 1,
-        pageSize: 4,
+        pageSize: 7,
         orderId: undefined,
         buyerId: undefined,
         goodsId: undefined,
-        sort: '+order_id',
+        sort: '-order_id',
         orderStatus: undefined
       },
       // 0-未付 1-已付 2-已发货 3-已签收 4-退货中 5-已退货

@@ -36,14 +36,15 @@
           <el-card class="box-card">
             <el-form
               label-position="right"
-              label-width="45px"
+              label-width="60px"
               :model="newWall"
             >
 
-              <el-form-item label="内容:">
+              <el-form-item label="内容:" >
                 <el-input
                   v-model="newWall.wallContent"
                   type="textarea"
+                  placeholder="输入内容"
                   :autosize="{ minRows: 2, maxRows: 8}"
                 />
               </el-form-item>

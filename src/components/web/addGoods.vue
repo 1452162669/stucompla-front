@@ -6,8 +6,8 @@
           <el-card class="box-card">
             <h3 v-if="!isEdit" align="center">发布二手商品</h3>
             <h3 v-if="isEdit" align="center">修改二手商品</h3>
-            <el-form label-position="right" label-width="80px" :model="newGoods" >
-              <el-form-item label="商品名" >
+            <el-form label-position="right" label-width="80px" :model="newGoods" :rules="goodsRules" ref="goodsForm">
+              <el-form-item label="商品名" prop="goodsName" >
                 <el-input
                   v-model="newGoods.goodsName"
                   placeholder="品类/品牌/型号，都是大家喜欢搜索的"
@@ -15,6 +15,7 @@
               </el-form-item>
               <el-form-item
                 label="详情介绍"
+                prop="goodsDetail"
               >
                 <el-input
                   v-model="newGoods.goodsDetail"
@@ -23,7 +24,7 @@
                   :autosize="{ minRows: 2, maxRows: 8}"
                 />
               </el-form-item>
-              <el-form-item label="相关图片">
+              <el-form-item label="相关图片" required>
                 <el-upload
                   action="http://localhost:8086/image/upload"
                   :headers="myHeader"
@@ -41,11 +42,11 @@
                   <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
               </el-form-item>
-              <el-form-item label="商品定价">
+              <el-form-item label="商品定价" required>
                 <el-input-number size="medium" v-model="newGoods.goodsPrice" :precision="2" :step="0.5"
                                  :min="0" :max="9999" style="width: 150px"></el-input-number>
               </el-form-item>
-              <el-form-item label="商品分类">
+              <el-form-item label="商品分类" prop="goodsCategoryId">
                 <div class="block">
                   <el-cascader
                     v-model="newGoods.goodsCategoryId"
@@ -57,7 +58,7 @@
                   ></el-cascader>
                 </div>
               </el-form-item>
-              <el-form-item label="商品数量">
+              <el-form-item label="商品数量" required>
                 <el-input-number size="medium" style="width: 150px" v-model="newGoods.goodsCount"
                                  :min="1" :max="999"
                                  label="描述文字"></el-input-number>
@@ -89,6 +90,13 @@ export default {
     goodsId: Number
   },
   data () {
+    const validateGoodsName = (rule, value, callback) => {
+      if (value.length < 1 || value.length > 15) {
+        callback(new Error('商品名长度在1-15位'))
+      } else {
+        callback()
+      }
+    }
     return {
       isLogin: false,
       myHeader: {
@@ -104,6 +112,11 @@ export default {
         goodsPrice: 0.00,
         goodsCategoryId: '',
         goodsCount: 1
+      },
+      goodsRules: {
+        goodsName: [{ required: true, trigger: 'blur', validator: validateGoodsName }],
+        goodsDetail: [{ required: true, trigger: 'blur', message: '请输入详情介绍' }],
+        goodsCategoryId: [{ required: true, trigger: 'blur', message: '请选择类型' }]
       },
       dialogImageUrl: '',
       dialogVisible: false,
@@ -261,43 +274,54 @@ export default {
 
     },
     addGoods () {
-      this.newGoods.goodsImages = this.newimgArray.toString()
-      console.log(this.newGoods)
-      this.getLoginState()
-      this.$http.post('/goods/add', this.newGoods).then(res => {
-        if (res.data.code !== 200) {
-          this.$message({
-            message: res.data.msg,
-            type: 'error'
+      this.$refs.goodsForm.validate(valid => {
+        if (valid) {
+          this.newGoods.goodsImages = this.newimgArray.toString()
+          console.log(this.newGoods)
+          this.getLoginState()
+          this.$http.post('/goods/add', this.newGoods).then(res => {
+            if (res.data.code !== 200) {
+              this.$message({
+                message: res.data.msg,
+                type: 'error'
+              })
+            } else {
+              this.$message({
+                message: '发布成功',
+                type: 'success'
+              })
+            }
           })
         } else {
-          this.$message({
-            message: '发布成功',
-            type: 'success'
-          })
+          return false
         }
       })
     },
     updateGoods () {
-      this.newGoods.goodsImages = this.newimgArray.toString()
-      console.log(this.newGoods)
-      this.getLoginState()
-      if (this.isLogin) {
-        // this.newGoods.
-        this.$http.post('/goods/edit', this.newGoods).then(res => {
-          if (res.data.code !== 200) {
-            this.$message({
-              message: res.data.msg,
-              type: 'error'
-            })
-          } else {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
+      this.$refs.goodsForm.validate(valid => {
+        if (valid) {
+          this.newGoods.goodsImages = this.newimgArray.toString()
+          this.getLoginState()
+          if (this.isLogin) {
+            // this.newGoods.
+            this.$http.post('/goods/edit', this.newGoods).then(res => {
+              if (res.data.code !== 200) {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'error'
+                })
+              } else {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+              }
             })
           }
-        })
-      }
+        } else {
+          return false
+        }
+      })
     },
     goBack () {
       this.$router.back()
