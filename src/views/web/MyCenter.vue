@@ -100,6 +100,7 @@
                     <el-card>
                       <el-form
                     ref="basicInfo"
+                    :rules="basicInfoRules"
                     label-position="right"
                     label-width="80px"
                     :model="basicInfo"
@@ -107,11 +108,14 @@
                         <h3 align="center">修改基本信息</h3>
                     <el-form-item
                       label="用户名"
+                      prop="username"
                     >
                       <el-input v-model="basicInfo.username"/>
                     </el-form-item>
                     <el-form-item
                       label="性别"
+                      prop="sex"
+                      required
                     >
                       <el-select
                         v-model="basicInfo.sex"
@@ -175,7 +179,8 @@
 <el-col :span="12" :offset="1">
   <el-card>
     <el-form
-      ref="basicInfo"
+      ref="changePwdForm"
+      :rules="changePwdRules"
       label-position="right"
       label-width="80px"
       :model="changePwdForm"
@@ -183,16 +188,19 @@
       <h3 align="center">修改密码</h3>
       <el-form-item
         label="旧密码"
+        prop="oldPassword"
       >
         <el-input v-model="changePwdForm.oldPassword" type="password"/>
       </el-form-item>
       <el-form-item
         label="新密码"
+        prop="inPassword"
       >
         <el-input v-model="changePwdForm.inPassword" type="password"/>
       </el-form-item>
       <el-form-item
         label="重复密码"
+        prop="secondPassword"
       >
         <el-input v-model="changePwdForm.secondPassword" type="password" @keyup.enter.native="changePwd"/>
       </el-form-item>
@@ -364,7 +372,7 @@
                         <el-row>
                           <el-col :span="7">
                             <router-link :to="`/stucompla/goods/${item.goodsId}`">
-                              <img style="width: 100%;border-radius: 5px" :src="`http://localhost:8086/image/${item.goodsImages[0]}`" alt="">
+                              <img style="width: 100%;border-radius: 5px" :src="`http://localhost:8086/image/${item.goodsImages[0]}`" alt="" class="image">
                             </router-link>
                           </el-col>
                           <el-col :span="9" :offset="1" align="left">
@@ -442,7 +450,8 @@
                 label="销售订单"
                 name="mySalesOrders"
               >
-                <router-view></router-view>
+                <MySalesOrders :key="mySalesOrdersRefreshKey"></MySalesOrders>
+<!--                <router-view></router-view>-->
               </el-tab-pane>
               <el-pagination
                 class="pagination"
@@ -454,7 +463,7 @@
                 :total="showList.total"
                 :hide-on-single-page="singlePage"
                 v-scroll-to="{ element: '.menu',duration: 300, easing: 'ease',offset: -90  }"
-                v-if="currentMenu!=='userInfo'"
+                v-if="currentMenu!=='userInfo'&&currentMenu!=='mySalesOrders'"
               align="center">
               </el-pagination>
             </el-tabs>
@@ -471,14 +480,30 @@
 import PostList from '../../components/web/postList'
 import commentList from '../../components/web/commentList'
 import { removeToken } from '../../utils/auth'
+import MySalesOrders from './mySalesOrders'
 
 export default {
   name: 'Index',
   components: {
+    MySalesOrders,
     PostList,
     commentList
   },
   data () {
+    const validateUsername = (rule, value, callback) => {
+      if (value.length < 3 || value.length > 10) {
+        callback(new Error('用户名长度在3-10位'))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6 || value.length > 16) {
+        callback(new Error('密码长度在6-16位'))
+      } else {
+        callback()
+      }
+    }
     return {
       loading: true,
       currentMenu: 'userInfo',
@@ -489,10 +514,19 @@ export default {
       basicInfo: {
 
       },
+      basicInfoRules: {
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        sex: [{ required: true, trigger: 'blur', message: '请选择性别' }]
+      },
       changePwdForm: {
         oldPassword: '',
         inPassword: '',
         secondPassword: ''
+      },
+      changePwdRules: {
+        oldPassword: [{ required: true, trigger: 'blur', message: '请输入旧密码' }],
+        inPassword: [{ required: true, trigger: 'blur', message: '密码长度在6-16位', validator: validatePassword }],
+        secondPassword: [{ required: true, trigger: 'blur', message: '密码长度在6-16位', validator: validatePassword }]
       },
       sexOptions: [
         {
@@ -589,7 +623,8 @@ export default {
         pages: '',
         walls: [],
         total: '0'
-      }
+      },
+      mySalesOrdersRefreshKey: 0
     }
   },
   watch: {
@@ -625,7 +660,8 @@ export default {
             this.getMyOrderList()
             break
           case 'mySalesOrders':
-            this.$router.push('/stucompla/myCenter/mySalesOrders')
+            this.mySalesOrdersRefreshKey++
+            // this.$router.push('/stucompla/myCenter/mySalesOrders')
             // this.getMySalesOrders()
             // this.showList = this.mySalesOrderList
             break
@@ -985,52 +1021,50 @@ export default {
         signature: this.basicInfo.signature,
         avatar: this.newImgArray.toString()
       }
-      await this.$http.post('/user/editUserInfo', updateData).then(res => {
-        if (res.data.code !== 200) {
-          this.$message.error(res.data.msg)
-        } else {
-          this.$message.success(res.data.data)
-        }
-      })
-      await this.$router.go(0)
-      // updateAccount(this.editId, updateData).then(response => {
-      //   const res = response.data
-      //   if (res.status === 200) {
-      //     this.basicInfo = {}
-      //     this.getAccountInfo()
-      //     this.newPassword = this.basicInfo.password
-      //     this.$message.success(res.msg)
-      //   } else {
-      //     this.dialogVisible = false
-      //     this.$message.error(res.msg)
-      //     this.basicInfo = {}
-      //     this.getAccountInfo()
-      //   }
-      // })
-    },
-    async changePwd () {
-      await this.$http.post('/user/changePassword', null, {
-        params: {
-          oldPassword: this.changePwdForm.oldPassword,
-          inPassword: this.changePwdForm.inPassword,
-          secondPassword: this.changePwdForm.secondPassword
-        }
-      }).then(res => {
-        if (res.data.code !== 200) {
-          this.$message.error(res.data.msg)
-        } else {
-          this.$http.delete('/user/logout').then(res => {
+      await this.$refs.basicInfo.validate(valid => {
+        if (valid) {
+          this.$http.post('/user/editUserInfo', updateData).then(res => {
             if (res.data.code !== 200) {
-
+              this.$message.error(res.data.msg)
             } else {
-              removeToken() // 必须先删除token
-              // resetRouter()
-              this.$store.dispatch('user/resetState')
-              this.$message.success('修改成功，请重新登录')
-
-              this.$router.push('/')
+              this.$message.success(res.data.data)
+              this.$router.go(0)
             }
           })
+        } else {
+          return false
+        }
+      })
+    },
+    async changePwd () {
+      await this.$refs.changePwdForm.validate(valid => {
+        if (valid) {
+          this.$http.post('/user/changePassword', null, {
+            params: {
+              oldPassword: this.changePwdForm.oldPassword,
+              inPassword: this.changePwdForm.inPassword,
+              secondPassword: this.changePwdForm.secondPassword
+            }
+          }).then(res => {
+            if (res.data.code !== 200) {
+              this.$message.error(res.data.msg)
+            } else {
+              this.$http.delete('/user/logout').then(res => {
+                if (res.data.code !== 200) {
+
+                } else {
+                  removeToken() // 必须先删除token
+                  // resetRouter()
+                  this.$store.dispatch('user/resetState')
+                  this.$message.success('修改成功，请重新登录')
+
+                  this.$router.push('/')
+                }
+              })
+            }
+          })
+        } else {
+          return false
         }
       })
     }
