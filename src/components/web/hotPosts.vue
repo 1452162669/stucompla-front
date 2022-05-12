@@ -19,7 +19,7 @@ export default {
   name: 'hotNews',
   data () {
     return {
-      //  热门新闻列表
+      //  热门帖子列表
       hotPosts: []
     }
   },
@@ -27,7 +27,7 @@ export default {
     this.getHotPosts()
   },
   methods: {
-    // 获取热门新闻
+    // 获取热门帖子
     async getHotPosts () {
       const { data: res } = await this.$http.get('/post/list', {
         params: {
@@ -40,16 +40,8 @@ export default {
       if (res.code !== 200) {
         this.hotPosts = []
       } else {
-        // this.$message.success('获取成功')
         this.hotPosts = res.data.postList
       }
-      // const { data: res } = await this.$http.get('/web/hotnews')
-      //   if (res.status !== 200) {
-      //     this.hotNews = []
-      //   } else {
-      //     // this.$message.success('获取成功')
-      //     this.hotNews = res.data.list
-      //   }
     }
   }
 }

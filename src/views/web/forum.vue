@@ -1,10 +1,9 @@
 <template>
   <div class="news">
-    <!--    <AwHeader class="news_header" ref="news_header"></AwHeader>-->
     <div class="box">
       <div class="news-banner">
         <div class="banner-title">
-          <h2>新视野</h2>
+          <h2>交流栏目</h2>
           <h3>了解更多信息</h3>
         </div>
         <el-input style="width: 46%;"
@@ -14,34 +13,8 @@
         >
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
-<!--        <el-autocomplete-->
-<!--          class="search-news"-->
-<!--          popper-class="my-autocomplete"-->
-<!--          highlight-first-item-->
-<!--          v-model="searchNews"-->
-<!--          clearable-->
-<!--          ref="autocomplete"-->
-<!--          @focus="autocompleteFlag=true"-->
-<!--          @blur="autocompleteFlag=false"-->
-<!--          @clear="searchHandle"-->
-<!--          :fetch-suggestions="querySearchAsync"-->
-<!--          placeholder="请输入关键词"-->
-<!--          :trigger-on-focus="false">-->
-<!--          <i slot="prefix" class="el-input__icon el-icon-search"></i>-->
-
-<!--        </el-autocomplete>-->
       </div>
       <div class="news-container">
-        <!--        <div class="news-card">-->
-        <!--          <el-card shadow="never" v-for="(item,index) in recomNews" :key="index">-->
-        <!--            <router-link :to="`/news/${item.news_path}`">-->
-        <!--              <div class="news-card-item">-->
-        <!--                <img :src="item.cover_img" alt="">-->
-        <!--                <p class="item-mask"><span>{{ item.news_title }}</span></p>-->
-        <!--              </div>-->
-        <!--            </router-link>-->
-        <!--          </el-card>-->
-        <!--        </div>-->
         <el-row class="product-carousel">
           <el-card>
             <h2>精华帖子</h2>
@@ -83,16 +56,8 @@
           </el-tabs>
           <div class="list-right">
             <div class="search-by-date">
-              <p>按日期搜索：</p>
-              <el-date-picker
-                v-model="pageInfo.selectDate"
-                type="month"
-                placeholder="选择日期"
-                value-format="yyyy-MM"
-                @change="searchByDate(pageInfo.selectDate)">
-              </el-date-picker>
             </div>
-            <hot-news></hot-news>
+            <hot-posts></hot-posts>
           </div>
         </div>
       </div>
@@ -103,22 +68,18 @@
         <i class="el-icon-edit-outline" style="font-size: 30px"></i>发帖
       </router-link>
     </div>
-    <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
 
 <script>
-import HotNews from '../../components/web/hotNews'
+import HotPosts from '../../components/web/hotPosts'
 import PostList from '../../components/web/postList'
 
 export default {
   name: 'forum',
   components: {
     PostList,
-    HotNews
-    // NewsList
-    // AwFooter,
-    // AwHeader
+    HotPosts
   },
   data () {
     return {
@@ -159,26 +120,6 @@ export default {
     }
   },
   methods: {
-    // 关键词搜索新闻
-    async querySearchAsync (queryString, cb) {
-      // this.searchList = []
-      // const { data: res } = await this.$http.get('/web/searchnews/' + queryString)
-      // if (res.status !== 200) {
-      // } else {
-      //   // this.$message.success('获取成功')
-      //   this.searchList = res.data.list
-      // }
-      // const newHtml = `<span style="color: #3370ff">${queryString}</span>`
-      // this.searchList.forEach(item => {
-      //   item.news_title = item.news_title.replace(queryString, newHtml)
-      //   item.news_desc = item.news_desc.replace(queryString, newHtml)
-      //   // item.news_desc = item.news_desc.replace(queryString, newHtml)
-      // })
-      // clearTimeout(this.timeout)
-      // this.timeout = setTimeout(() => {
-      //   cb(this.searchList)
-      // }, 1000 * Math.random())
-    },
     // 解决 clearable 搜索框后再次输入不显示下拉
     searchHandle () {
       if (this.autocompleteFlag) this.$refs.autocomplete.activated = true
@@ -238,21 +179,8 @@ export default {
         }
       })
     },
-    // 根据新闻 类型、日期 查询新闻，并按日期排序
-    async getNewsItems () {
-      // const { data: res } = await this.$http.get('/web/newslist', { params: this.pageInfo })
-      // if (res.status !== 200) {
-      //   this.newsItems = {}
-      // } else {
-      //   // this.$message.success('获取成功')
-      //   this.newsItems = res.data
-      //   if (this.newsItems.total <= this.newsItems.limit) {
-      //     this.singlePage = true
-      //   }
-      // }
-    },
+
     searchByDate (data) {
-      // console.log(data)
       this.getNewsItems()
     },
     // 获取精帖 要改
@@ -268,7 +196,6 @@ export default {
       if (res.code !== 200) {
         this.bestPostsData = []
       } else {
-        // this.$message.success('获取成功')
         this.bestPostsData = res.data.postList
       }
     },
@@ -288,25 +215,14 @@ export default {
           res.data.data.forEach(item => {
             this.categories.push(item)
           })
-          // this.categories.push(res.data.date)
           console.log(this.categories)
         }
       })
-    },
-    async getRecomNews () {
-      // const { data: res } = await this.$http.get('/web/recomNews')
-      // if (res.status !== 200) {
-      //   this.hotNews = []
-      // } else {
-      //   // this.$message.success('获取成功')
-      //   this.recomNews = res.data.list
-      // }
     }
   },
   async created () {
     await this.getCategories()
     await this.getPostsItems()
-    await this.getRecomNews()
     await this.getBestPostsDataList()
   },
   mounted () {

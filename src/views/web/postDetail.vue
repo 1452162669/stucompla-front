@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import HotNews from '../../components/web/hotNews'
+import HotNews from '../../components/web/hotPosts'
 import CommentList from '../../components/web/commentList'
 import { getToken } from '../../utils/auth'
 

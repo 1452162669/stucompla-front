@@ -9,15 +9,14 @@
             <p class="text2">STUDENT COMMUNICATION PLATFORM</p>
           </div>
         </div>
-        <h2>© 2020-2021 Stucompla&nbsp;学生交流平台</h2>
+        <h2>© 2021-2022 Stucompla&nbsp;学生交流平台</h2>
         <h2>X公网安备 xxxxxxxxxxxxxx号 I ICP备xxxxxxxx号-1</h2>
       </div>
       <div class="about_us footer-content-column">
         <h2>关于我们</h2>
         <ul class="about_list">
           <li>
-            <!--            <router-link to = "/job" target = "_blank">企业文化</router-link>-->
-            <router-link to="/job" target="_blank">xxxxx</router-link>
+            <p >xxxxx</p>
           </li>
         </ul>
       </div>
@@ -28,23 +27,6 @@
             <a :href="'mailto:'+item.email">{{ item.name }}</a>
           </li>
         </ul>
-      </div>
-      <div class="focus_us footer-content-column">
-        <!--        <h2>实时动态与招聘信息，扫码关注我们</h2>-->
-        <h2>xxxxxxxxxxxxxxxxxxxxxxxx</h2>
-        <div class="media">
-          <div :class="item.name" v-for="(item,index) in focus_icon" :key="index">
-            <el-popover
-              placement="top"
-              trigger="hover">
-              <div class="qr_popover">
-                <img :src="item.qr" alt="">
-                <h2>{{ item.info }}</h2>
-              </div>
-              <img :src="item.path" :alt="item.name" slot="reference">
-            </el-popover>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -60,61 +42,12 @@ export default {
       logo_url: require('../../../assets/img/index/stucomplaLogoColor3.png'),
       contact_way: [
         {
-          name: 'xxxxx',
-          // name: '媒体问询',
-          email: 'aerowangue@126.com'
-        },
-        {
-          name: 'xxxxx',
-          // name: '招聘相关',
-          email: 'aerowangue@126.com'
-        },
-        {
-          name: 'xxxxx',
-          // name: '商务合作',
-          email: 'aerowangue@126.com'
-        },
-        {
-          name: '广告相关',
-          email: 'aerowangue@126.com'
-        }
-      ],
-      focus_icon: [
-        {
-          name: 'weibo',
-          path: require('../../../assets/img/focus/weibo.png'),
-          qr: require('../../../assets/img/focus/qr_weibo.png'),
-          info: '关注官方微博'
-        },
-        {
-          name: 'weixin',
-          path: require('../../../assets/img/focus/weixin.svg'),
-          qr: require('../../../assets/img/focus/qr_weixin.png'),
-          info: '关注官方微信公众号'
-        },
-        {
-          name: 'bilibili',
-          path: require('../../../assets/img/focus/bilibili.png'),
-          qr: require('../../../assets/img/focus/qr_bilibili.png'),
-          info: '关注官方 bilibili 号'
+          name: '1452162669@qq.com',
+          email: '1452162669@qq.com'
         }
       ]
+
     }
-  },
-  methods: {
-    // setFooterHeight () {
-    //   this.curWidth = window.innerWidth
-    //   if (this.curWidth <= 991) {
-    //     this.footerHeight = 570 + 'px'
-    //   } else {
-    //     this.footerHeight = 280 + 'px'
-    //   }
-    // }
-  },
-  created () {
-    // 页面创建时执行一次getHeight进行赋值，顺道绑定resize事件
-    // window.addEventListener('resize', this.setFooterHeight)
-    // this.setFooterHeight()
   }
 }
 </script>

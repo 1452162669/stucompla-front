@@ -14,9 +14,8 @@ export default new Vuex.Store({
     navDarkActive: false,
 
     dialogLoginVisible: false,
-    dialogRegisterVisible: false,
+    dialogRegisterVisible: false
 
-    articlePath: ''
   },
   mutations: {
     setBannerHeight (state, value) {
@@ -39,16 +38,11 @@ export default new Vuex.Store({
     },
     setNavDarkActive (state, value) {
       state.navDarkActive = value.navDarkActive
-    },
-    SET_ARTICLE_PATH: (state, value) => {
-      state.article_path = value.path
     }
+
   },
   actions: {
-    setArticlePath ({ commit }, path) {
-      return new Promise(resolve =>
-        commit('SET_ARTICLE_PATH'), path)
-    }
+
   },
   modules: {
     user
