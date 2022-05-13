@@ -24,13 +24,18 @@
               <el-carousel-item
                 v-for="(item,index) in bestPostsData"
                 :key="index">
+
                 <router-link :to="`/stucompla/post/${item.postId}`">
+                  <div class="pic_item">
                   <el-image
-                    :src="getCoverImgFromImages(item.images)"
+                    :src="item.images[0]"
+                    v-if="item.images!=null&&item.images.length>0"
                     fit="cover"
-                    style="width: 100%"/>
-                  <!--                <h2>{{ item.title }}</h2>-->
+                    style="width: 100%;height: 100%"/>
+                  <h3>{{ item.title }}</h3>
+                  </div>
                 </router-link>
+
               </el-carousel-item>
             </el-carousel>
           </el-card>
@@ -192,19 +197,36 @@ export default {
           postStatus: 0
         }
       })
-      console.log(res)
       if (res.code !== 200) {
         this.bestPostsData = []
       } else {
         this.bestPostsData = res.data.postList
+        this.handleImg(this.bestPostsData)
       }
     },
-    getCoverImgFromImages (images) {
-      if (images == null) {
-        return ''
-      }
-      const imageArr = images.split(',')
-      return 'http://localhost:8086/image/' + imageArr[0]
+    // 处理本地图片和网站图片问题
+    async handleImg (postList) {
+      await postList.forEach(function (item) {
+        if (item.images != null && item.images.length > 0) {
+          item.images = item.images.split(',')
+          item.images[0] = 'http://localhost:8086/image/' + item.images[0]
+        } else {
+          var content = item.detail
+          const imgReg = /<img.*?(?:>|\/>)/gi // 匹配图片中的img标签
+          const srcReg = /src=['"]?([^'"]*)['"]?/i // 匹配图片中的src
+          const srcArr = []
+          const arr = content.match(imgReg) // 筛选出所有的img
+          if (arr != null) {
+            // console.log(arr)
+            for (let i = 0; i < arr.length; i++) {
+              const src = arr[i].match(srcReg)
+              // 获取图片地址
+              srcArr.push(src[1])
+            }
+            item.images = srcArr
+          }
+        }
+      })
     },
     async getCategories () {
       await this.$http.get('/category/list').then(res => {
@@ -547,5 +569,24 @@ export default {
 
 .box-card {
   width: 480px;
+}
+
+.pic_item {
+  position: relative;
+  height: 100%;
+}
+.pic_item:hover{
+  cursor: pointer;
+}
+
+.pic_item img {
+  width: 100%;
+  height: 100%;
+}
+
+.pic_item h3 {
+  position: absolute;
+  left: 1rem;
+  bottom: 2rem;
 }
 </style>

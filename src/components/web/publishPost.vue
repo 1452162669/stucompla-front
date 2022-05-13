@@ -79,8 +79,6 @@ export default {
         if (valid) {
           this.form.images = this.$refs.MyEditor.getImgFromHtml(this.$refs.MyEditor.editorData).toString()
           this.form.detail = this.$refs.MyEditor.getEditorData()
-          console.log(this.form)
-          console.log(this.form.images)
           this.form.postId = this.postId
           this.$http.post('/post/edit', this.form).then(res => {
             if (res.data.code !== 200) {
