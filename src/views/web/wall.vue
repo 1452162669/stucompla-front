@@ -1,16 +1,16 @@
 <template>
   <div style="padding-top: 90px">
     <el-row :gutter="20" style="margin: 0px">
-      <el-col :span="4" :offset="1">
-        <div class="grid-content bg-purple">
-          <el-card class="box-card">
-            <div v-for="o in 4" :key="o" class="text item">
-              {{ '列表内容 ' + o }}
-            </div>
-          </el-card>
-        </div>
-      </el-col>
-      <el-col :span="12">
+<!--      <el-col :span="4" :offset="1">-->
+<!--        <div class="grid-content bg-purple">-->
+<!--          <el-card class="box-card">-->
+<!--            <div v-for="o in 4" :key="o" class="text item">-->
+<!--              {{ '列表内容 ' + o }}-->
+<!--            </div>-->
+<!--          </el-card>-->
+<!--        </div>-->
+<!--      </el-col>-->
+      <el-col :span="12" :offset="5">
         <div class="grid-content bg-purple">
           <el-card class="main-card" v-for="(item,index) in wallList" :key="index" shadow="hover">
             {{ item.wallContent }}

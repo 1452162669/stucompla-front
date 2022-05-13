@@ -20,7 +20,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="0" class="el-row-market">
-      <el-col :span="14" :offset="5" >
+      <el-col :span="18" :offset="3" >
         <div class="grid-content bg-purple">
           <el-tabs tabPosition="left" >
             <el-tab-pane :label="item.categoryName" :name="''+index"
