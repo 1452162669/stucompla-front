@@ -74,18 +74,9 @@ import { getUnReadTotal } from '../../../utils/letter'
 
 export default {
   name: 'Header',
-  // props: ['dialogLoginVisible'],
-  // model: {
-  //   prop: 'dialogLoginVisible',
-  //   event: 'changeDialog'
-  // },
   data () {
     return {
-      // dialogFormVisible: false,
-      // loginForm: {
-      //   username: '',
-      //   password: ''
-      // },
+
       avatar: getAvatar(),
       total: getUnReadTotal(),
       isLogin: false,
@@ -110,26 +101,7 @@ export default {
           title: '二手交易',
           path: '/stucompla/market'
         }
-        // {
-        //   title: '新闻中心',
-        //   path: '/news'
-        // },
-        // {
-        //   title: '产品与服务',
-        //   path: '/product'
-        // },
-        // {
-        //   title: '人才招聘',
-        //   path: '/job'
-        // }
-        // {
-        //   title: '客户服务',
-        //   path: '/customer'
-        // },
-        // {
-        //   title: '登录',
-        //   path: '/login'
-        // }
+
       ],
       logo_img: [
         {

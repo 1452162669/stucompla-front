@@ -20,7 +20,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="0" class="el-row-market">
-      <el-col :span="9" :offset="2" >
+      <el-col :span="14" :offset="5" >
         <div class="grid-content bg-purple">
           <el-tabs tabPosition="left" >
             <el-tab-pane :label="item.categoryName" :name="''+index"
@@ -38,17 +38,17 @@
           </el-tabs>
         </div>
       </el-col>
-      <el-col :span="11">
-        <div class="grid-content bg-purple">
-          <div class="block">
-            <el-carousel trigger="click" height="365px">
-              <el-carousel-item v-for="item in 4" :key="item">
-                <h3 class="small">{{ item }}</h3>
-              </el-carousel-item>
-            </el-carousel>
-          </div>
-        </div>
-      </el-col>
+<!--      <el-col :span="11">-->
+<!--        <div class="grid-content bg-purple">-->
+<!--          <div class="block">-->
+<!--            <el-carousel trigger="click" height="365px">-->
+<!--              <el-carousel-item v-for="item in 4" :key="item">-->
+<!--                <h3 class="small">{{ item }}</h3>-->
+<!--              </el-carousel-item>-->
+<!--            </el-carousel>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </el-col>-->
     </el-row>
     <el-row class="el-row-market" >
       <el-col :span="5" :offset="2">
