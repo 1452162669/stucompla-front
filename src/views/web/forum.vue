@@ -367,7 +367,7 @@ export default {
 
 .news-banner {
   width: 100%;
-  height: 280px;
+  height: 220px;
   background: url("../../assets/img/news/newsbanner.jpg") 50% no-repeat;
   background-size: cover;
   text-align: center;

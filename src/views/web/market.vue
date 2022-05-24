@@ -14,7 +14,7 @@
         </div>
       </el-col>
       <el-col :span="2" :offset="2">
-        <div class="grid-content bg-purple" align="right">
+        <div class="grid-content " align="right">
           <el-button type="primary" plain @click="toCreateGoods">我要卖二手</el-button>
         </div>
       </el-col>

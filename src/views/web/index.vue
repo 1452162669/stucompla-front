@@ -4,26 +4,26 @@
     <div class="banner-wrap">
       <Banner :BannerHeight="BannerHeight"></Banner>
       <over-lay></over-lay>
-      <scroll-hint
-        v-scroll-to="{ element: '.wrap-block',duration: 300, easing: 'ease',offset: 1  }"></scroll-hint>
+<!--      <scroll-hint-->
+<!--        v-scroll-to="{ element: '.wrap-block',duration: 300, easing: 'ease',offset: 1  }"></scroll-hint>-->
     </div>
-    <index-service></index-service>
+<!--    <index-service></index-service>-->
     <!--    <AwFooter></AwFooter>-->
   </div>
 </template>
 
 <script>
 import Banner from '../../components/web/Banner'
-import ScrollHint from '../../components/web/scrollHint'
+// import ScrollHint from '../../components/web/scrollHint'
 import OverLay from '../../components/web/overLayText'
-import IndexService from '../../components/web/IndexService'
+// import IndexService from '../../components/web/IndexService'
 
 export default {
   name: 'index',
   components: {
-    IndexService,
+    // IndexService,
     Banner,
-    ScrollHint,
+    // ScrollHint,
     OverLay
     // AwFooter,
     // AwHeader
